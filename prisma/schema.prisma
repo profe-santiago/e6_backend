@@ -1,13 +1,210 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Rol { 
+  SUPER_ADMIN 
+  ADMIN
+  COORDINADOR
+  USUARIO 
+}
+
+enum Categoria { 
+  INFRAESTRUCTURA 
+  VIALIDAD 
+  BLOQUEOS 
+  SEGURIDAD 
+}
+
+enum EstadoReporte { 
+  PENDIENTE 
+  EN_PROCESO 
+  RESUELTO
+  RECHAZADO 
+}
+
+enum FuenteReporte { 
+  APP_MOVIL 
+  WEB 
+  TWITTER 
+  FACEBOOK 
+}
+
+enum EstadoComunidad { 
+  PENDIENTE 
+  ACTIVO 
+  RECHAZADO 
+  SUSPENDIDO 
+}
+
+enum NivelAlerta { 
+  AMARILLA 
+  ROJA 
+}
+
+enum EstadoAlerta { 
+  ACTIVA 
+  EN_ATENCION 
+  CERRADA 
+}
+
+model Estado {
+  id         Int         @id @default(autoincrement())
+  nombre     String      @db.VarChar(100)
+  clave      String      @unique @db.Char(2)
+  municipios Municipio[]
+  @@map("estados")
+}
+
+model Municipio {
+  id              Int            @id @default(autoincrement())
+  nombre          String         @db.VarChar(200)
+  clave           String         @unique @db.Char(5)
+  estadoId        Int
+  estado          Estado         @relation(fields: [estadoId], references: [id])
+  comunidades     Comunidad[]
+  codigosPostales CodigoPostal[]
+  usuarios        Usuario[]
+  @@map("municipios")
+}
+
+model CodigoPostal {
+  id          Int         @id @default(autoincrement())
+  codigo      String      @db.Char(5)
+  colonia     String      @db.VarChar(200)
+  municipioId Int
+  municipio   Municipio   @relation(fields: [municipioId], references: [id])
+  comunidades Comunidad[]
+  @@index([codigo])
+  @@map("codigos_postales")
+}
+
+model Comunidad {
+  id           Int             @id @default(autoincrement())
+  nombre       String          @db.VarChar(200)
+  slug         String          @unique @db.VarChar(250)
+  status       EstadoComunidad @default(PENDIENTE)
+  irsuActual   Float           @default(0)
+  color        String          @default("#3B82F6") @db.VarChar(7)
+  logoUrl      String?
+  municipioId  Int
+  municipio    Municipio       @relation(fields: [municipioId], references: [id])
+  cpId         Int?
+  codigoPostal CodigoPostal?   @relation(fields: [cpId], references: [id])
+  usuarios     Usuario[]
+  reportes     Reporte[]
+  alertas      Alerta[]
+  irsuHistorial IrsuHistorial[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  @@unique([municipioId, nombre])
+  @@map("comunidades")
+}
+
+model Usuario {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique @db.VarChar(150)
+  passwordHash String
+  nombre       String?  @db.VarChar(100)
+  rol          Rol      @default(USUARIO)
+  activo       Boolean  @default(true)
+  municipioId  Int?
+  municipio    Municipio? @relation(fields: [municipioId], references: [id])
+  comunidadId  Int?
+  comunidad    Comunidad? @relation(fields: [comunidadId], references: [id])
+  reportes     Reporte[]
+  votos        Voto[]
+  historial    ReporteHistorial[]
+  alertasAsignadas Alerta[]
+  createdAt    DateTime @default(now())
+  @@map("usuarios")
+}
+
+model Reporte {
+  id           Int           @id @default(autoincrement())
+  titulo       String        @db.VarChar(120)
+  descripcion  String?       @db.Text
+  gravedad     Int
+  categoria    Categoria
+  estado       EstadoReporte @default(PENDIENTE)
+  fuente       FuenteReporte @default(APP_MOVIL)
+  latitud      Float
+  longitud     Float
+  deviceIp     String?       @db.VarChar(45)
+  sincronizado Boolean       @default(true)
+  voteCount    Int           @default(0)
+  usuarioId    Int?
+  usuario      Usuario?      @relation(fields: [usuarioId], references: [id])
+  comunidadId  Int
+  comunidad    Comunidad     @relation(fields: [comunidadId], references: [id])
+  fotos        ReporteFoto[]
+  votos        Voto[]
+  historial    ReporteHistorial[]
+  createdAt    DateTime      @default(now())
+  deletedAt    DateTime?
+  @@map("reportes")
+}
+
+model ReporteFoto {
+  id        Int      @id @default(autoincrement())
+  url       String   @db.Text
+  reporteId Int
+  reporte   Reporte  @relation(fields: [reporteId], references: [id])
+  @@map("reporte_fotos")
+}
+
+model Voto {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  reporteId Int
+  reporte   Reporte  @relation(fields: [reporteId], references: [id])
+  @@unique([usuarioId, reporteId])
+  @@map("votos")
+}
+
+model ReporteHistorial {
+  id             Int           @id @default(autoincrement())
+  reporteId      Int
+  reporte        Reporte       @relation(fields: [reporteId], references: [id])
+  cambiadoPor    Int
+  usuario        Usuario       @relation(fields: [cambiadoPor], references: [id])
+  estadoAnterior EstadoReporte?
+  estadoNuevo    EstadoReporte
+  nota           String?       @db.Text
+  createdAt      DateTime      @default(now())
+  @@map("reporte_historial")
+}
+
+model Alerta {
+  id              Int          @id @default(autoincrement())
+  comunidadId     Int
+  comunidad       Comunidad    @relation(fields: [comunidadId], references: [id])
+  categoria       Categoria
+  nivel           NivelAlerta
+  estado          EstadoAlerta @default(ACTIVA)
+  irsuValor       Float
+  asignadoA       Int?
+  usuario         Usuario?     @relation(fields: [asignadoA], references: [id])
+  atendidaEn      DateTime?
+  cerradaEn       DateTime?
+  createdAt       DateTime     @default(now())
+  @@map("alertas")
+}
+
+model IrsuHistorial {
+  id               Int        @id @default(autoincrement())
+  comunidadId      Int
+  comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
+  categoria        Categoria?
+  valor            Float
+  totalReportes    Int
+  gravedadPromedio Float
+  tendencia        Float
+  createdAt        DateTime   @default(now())
+  @@map("irsu_historial")
 }

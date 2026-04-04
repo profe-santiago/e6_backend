@@ -1,5 +1,6 @@
 import { Municipio } from '@prisma/client';
 import { municipioRepository } from './municipio.repository';
+import { prisma } from '../lib/prisma';
 
 export const municipioService ={
     getAll: (): Promise<Municipio[]> => {
@@ -30,8 +31,9 @@ export const municipioService ={
         return municipio;
     },
 
-    getMunicipiosByEstado: async (estadoId: number): Promise<Municipio[]> => {
-        return municipioRepository.findMunicipiosByEstado(estadoId);
+    getComunidadesByMunicipio: async (municipioId: number) => {
+        await municipioService.getById(municipioId); // lanza 404 si no existe
+        return municipioRepository.findComunidadesByMunicipio(municipioId);
     },
 
 

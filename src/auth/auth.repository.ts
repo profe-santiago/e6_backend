@@ -2,10 +2,7 @@
 // Solo esta capa conoce @prisma/client.
 import { PrismaClient, Usuario} from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-
-
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma   = new PrismaClient({ adapter });
+import { prisma } from '../lib/prisma';
 
 export const authRepository = {
     findByEmail: (email:string): Promise<Usuario | null> => {

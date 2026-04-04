@@ -28,5 +28,10 @@ export const estadoService ={
             throw Object.assign(new Error('Estado no encontrado'), { statusCode: 404 });
         }
         return estado;
-    }
+    },
+
+    getMunicipiosByEstado: async (id: number) => {
+        await estadoService.getById(id);
+        return estadoRepository.findMunicipiosByEstado(id);
+    },
 };

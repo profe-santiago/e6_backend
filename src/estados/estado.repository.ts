@@ -1,8 +1,6 @@
 import { PrismaClient, Estado, Municipio, CodigoPostal } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma   = new PrismaClient({ adapter });
+import { prisma } from '../lib/prisma';
 
 
 export const estadoRepository ={
@@ -30,6 +28,14 @@ export const estadoRepository ={
                 equals: nombre,
                 mode: 'insensitive'
             } }
+        });
+    },
+
+    findMunicipiosByEstado: (estadoId: number) => {
+        return prisma.municipio.findMany({
+            where:   { estadoId },
+            select:  { id: true, clave: true, nombre: true, estadoId: true },
+            orderBy: { nombre: 'asc' },
         });
     },
    

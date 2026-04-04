@@ -1,8 +1,6 @@
 import { PrismaClient, Estado, Municipio} from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-const prisma   = new PrismaClient({ adapter });
+import { prisma } from '../lib/prisma';
 
 
 export const municipioRepository ={
@@ -25,10 +23,10 @@ export const municipioRepository ={
         return prisma.municipio.findUnique({ where: { id } });
     },
 
-    findMunicipiosByEstado: (estadoId: number): Promise<Municipio[]> => {
-        return prisma.municipio.findMany({
-            where:   { estadoId },
-            select:  { id: true, clave: true, nombre: true, estadoId: true },
+    findComunidadesByMunicipio: (municipioId: number) => {
+        return prisma.comunidad.findMany({
+            where:   { municipioId, status: 'ACTIVO' },
+            select:  { id: true, nombre: true, slug: true, irsuActual: true, color: true },
             orderBy: { nombre: 'asc' },
         });
     },

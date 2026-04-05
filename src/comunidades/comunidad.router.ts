@@ -90,7 +90,7 @@ comunidadRouter.get('/:slug', async (req: Request, res: Response) => {
  * @swagger
  * /api/v1/comunidades:
  *   post:
- *     summary: Crear una comunidad (RF-07-1) — solo ADMIN o SUPER_ADMIN
+ *     summary: Crear una comunidad — solo ADMIN o SUPER_ADMIN
  *     tags: [Comunidades]
  *     security:
  *       - bearerAuth: []

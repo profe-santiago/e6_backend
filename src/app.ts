@@ -9,6 +9,8 @@ import { estadoRouter } from './estados/estado.router';
 import { municipioRouter } from './municipios/municipio.router';
 import { codigoPostalRouter } from './codigo-postal/codigo-postal.router';
 import { comunidadRouter } from './comunidades/comunidad.router';
+import { usuarioRouter } from './usuarios/usuario.router';
+import { reporteRouter } from './reportes/reporte.router';
 
 
 export const app = express();
@@ -39,6 +41,8 @@ app.use('/api/v1/estados', estadoRouter);
 app.use('/api/v1/municipios', municipioRouter);
 app.use('/api/v1/codigos-postales', codigoPostalRouter);
 app.use('/api/v1/comunidades', comunidadRouter);
+app.use('/api/v1/usuarios', usuarioRouter);
+app.use('/api/v1/reportes', reporteRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

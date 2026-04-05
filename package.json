@@ -11,7 +11,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "create-superadmin": "tsx prisma/create-superadmin.ts"
   },
   "repository": {
     "type": "git",

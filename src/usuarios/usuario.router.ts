@@ -230,7 +230,7 @@ usuarioRouter.post(
  * @swagger
  * /api/v1/usuarios/{id}/desactivar:
  *   patch:
- *     summary: Desactivar un usuario (RF-05-6) — ADMIN o SUPER_ADMIN
+ *     summary: Desactivar un usuario — ADMIN o SUPER_ADMIN
  *     tags: [Usuarios]
  *     security:
  *       - bearerAuth: []

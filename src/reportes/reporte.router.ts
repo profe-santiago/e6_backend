@@ -16,7 +16,7 @@ export const reporteRouter = Router();
  * @swagger
  * /api/v1/reportes:
  *   get:
- *     summary: Listar reportes con filtros y paginación (RF-04)
+ *     summary: Listar reportes con filtros y paginación
  *     tags: [Reportes]
  *     parameters:
  *       - in: query
@@ -61,7 +61,7 @@ reporteRouter.get('/', optionalAuth, async (req: Request, res: Response) => {
  * @swagger
  * /api/v1/reportes/{id}:
  *   get:
- *     summary: Obtener detalle de un reporte (RF-03-1)
+ *     summary: Obtener detalle de un reporte
  *     tags: [Reportes]
  *     parameters:
  *       - in: path
@@ -89,7 +89,7 @@ reporteRouter.get('/:id', optionalAuth, async (req: Request, res: Response) => {
  * @swagger
  * /api/v1/reportes:
  *   post:
- *     summary: Crear un reporte — anónimo o autenticado (RF-02-1, RF-01-1)
+ *     summary: Crear un reporte — anónimo o autenticado
  *     tags: [Reportes]
  *     requestBody:
  *       required: true
@@ -128,7 +128,7 @@ reporteRouter.get('/:id', optionalAuth, async (req: Request, res: Response) => {
  *       201:
  *         description: Reporte creado
  *       429:
- *         description: Límite de reportes anónimos alcanzado (RF-01-3)
+ *         description: Límite de reportes anónimos alcanzado
  */
 reporteRouter.post('/', optionalAuth, async (req: Request, res: Response) => {
   const parsed = createReporteSchema.safeParse(req.body);
@@ -152,7 +152,7 @@ reporteRouter.post('/', optionalAuth, async (req: Request, res: Response) => {
  * @swagger
  * /api/v1/reportes/{id}:
  *   patch:
- *     summary: Editar un reporte propio (RF-02-2)
+ *     summary: Editar un reporte propio
  *     tags: [Reportes]
  *     security:
  *       - bearerAuth: []
@@ -208,7 +208,7 @@ reporteRouter.patch('/:id', authenticate, async (req: Request, res: Response) =>
  * @swagger
  * /api/v1/reportes/{id}:
  *   delete:
- *     summary: Eliminar (soft delete) un reporte propio (RF-02-2)
+ *     summary: Eliminar (soft delete) un reporte propio
  *     tags: [Reportes]
  *     security:
  *       - bearerAuth: []
@@ -238,7 +238,7 @@ reporteRouter.delete('/:id', authenticate, async (req: Request, res: Response) =
  * @swagger
  * /api/v1/reportes/{id}/estado:
  *   patch:
- *     summary: Cambiar estado de un reporte (RF-05-7) — autoridades
+ *     summary: Cambiar estado de un reporte — autoridades
  *     tags: [Reportes]
  *     security:
  *       - bearerAuth: []

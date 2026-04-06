@@ -167,32 +167,4 @@ export const reporteRepository = {
       }),
     ]);
   },
-
-  addVoto: async (reporteId: number, usuarioId: number) => {
-    return prisma.$transaction([
-      prisma.voto.create({ data: { reporteId, usuarioId } }),
-      prisma.reporte.update({
-        where: { id: reporteId },
-        data:  { voteCount: { increment: 1 } },
-      }),
-    ]);
-  },
-
-  removeVoto: async (reporteId: number, usuarioId: number) => {
-    return prisma.$transaction([
-      prisma.voto.delete({
-        where: { usuarioId_reporteId: { usuarioId, reporteId } },
-      }),
-      prisma.reporte.update({
-        where: { id: reporteId },
-        data:  { voteCount: { decrement: 1 } },
-      }),
-    ]);
-  },
-
-  findVoto: (reporteId: number, usuarioId: number) => {
-    return prisma.voto.findUnique({
-      where: { usuarioId_reporteId: { usuarioId, reporteId } },
-    });
-  },
 };

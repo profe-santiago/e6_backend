@@ -8,7 +8,7 @@ import {
 } from './reporte.schema';
 import { JwtPayload } from '../auth/auth.types';
 
-const LIMITE_ANONIMO = 3; // RF-01-3
+const LIMITE_ANONIMO = 3;
 
 export const reporteService = {
   getAll: async (filtros: FiltrosReporteInput, user?: JwtPayload) => {
@@ -100,7 +100,7 @@ export const reporteService = {
   update: async (id: number, data: UpdateReporteInput, user: JwtPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo el autor puede editar (RF-02-2)
+    // Solo el autor puede editar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
       throw Object.assign(
         new Error('Solo puedes editar tus propios reportes'),
@@ -122,7 +122,7 @@ export const reporteService = {
   delete: async (id: number, user: JwtPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo el autor puede eliminar (RF-02-2)
+    // Solo el autor puede eliminar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
       throw Object.assign(
         new Error('Solo puedes eliminar tus propios reportes'),
@@ -137,7 +137,7 @@ export const reporteService = {
   cambiarEstado: async (id: number, data: CambiarEstadoInput, user: JwtPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo autoridades pueden cambiar estado (RF-05-7)
+    // Solo autoridades pueden cambiar estado
     if (user.rol === 'USUARIO') {
       throw Object.assign(
         new Error('No tienes permisos para cambiar el estado de un reporte'),
@@ -161,35 +161,5 @@ export const reporteService = {
     });
 
     return reporteService.getById(id);
-  },
-
-  votar: async (id: number, user: JwtPayload) => {
-    await reporteService.getById(id);
-
-    const votoExistente = await reporteRepository.findVoto(id, user.sub);
-    if (votoExistente) {
-      throw Object.assign(
-        new Error('Ya votaste por este reporte'),
-        { statusCode: 400 }
-      );
-    }
-
-    await reporteRepository.addVoto(id, user.sub);
-    return { message: 'Voto registrado' };
-  },
-
-  quitarVoto: async (id: number, user: JwtPayload) => {
-    await reporteService.getById(id);
-
-    const votoExistente = await reporteRepository.findVoto(id, user.sub);
-    if (!votoExistente) {
-      throw Object.assign(
-        new Error('No has votado por este reporte'),
-        { statusCode: 400 }
-      );
-    }
-
-    await reporteRepository.removeVoto(id, user.sub);
-    return { message: 'Voto eliminado' };
   },
 };

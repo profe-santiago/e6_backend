@@ -11,6 +11,11 @@ import { codigoPostalRouter } from './codigo-postal/codigo-postal.router';
 import { comunidadRouter } from './comunidades/comunidad.router';
 import { usuarioRouter } from './usuarios/usuario.router';
 import { reporteRouter } from './reportes/reporte.router';
+import { reporteFotoRouter } from './reporte-fotos/reporte-foto.router';
+import { votoRouter } from './votos/voto.router';
+import { reporteHistorialRouter } from './reporte-historial/reporte-historial.router';
+import { alertaRouter } from './alertas/alerta.router';
+import { irsuRouter } from './irsu/irsu.router';
 
 
 export const app = express();
@@ -43,6 +48,12 @@ app.use('/api/v1/codigos-postales', codigoPostalRouter);
 app.use('/api/v1/comunidades', comunidadRouter);
 app.use('/api/v1/usuarios', usuarioRouter);
 app.use('/api/v1/reportes', reporteRouter);
+app.use('/api/v1/alertas', alertaRouter);
+app.use('/api/v1/irsu', irsuRouter);;
+app.use('/api/v1/reportes', reporteRouter)
+app.use('/api/v1/reportes/:reporteId/fotos', reporteFotoRouter);
+app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
+app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

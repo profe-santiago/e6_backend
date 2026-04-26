@@ -68,8 +68,7 @@ npm run seed
 npm run create-superadmin
 ```
 
-Crea el usuario `superadmin@irsu.mx` con contraseña `SuperAdmin2024!`. **Cámbiala antes de producción.**
-
+Crea el usuario `superadmin@irsu.mx` con contraseña `SuperAdmin2024!`.
 ---
 
 ## Ejecución

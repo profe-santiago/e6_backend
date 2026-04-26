@@ -1,7 +1,6 @@
-// Lógica de negocio. Orquesta el repositorio y lanza errores HTTP si algo falla.
-
 import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
+import { AppError } from '../lib/app-error';
 import { authRepository } from './auth.repository';
 import { RegisterInput, LoginInput } from './auth.schema';
 import { JwtPayload, AuthResponse } from './auth.types';
@@ -18,7 +17,7 @@ export const authService = {
   register: async (data: RegisterInput): Promise<AuthResponse> => {
     const existing = await authRepository.findByEmail(data.email);
     if (existing) {
-      throw Object.assign(new Error('El email ya está registrado'), { statusCode: 400 });
+      throw new AppError(400, 'El email ya está registrado');
     }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
@@ -29,9 +28,9 @@ export const authService = {
     });
 
     const token = signToken({
-      sub:  usuario.id,
+      sub:   usuario.id,
       email: usuario.email,
-      rol:  usuario.rol,
+      rol:   usuario.rol,
     });
 
     return {
@@ -43,16 +42,16 @@ export const authService = {
   login: async (data: LoginInput): Promise<AuthResponse> => {
     const usuario = await authRepository.findByEmail(data.email);
     if (!usuario) {
-      throw Object.assign(new Error('Credenciales inválidas'), { statusCode: 401 });
+      throw new AppError(401, 'Credenciales inválidas');
     }
 
     if (!usuario.activo) {
-      throw Object.assign(new Error('Cuenta desactivada'), { statusCode: 403 });
+      throw new AppError(403, 'Cuenta desactivada');
     }
 
     const valid = await bcrypt.compare(data.password, usuario.passwordHash);
     if (!valid) {
-      throw Object.assign(new Error('Credenciales inválidas'), { statusCode: 401 });
+      throw new AppError(401, 'Credenciales inválidas');
     }
 
     const token = signToken({

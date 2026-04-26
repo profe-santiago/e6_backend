@@ -16,6 +16,7 @@ import { votoRouter } from './votos/voto.router';
 import { reporteHistorialRouter } from './reporte-historial/reporte-historial.router';
 import { alertaRouter } from './alertas/alerta.router';
 import { irsuRouter } from './irsu/irsu.router';
+import { AppError } from './lib/app-error';
 
 
 export const app = express();
@@ -55,8 +56,12 @@ app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
 app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  const status  = err.statusCode || 500;
-  const message = err.message    || 'Error interno del servidor';
-  res.status(status).json({ error: message });
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({ error: err.message });
+    return;
+  }
+  // Errores no controlados
+  const message = err instanceof Error ? err.message : 'Error interno del servidor';
+  res.status(500).json({ error: message });
 });

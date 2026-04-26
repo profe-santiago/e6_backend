@@ -1,4 +1,5 @@
 import { prisma } from '../lib/prisma';
+import { AppError } from '../lib/app-error';
 import { reporteRepository } from './reporte.repository';
 import {
   CreateReporteInput,
@@ -8,7 +9,8 @@ import {
 } from './reporte.schema';
 import { JwtPayload } from '../auth/auth.types';
 
-const LIMITE_ANONIMO = 3;
+// Configurable desde .env — si no está definida, usa 3 como valor por defecto
+const LIMITE_ANONIMO = Number(process.env.LIMITE_REPORTES_ANONIMO ?? 3);
 
 export const reporteService = {
   getAll: async (filtros: FiltrosReporteInput, user?: JwtPayload) => {
@@ -58,7 +60,7 @@ export const reporteService = {
   getById: async (id: number) => {
     const reporte = await reporteRepository.findById(id);
     if (!reporte) {
-      throw Object.assign(new Error('Reporte no encontrado'), { statusCode: 404 });
+      throw new AppError(404, 'Reporte no encontrado');
     }
     return reporte;
   },
@@ -70,22 +72,19 @@ export const reporteService = {
       select: { id: true, status: true },
     });
     if (!comunidad) {
-      throw Object.assign(new Error('Comunidad no encontrada'), { statusCode: 404 });
+      throw new AppError(404, 'Comunidad no encontrada');
     }
     if (comunidad.status !== 'ACTIVO') {
-      throw Object.assign(
-        new Error('Solo se pueden crear reportes en comunidades activas'),
-        { statusCode: 400 }
-      );
+      throw new AppError(400, 'Solo se pueden crear reportes en comunidades activas');
     }
 
     // RF-01-3: Límite para anónimos
     if (!user && ip) {
       const countHoy = await reporteRepository.countByIpToday(ip);
       if (countHoy >= LIMITE_ANONIMO) {
-        throw Object.assign(
-          new Error(`Los usuarios anónimos tienen un límite de ${LIMITE_ANONIMO} reportes por día`),
-          { statusCode: 429 }
+        throw new AppError(
+          429,
+          `Los usuarios anónimos tienen un límite de ${LIMITE_ANONIMO} reportes por día`
         );
       }
     }
@@ -102,18 +101,12 @@ export const reporteService = {
 
     // Solo el autor puede editar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
-      throw Object.assign(
-        new Error('Solo puedes editar tus propios reportes'),
-        { statusCode: 403 }
-      );
+      throw new AppError(403, 'Solo puedes editar tus propios reportes');
     }
 
     // No se puede editar si ya está resuelto o rechazado
     if (['RESUELTO', 'RECHAZADO'].includes(reporte.estado)) {
-      throw Object.assign(
-        new Error('No se puede editar un reporte resuelto o rechazado'),
-        { statusCode: 400 }
-      );
+      throw new AppError(400, 'No se puede editar un reporte resuelto o rechazado');
     }
 
     return reporteRepository.update(id, data);
@@ -124,10 +117,7 @@ export const reporteService = {
 
     // Solo el autor puede eliminar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
-      throw Object.assign(
-        new Error('Solo puedes eliminar tus propios reportes'),
-        { statusCode: 403 }
-      );
+      throw new AppError(403, 'Solo puedes eliminar tus propios reportes');
     }
 
     await reporteRepository.softDelete(id);
@@ -139,18 +129,12 @@ export const reporteService = {
 
     // Solo autoridades pueden cambiar estado
     if (user.rol === 'USUARIO') {
-      throw Object.assign(
-        new Error('No tienes permisos para cambiar el estado de un reporte'),
-        { statusCode: 403 }
-      );
+      throw new AppError(403, 'No tienes permisos para cambiar el estado de un reporte');
     }
 
     // COORDINADOR solo puede cambiar estado en su comunidad
     if (user.rol === 'COORDINADOR' && user.comunidadId !== reporte.comunidad.id) {
-      throw Object.assign(
-        new Error('No puedes cambiar el estado de reportes fuera de tu comunidad'),
-        { statusCode: 403 }
-      );
+      throw new AppError(403, 'No puedes cambiar el estado de reportes fuera de tu comunidad');
     }
 
     await reporteRepository.cambiarEstado(id, {

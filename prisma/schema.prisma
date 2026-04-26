@@ -6,56 +6,56 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Rol { 
-  SUPER_ADMIN 
-  ADMIN
-  COORDINADOR
-  USUARIO 
+enum Rol {
+  SUPER_ADMIN   // Acceso total al sistema
+  ADMIN         // Administrador de un municipio
+  COORDINADOR   // Coordinador de una comunidad específica
+  USUARIO       // Ciudadano registrado
 }
 
-enum Categoria { 
-  INFRAESTRUCTURA 
-  VIALIDAD 
-  BLOQUEOS 
-  SEGURIDAD 
+enum Categoria {
+  INFRAESTRUCTURA
+  VIALIDAD
+  BLOQUEOS
+  SEGURIDAD
 }
 
-enum EstadoReporte { 
-  PENDIENTE 
-  EN_PROCESO 
-  RESUELTO
-  RECHAZADO 
+enum EstadoReporte {
+  PENDIENTE   // Recién creado, sin atender
+  EN_PROCESO  // Siendo atendido por una autoridad
+  RESUELTO    // Problema resuelto
+  RECHAZADO   // Reporte inválido o duplicado
 }
 
-enum FuenteReporte { 
-  APP_MOVIL 
-  WEB 
-  TWITTER 
-  FACEBOOK 
+enum FuenteReporte {
+  APP_MOVIL
+  WEB
+  TWITTER
+  FACEBOOK
 }
 
-enum EstadoComunidad { 
-  PENDIENTE 
-  ACTIVO 
-  RECHAZADO 
-  SUSPENDIDO 
+enum EstadoComunidad {
+  PENDIENTE    // Recién creada, pendiente de aprobación
+  ACTIVO       // Comunidad operativa y visible en el mapa
+  RECHAZADO    // Solicitud de comunidad rechazada
+  SUSPENDIDO   // Comunidad temporalmente inactiva
 }
 
-enum NivelAlerta { 
-  AMARILLA 
-  ROJA 
+enum NivelAlerta {
+  AMARILLA  // IRSU > 50: situación de atención moderada
+  ROJA      // IRSU > 100: situación crítica
 }
 
-enum EstadoAlerta { 
-  ACTIVA 
-  EN_ATENCION 
-  CERRADA 
+enum EstadoAlerta {
+  ACTIVA       // Generada automáticamente, sin atender
+  EN_ATENCION  // Tomada por un coordinador o admin
+  CERRADA      // Problema resuelto
 }
 
 model Estado {
   id         Int         @id @default(autoincrement())
   nombre     String      @db.VarChar(100)
-  clave      String      @unique @db.Char(2)
+  clave      String      @unique @db.Char(2) // Clave INEGI de 2 dígitos (ej. "20" para Oaxaca)
   municipios Municipio[]
   @@map("estados")
 }
@@ -63,7 +63,7 @@ model Estado {
 model Municipio {
   id              Int            @id @default(autoincrement())
   nombre          String         @db.VarChar(200)
-  clave           String         @unique @db.Char(5)
+  clave           String         @unique @db.Char(5) // Clave INEGI de 5 dígitos (estado+municipio)
   estadoId        Int
   estado          Estado         @relation(fields: [estadoId], references: [id])
   comunidades     Comunidad[]
@@ -74,7 +74,7 @@ model Municipio {
 
 model CodigoPostal {
   id          Int         @id @default(autoincrement())
-  codigo      String      @db.Char(5)
+  codigo      String      @db.Char(5)    // Código postal de 5 dígitos (SEPOMEX)
   colonia     String      @db.VarChar(200)
   municipioId Int
   municipio   Municipio   @relation(fields: [municipioId], references: [id])
@@ -84,43 +84,43 @@ model CodigoPostal {
 }
 
 model Comunidad {
-  id           Int             @id @default(autoincrement())
-  nombre       String          @db.VarChar(200)
-  slug         String          @unique @db.VarChar(250)
-  status       EstadoComunidad @default(PENDIENTE)
-  irsuActual   Float           @default(0)
-  color        String          @default("#3B82F6") @db.VarChar(7)
-  logoUrl      String?
-  municipioId  Int
-  municipio    Municipio       @relation(fields: [municipioId], references: [id])
-  cpId         Int?
-  codigoPostal CodigoPostal?   @relation(fields: [cpId], references: [id])
-  usuarios     Usuario[]
-  reportes     Reporte[]
-  alertas      Alerta[]
+  id            Int             @id @default(autoincrement())
+  nombre        String          @db.VarChar(200)
+  slug          String          @unique @db.VarChar(250) // URL-friendly, generado al crear (ej. "colonia-centro-420-abc123")
+  status        EstadoComunidad @default(PENDIENTE)
+  irsuActual    Float           @default(0)              // Valor IRSU más reciente calculado por el motor
+  color         String          @default("#3B82F6") @db.VarChar(7) // Color del semáforo: verde/amarillo/rojo según IRSU
+  logoUrl       String?
+  municipioId   Int
+  municipio     Municipio       @relation(fields: [municipioId], references: [id])
+  cpId          Int?                                     // Código postal principal de la comunidad (opcional)
+  codigoPostal  CodigoPostal?   @relation(fields: [cpId], references: [id])
+  usuarios      Usuario[]
+  reportes      Reporte[]
+  alertas       Alerta[]
   irsuHistorial IrsuHistorial[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   @@unique([municipioId, nombre])
   @@map("comunidades")
 }
 
 model Usuario {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique @db.VarChar(150)
-  passwordHash String
-  nombre       String?  @db.VarChar(100)
-  rol          Rol      @default(USUARIO)
-  activo       Boolean  @default(true)
-  municipioId  Int?
-  municipio    Municipio? @relation(fields: [municipioId], references: [id])
-  comunidadId  Int?
-  comunidad    Comunidad? @relation(fields: [comunidadId], references: [id])
-  reportes     Reporte[]
-  votos        Voto[]
-  historial    ReporteHistorial[]
+  id               Int      @id @default(autoincrement())
+  email            String   @unique @db.VarChar(150)
+  passwordHash     String
+  nombre           String?  @db.VarChar(100)
+  rol              Rol      @default(USUARIO)
+  activo           Boolean  @default(true)               // false = cuenta desactivada por admin
+  municipioId      Int?                                  // Obligatorio para ADMIN y COORDINADOR
+  municipio        Municipio? @relation(fields: [municipioId], references: [id])
+  comunidadId      Int?                                  // Obligatorio para COORDINADOR
+  comunidad        Comunidad? @relation(fields: [comunidadId], references: [id])
+  reportes         Reporte[]
+  votos            Voto[]
+  historial        ReporteHistorial[]
   alertasAsignadas Alerta[]
-  createdAt    DateTime @default(now())
+  createdAt        DateTime @default(now())
   @@map("usuarios")
 }
 
@@ -128,16 +128,16 @@ model Reporte {
   id           Int           @id @default(autoincrement())
   titulo       String        @db.VarChar(120)
   descripcion  String?       @db.Text
-  gravedad     Int
+  gravedad     Int                                        // Escala 1–5: 1=menor, 5=crítico
   categoria    Categoria
   estado       EstadoReporte @default(PENDIENTE)
   fuente       FuenteReporte @default(APP_MOVIL)
   latitud      Float
   longitud     Float
-  deviceIp     String?       @db.VarChar(45)
-  sincronizado Boolean       @default(true)
-  voteCount    Int           @default(0)
-  usuarioId    Int?
+  deviceIp     String?       @db.VarChar(45)             // IP del dispositivo; solo se guarda en reportes anónimos
+  sincronizado Boolean       @default(true)              // false = creado offline, pendiente de sincronizar
+  voteCount    Int           @default(0)                 // Contador desnormalizado para evitar COUNT en queries frecuentes
+  usuarioId    Int?                                      // null = reporte anónimo
   usuario      Usuario?      @relation(fields: [usuarioId], references: [id])
   comunidadId  Int
   comunidad    Comunidad     @relation(fields: [comunidadId], references: [id])
@@ -145,7 +145,7 @@ model Reporte {
   votos        Voto[]
   historial    ReporteHistorial[]
   createdAt    DateTime      @default(now())
-  deletedAt    DateTime?
+  deletedAt    DateTime?                                 // null = activo; non-null = eliminado (soft delete)
   @@map("reportes")
 }
 
@@ -163,7 +163,7 @@ model Voto {
   usuario   Usuario  @relation(fields: [usuarioId], references: [id])
   reporteId Int
   reporte   Reporte  @relation(fields: [reporteId], references: [id])
-  @@unique([usuarioId, reporteId])
+  @@unique([usuarioId, reporteId])                       // Un usuario solo puede votar una vez por reporte
   @@map("votos")
 }
 
@@ -173,7 +173,7 @@ model ReporteHistorial {
   reporte        Reporte       @relation(fields: [reporteId], references: [id])
   cambiadoPor    Int
   usuario        Usuario       @relation(fields: [cambiadoPor], references: [id])
-  estadoAnterior EstadoReporte?
+  estadoAnterior EstadoReporte?                          // null solo en el primer cambio de estado
   estadoNuevo    EstadoReporte
   nota           String?       @db.Text
   createdAt      DateTime      @default(now())
@@ -181,18 +181,18 @@ model ReporteHistorial {
 }
 
 model Alerta {
-  id              Int          @id @default(autoincrement())
-  comunidadId     Int
-  comunidad       Comunidad    @relation(fields: [comunidadId], references: [id])
-  categoria       Categoria
-  nivel           NivelAlerta
-  estado          EstadoAlerta @default(ACTIVA)
-  irsuValor       Float
-  asignadoA       Int?
-  usuario         Usuario?     @relation(fields: [asignadoA], references: [id])
-  atendidaEn      DateTime?
-  cerradaEn       DateTime?
-  createdAt       DateTime     @default(now())
+  id          Int          @id @default(autoincrement())
+  comunidadId Int
+  comunidad   Comunidad    @relation(fields: [comunidadId], references: [id])
+  categoria   Categoria
+  nivel       NivelAlerta                                // AMARILLA (IRSU > 50) o ROJA (IRSU > 100)
+  estado      EstadoAlerta @default(ACTIVA)
+  irsuValor   Float                                      // Valor IRSU que disparó la alerta
+  asignadoA   Int?                                       // ID del coordinador o admin responsable
+  usuario     Usuario?     @relation(fields: [asignadoA], references: [id])
+  atendidaEn  DateTime?                                  // Fecha en que pasó a EN_ATENCION
+  cerradaEn   DateTime?                                  // Fecha en que pasó a CERRADA
+  createdAt   DateTime     @default(now())
   @@map("alertas")
 }
 
@@ -200,11 +200,11 @@ model IrsuHistorial {
   id               Int        @id @default(autoincrement())
   comunidadId      Int
   comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
-  categoria        Categoria?
-  valor            Float
+  categoria        Categoria?                            // null = cálculo global; non-null = por categoría
+  valor            Float                                 // Valor IRSU calculado
   totalReportes    Int
   gravedadPromedio Float
-  tendencia        Float
+  tendencia        Float                                 // Pendiente de regresión lineal: positivo=empeora, negativo=mejora
   createdAt        DateTime   @default(now())
   @@map("irsu_historial")
 }

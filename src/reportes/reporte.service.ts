@@ -8,18 +8,16 @@ import {
   FiltrosReporteInput,
 } from './reporte.schema';
 import { TokenPayload } from '../auth/auth.types';
+import { irsuService } from '../irsu/irsu.service';
 
-// Configurable desde .env — si no está definida, usa 3 como valor por defecto
 const LIMITE_ANONIMO = Number(process.env.LIMITE_REPORTES_ANONIMO ?? 3);
 
 export const reporteService = {
   getAll: async (filtros: FiltrosReporteInput, user?: TokenPayload) => {
-    // COORDINADOR solo ve reportes de su comunidad
     const comunidadId =
       user?.rol === 'COORDINADOR' ? user.comunidadId ?? filtros.comunidadId :
       filtros.comunidadId;
 
-    // USUARIO solo ve sus propios reportes
     const usuarioId =
       user?.rol === 'USUARIO' ? user.sub :
       filtros.usuarioId;
@@ -66,7 +64,6 @@ export const reporteService = {
   },
 
   create: async (data: CreateReporteInput, user?: TokenPayload, ip?: string) => {
-    // Valida que la comunidad exista
     const comunidad = await prisma.comunidad.findUnique({
       where:  { id: data.comunidadId },
       select: { id: true, status: true },
@@ -78,7 +75,6 @@ export const reporteService = {
       throw new AppError(400, 'Solo se pueden crear reportes en comunidades activas');
     }
 
-    // RF-01-3: Límite para anónimos
     if (!user && ip) {
       const countHoy = await reporteRepository.countByIpToday(ip);
       if (countHoy >= LIMITE_ANONIMO) {
@@ -89,22 +85,25 @@ export const reporteService = {
       }
     }
 
-    return reporteRepository.create({
+    const reporte = await reporteRepository.create({
       ...data,
       usuarioId: user?.sub,
       deviceIp:  ip,
     });
+
+    // Recalcula el IRSU de la comunidad afectada en background
+    irsuService.calcular(data.comunidadId).catch(() => {});
+
+    return reporte;
   },
 
   update: async (id: number, data: UpdateReporteInput, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo el autor puede editar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
       throw new AppError(403, 'Solo puedes editar tus propios reportes');
     }
 
-    // No se puede editar si ya está resuelto o rechazado
     if (['RESUELTO', 'RECHAZADO'].includes(reporte.estado)) {
       throw new AppError(400, 'No se puede editar un reporte resuelto o rechazado');
     }
@@ -115,7 +114,6 @@ export const reporteService = {
   delete: async (id: number, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo el autor puede eliminar
     if (reporte.usuario?.id !== user.sub && user.rol === 'USUARIO') {
       throw new AppError(403, 'Solo puedes eliminar tus propios reportes');
     }
@@ -127,12 +125,10 @@ export const reporteService = {
   cambiarEstado: async (id: number, data: CambiarEstadoInput, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
-    // Solo autoridades pueden cambiar estado
     if (user.rol === 'USUARIO') {
       throw new AppError(403, 'No tienes permisos para cambiar el estado de un reporte');
     }
 
-    // COORDINADOR solo puede cambiar estado en su comunidad
     if (user.rol === 'COORDINADOR' && user.comunidadId !== reporte.comunidad.id) {
       throw new AppError(403, 'No puedes cambiar el estado de reportes fuera de tu comunidad');
     }
@@ -143,6 +139,9 @@ export const reporteService = {
       estadoAnterior: reporte.estado,
       nota:           data.nota,
     });
+
+    // Recalcula el IRSU de la comunidad afectada en background
+    irsuService.calcular(reporte.comunidad.id).catch(() => {});
 
     return reporteService.getById(id);
   },

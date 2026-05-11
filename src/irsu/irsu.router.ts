@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { irsuService } from './irsu.service';
-import { slugParamSchema, filtrosHistorialSchema } from './irsu.schema';
+import { slugParamSchema, filtrosHistorialSchema, dashboardStatsSchema } from './irsu.schema';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { optionalAuth } from '../middleware/optional-auth.middleware';
 
@@ -142,5 +142,24 @@ irsuRouter.post(
   async (_req: Request, res: Response): Promise<void> => {
     const resultado = await irsuService.calcularTodas();
     res.json(resultado);
+  }
+);
+
+/**
+ * GET /api/v1/irsu/stats/dashboard
+ * Datos agregados para el dashboard admin — IRSU global en el tiempo
+ */
+irsuRouter.get(
+  '/stats/dashboard',
+  authenticate,
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  async (req: Request, res: Response): Promise<void> => {
+    const parsed = dashboardStatsSchema.safeParse(req.query);
+    if (!parsed.success) {
+      res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
+      return;
+    }
+    const result = await irsuService.getDashboardStats(parsed.data, req.user!);
+    res.json(result);
   }
 );

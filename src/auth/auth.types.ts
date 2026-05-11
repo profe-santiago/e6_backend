@@ -1,6 +1,6 @@
 import { Rol } from '@prisma/client';
 
-export interface JwtPayload {
+export interface TokenPayload {
   sub: number;
   email: string;
   rol: Rol;

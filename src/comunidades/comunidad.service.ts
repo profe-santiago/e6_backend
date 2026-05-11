@@ -2,7 +2,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../lib/app-error';
 import { comunidadRepository } from './comunidad.repository';
 import { CreateComunidadInput, UpdateComunidadInput, FiltrosComunidadInput } from './comunidad.schema';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 
 function generarSlug(nombre: string, municipioId: number): string {
   const base = nombre
@@ -16,7 +16,7 @@ function generarSlug(nombre: string, municipioId: number): string {
 }
 
 export const comunidadService = {
-  getAll: async (filtros: FiltrosComunidadInput, user?: JwtPayload) => {
+  getAll: async (filtros: FiltrosComunidadInput, user?: TokenPayload) => {
     const municipioId =
       user?.rol === 'ADMIN'        ? user.municipioId ?? filtros.municipioId :
       user?.rol === 'COORDINADOR'  ? user.municipioId ?? filtros.municipioId :
@@ -49,7 +49,7 @@ export const comunidadService = {
     return comunidad;
   },
 
-  create: async (data: CreateComunidadInput, user: JwtPayload) => {
+  create: async (data: CreateComunidadInput, user: TokenPayload) => {
     if (user.rol === 'ADMIN' && user.municipioId !== data.municipioId) {
       throw new AppError(403, 'No puedes crear comunidades fuera de tu municipio');
     }
@@ -78,7 +78,7 @@ export const comunidadService = {
     return comunidadRepository.create({ ...data, slug });
   },
 
-  update: async (slug: string, data: UpdateComunidadInput, user: JwtPayload) => {
+  update: async (slug: string, data: UpdateComunidadInput, user: TokenPayload) => {
     const comunidad = await comunidadService.getBySlug(slug);
 
     if (user.rol === 'ADMIN' && user.municipioId !== comunidad.municipio.id) {

@@ -4,7 +4,8 @@ import { irsuRepository } from './irsu.repository';
 import { alertaService } from '../alertas/alerta.service';
 import { Categoria } from '@prisma/client';
 import { IrsuResultado, IrsuCategoria } from './irsu.types';
-import { FiltrosHistorialInput } from './irsu.schema';
+import { DashboardStatsInput, FiltrosHistorialInput } from './irsu.schema';
+import { TokenPayload } from '../auth/auth.types';
 
 const PESOS_CATEGORIA: Record<Categoria, number> = {
   SEGURIDAD:       1.5,
@@ -112,4 +113,62 @@ export const irsuService = {
     const historial = await irsuRepository.findHistorial({ comunidadId, ...filtros });
     return { comunidad, historial };
   },
+
+  getDashboardStats: async (
+    filtros: DashboardStatsInput,
+    user: TokenPayload
+  ) => {
+    const dias    = filtros.periodo === '7D' ? 7 : filtros.periodo === '30D' ? 30 : 90;
+    const desde   = new Date();
+    desde.setDate(desde.getDate() - dias);
+
+    // Filtra por municipio si es ADMIN o COORDINADOR
+    const comunidadWhere =
+      user.rol === 'COORDINADOR' && user.comunidadId
+        ? { id: user.comunidadId }
+        : user.rol === 'ADMIN' && user.municipioId
+        ? { municipioId: user.municipioId }
+        : {};
+
+    // Historial IRSU global (categoria null = global) agrupado por día
+    const historial = await prisma.irsuHistorial.findMany({
+      where: {
+        categoria: null,   // solo globales, no por categoría
+        createdAt: { gte: desde },
+        comunidad: comunidadWhere,
+      },
+      select: {
+        valor:      true,
+        createdAt:  true,
+        comunidadId: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    // Agrupa por día y promedia el IRSU de todas las comunidades ese día
+    const porDia: Record<string, number[]> = {};
+    historial.forEach(h => {
+      const dia = h.createdAt.toISOString().slice(0, 10);
+      if (!porDia[dia]) porDia[dia] = [];
+      porDia[dia].push(h.valor);
+    });
+
+    const serie = Object.entries(porDia).map(([fecha, valores]) => ({
+      fecha,
+      irsu: Math.round(
+        (valores.reduce((a, b) => a + b, 0) / valores.length) * 10
+      ) / 10,
+    }));
+
+    // KPIs adicionales
+    const [totalReportes, pendientes, enProceso, resueltos] = await Promise.all([
+      prisma.reporte.count({ where: { deletedAt: null } }),
+      prisma.reporte.count({ where: { deletedAt: null, estado: 'PENDIENTE' } }),
+      prisma.reporte.count({ where: { deletedAt: null, estado: 'EN_PROCESO' } }),
+      prisma.reporte.count({ where: { deletedAt: null, estado: 'RESUELTO' } }),
+    ]);
+
+    return { serie, kpis: { totalReportes, pendientes, enProceso, resueltos } };
+  },
+
 };

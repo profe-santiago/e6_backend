@@ -2,7 +2,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../lib/app-error';
 import { reporteFotoRepository } from './reporte-foto.repository';
 import { AddFotosInput } from './reporte-foto.schema';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 
 const MAX_FOTOS = 10;
 
@@ -21,7 +21,7 @@ export const reporteFotoService = {
     return reporteFotoRepository.findByReporte(reporteId);
   },
 
-  add: async (reporteId: number, data: AddFotosInput, user: JwtPayload) => {
+  add: async (reporteId: number, data: AddFotosInput, user: TokenPayload) => {
     const reporte = await getReporteOr404(reporteId);
 
     const esAutor     = reporte.usuarioId === user.sub;
@@ -43,7 +43,7 @@ export const reporteFotoService = {
     return reporteFotoRepository.findByReporte(reporteId);
   },
 
-  delete: async (reporteId: number, fotoId: number, user: JwtPayload) => {
+  delete: async (reporteId: number, fotoId: number, user: TokenPayload) => {
     await getReporteOr404(reporteId);
 
     const foto = await reporteFotoRepository.findById(fotoId);

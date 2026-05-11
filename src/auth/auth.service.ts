@@ -3,10 +3,10 @@ import jwt, { SignOptions } from 'jsonwebtoken';
 import { AppError } from '../lib/app-error';
 import { authRepository } from './auth.repository';
 import { RegisterInput, LoginInput } from './auth.schema';
-import { JwtPayload, AuthResponse } from './auth.types';
+import { TokenPayload , AuthResponse } from './auth.types';
 import { config } from '../config';
 
-const signToken = (payload: JwtPayload): string => {
+const signToken = (payload: TokenPayload): string => {
   const options: SignOptions = {
     expiresIn: config.JWT_EXPIRES_IN as SignOptions['expiresIn'],
   };

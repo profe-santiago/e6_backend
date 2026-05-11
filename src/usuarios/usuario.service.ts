@@ -7,10 +7,10 @@ import {
   CreateCoordinadorInput,
   FiltrosUsuarioInput,
 } from './usuario.schema';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 
 export const usuarioService = {
-  getAll: async (filtros: FiltrosUsuarioInput, user: JwtPayload) => {
+  getAll: async (filtros: FiltrosUsuarioInput, user: TokenPayload) => {
     const municipioId =
       user.rol === 'ADMIN'       ? user.municipioId :
       user.rol === 'COORDINADOR' ? user.municipioId :
@@ -51,7 +51,7 @@ export const usuarioService = {
     return usuarioService.getById(userId);
   },
 
-  createAdmin: async (data: CreateAdminInput, user: JwtPayload) => {
+  createAdmin: async (data: CreateAdminInput, user: TokenPayload) => {
     if (user.rol !== 'SUPER_ADMIN') {
       throw new AppError(403, 'Solo el SUPER_ADMIN puede crear administradores');
     }
@@ -76,7 +76,7 @@ export const usuarioService = {
     });
   },
 
-  createCoordinador: async (data: CreateCoordinadorInput, user: JwtPayload) => {
+  createCoordinador: async (data: CreateCoordinadorInput, user: TokenPayload) => {
     const comunidad = await prisma.comunidad.findUnique({
       where:  { id: data.comunidadId },
       select: { id: true, municipioId: true, status: true },
@@ -109,7 +109,7 @@ export const usuarioService = {
     });
   },
 
-  desactivar: async (id: number, user: JwtPayload) => {
+  desactivar: async (id: number, user: TokenPayload) => {
     const objetivo = await usuarioService.getById(id);
 
     if (objetivo.id === user.sub) {
@@ -127,7 +127,7 @@ export const usuarioService = {
     return usuarioRepository.setActivo(id, false);
   },
 
-  activar: async (id: number, user: JwtPayload) => {
+  activar: async (id: number, user: TokenPayload) => {
     const objetivo = await usuarioService.getById(id);
 
     if (user.rol === 'ADMIN' && objetivo.municipio?.id !== user.municipioId) {

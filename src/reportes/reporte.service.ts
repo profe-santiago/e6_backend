@@ -7,13 +7,13 @@ import {
   CambiarEstadoInput,
   FiltrosReporteInput,
 } from './reporte.schema';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 
 // Configurable desde .env — si no está definida, usa 3 como valor por defecto
 const LIMITE_ANONIMO = Number(process.env.LIMITE_REPORTES_ANONIMO ?? 3);
 
 export const reporteService = {
-  getAll: async (filtros: FiltrosReporteInput, user?: JwtPayload) => {
+  getAll: async (filtros: FiltrosReporteInput, user?: TokenPayload) => {
     // COORDINADOR solo ve reportes de su comunidad
     const comunidadId =
       user?.rol === 'COORDINADOR' ? user.comunidadId ?? filtros.comunidadId :
@@ -65,7 +65,7 @@ export const reporteService = {
     return reporte;
   },
 
-  create: async (data: CreateReporteInput, user?: JwtPayload, ip?: string) => {
+  create: async (data: CreateReporteInput, user?: TokenPayload, ip?: string) => {
     // Valida que la comunidad exista
     const comunidad = await prisma.comunidad.findUnique({
       where:  { id: data.comunidadId },
@@ -96,7 +96,7 @@ export const reporteService = {
     });
   },
 
-  update: async (id: number, data: UpdateReporteInput, user: JwtPayload) => {
+  update: async (id: number, data: UpdateReporteInput, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
     // Solo el autor puede editar
@@ -112,7 +112,7 @@ export const reporteService = {
     return reporteRepository.update(id, data);
   },
 
-  delete: async (id: number, user: JwtPayload) => {
+  delete: async (id: number, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
     // Solo el autor puede eliminar
@@ -124,7 +124,7 @@ export const reporteService = {
     return { message: 'Reporte eliminado correctamente' };
   },
 
-  cambiarEstado: async (id: number, data: CambiarEstadoInput, user: JwtPayload) => {
+  cambiarEstado: async (id: number, data: CambiarEstadoInput, user: TokenPayload) => {
     const reporte = await reporteService.getById(id);
 
     // Solo autoridades pueden cambiar estado

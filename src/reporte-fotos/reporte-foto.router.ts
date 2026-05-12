@@ -1,8 +1,12 @@
-import { Router, Request, Response } from 'express';
-import { reporteFotoService } from './reporte-foto.service';
-import { reporteIdParamSchema, fotoIdParamSchema, addFotosSchema } from './reporte-foto.schema';
-import { authenticate } from '../middleware/auth.middleware';
-import { optionalAuth } from '../middleware/optional-auth.middleware';
+import { Router, Request, Response } from "express";
+import { reporteFotoService } from "./reporte-foto.service";
+import {
+	reporteIdParamSchema,
+	fotoIdParamSchema,
+} from "./reporte-foto.schema";
+import { authenticate } from "../middleware/auth.middleware";
+import { optionalAuth } from "../middleware/optional-auth.middleware";
+import { uploadReporteFotos } from "../middleware/upload";
 
 // mergeParams: true permite leer :reporteId del router padre
 export const reporteFotoRouter = Router({ mergeParams: true });
@@ -25,15 +29,19 @@ export const reporteFotoRouter = Router({ mergeParams: true });
  *       404:
  *         description: Reporte no encontrado
  */
-reporteFotoRouter.get('/', optionalAuth, async (req: Request, res: Response): Promise<void> => {
-  const parsed = reporteIdParamSchema.safeParse(req.params);
-  if (!parsed.success) {
-    res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
-    return;
-  }
-  const fotos = await reporteFotoService.getByReporte(parsed.data.reporteId);
-  res.json(fotos);
-});
+reporteFotoRouter.get(
+	"/",
+	optionalAuth,
+	async (req: Request, res: Response): Promise<void> => {
+		const parsed = reporteIdParamSchema.safeParse(req.params);
+		if (!parsed.success) {
+			res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
+			return;
+		}
+		const fotos = await reporteFotoService.getByReporte(parsed.data.reporteId);
+		res.json(fotos);
+	},
+);
 
 /**
  * @swagger
@@ -74,26 +82,58 @@ reporteFotoRouter.get('/', optionalAuth, async (req: Request, res: Response): Pr
  *       404:
  *         description: Reporte no encontrado
  */
-reporteFotoRouter.post('/', authenticate, async (req: Request, res: Response): Promise<void> => {
-  const paramParsed = reporteIdParamSchema.safeParse(req.params);
-  if (!paramParsed.success) {
-    res.status(400).json({ errors: paramParsed.error.flatten().fieldErrors });
-    return;
-  }
+reporteFotoRouter.post(
+  '/',
 
-  const bodyParsed = addFotosSchema.safeParse(req.body);
-  if (!bodyParsed.success) {
-    res.status(400).json({ errors: bodyParsed.error.flatten().fieldErrors });
-    return;
-  }
+  authenticate,
 
-  const fotos = await reporteFotoService.add(
-    paramParsed.data.reporteId,
-    bodyParsed.data,
-    req.user!
-  );
-  res.json(fotos);
-});
+  uploadReporteFotos.array('fotos', 10),
+
+  async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+
+    console.log("Params recibidos:", req.params); // Si esto sale {}, el problema es mergeParams (pero ya lo tienes)
+    console.log("Archivos recibidos:", req.files?.length); // Si esto sale 0 o undefined, el problema es el FormData de Expo
+
+    const paramParsed =
+      reporteIdParamSchema.safeParse(
+        req.params
+      );
+
+    if (!paramParsed.success) {
+      res.status(400).json({
+        errors:
+          paramParsed.error.flatten()
+            .fieldErrors,
+      });
+
+      return;
+    }
+
+    const files =
+      req.files as Express.Multer.File[];
+
+    if (!files || files.length === 0) {
+      res.status(400).json({
+        error: 'No se enviaron fotos',
+      });
+
+      return;
+    }
+
+    const fotos =
+      await reporteFotoService.add(
+        paramParsed.data.reporteId,
+        files,
+        req.user!
+      );
+
+    res.json(fotos);
+  }
+);
+
 
 /**
  * @swagger
@@ -124,16 +164,20 @@ reporteFotoRouter.post('/', authenticate, async (req: Request, res: Response): P
  *       404:
  *         description: Reporte o foto no encontrados
  */
-reporteFotoRouter.delete('/:id', authenticate, async (req: Request, res: Response): Promise<void> => {
-  const parsed = fotoIdParamSchema.safeParse(req.params);
-  if (!parsed.success) {
-    res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
-    return;
-  }
-  const result = await reporteFotoService.delete(
-    parsed.data.reporteId,
-    parsed.data.id,
-    req.user!
-  );
-  res.json(result);
-});
+reporteFotoRouter.delete(
+	"/:id",
+	authenticate,
+	async (req: Request, res: Response): Promise<void> => {
+		const parsed = fotoIdParamSchema.safeParse(req.params);
+		if (!parsed.success) {
+			res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
+			return;
+		}
+		const result = await reporteFotoService.delete(
+			parsed.data.reporteId,
+			parsed.data.id,
+			req.user!,
+		);
+		res.json(result);
+	},
+);

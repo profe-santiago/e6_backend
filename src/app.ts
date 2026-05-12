@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { config } from './config';
@@ -56,7 +57,11 @@ app.use('/api/v1/reportes', reporteRouter)
 app.use('/api/v1/reportes/:reporteId/fotos', reporteFotoRouter);
 app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
 app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
+<<<<<<< HEAD
 app.use('/api/perfil', perfilRouter);
+=======
+app.use('/uploads', express.static(path.resolve('uploads')));
+>>>>>>> adbfa1a (add: middleware and updated service and router to accept multipart files)
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

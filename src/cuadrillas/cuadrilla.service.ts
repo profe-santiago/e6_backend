@@ -78,7 +78,13 @@ export const cuadrillaService = {
     const take = filtros.limit;
 
     const [asignaciones, total] = await Promise.all([
-      cuadrillaRepository.findAsignaciones({ ...filtros, skip, take }),
+          cuadrillaRepository.findAsignaciones({
+      cuadrillaId: filtros.cuadrillaId,
+      estado:      filtros.estado,
+      skip,
+      take,
+    }),
+
       cuadrillaRepository.countAsignaciones(filtros),
     ]);
 

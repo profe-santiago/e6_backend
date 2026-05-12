@@ -74,6 +74,29 @@ cuadrillaRouter.get(
   }
 );
 
+// ─── Asignaciones ─────────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/v1/cuadrillas/asignaciones:
+ *   get:
+ *     summary: Listar asignaciones con filtros
+ *     tags: [Cuadrillas]
+ */
+cuadrillaRouter.get(
+  '/asignaciones/lista',
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  async (req: Request, res: Response): Promise<void> => {
+    const parsed = filtrosAsignacionSchema.safeParse(req.query);
+    if (!parsed.success) {
+      res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
+      return;
+    }
+    const result = await cuadrillaService.getAsignaciones(parsed.data, req.user!);
+    res.json(result);
+  }
+);
+
 /**
  * @swagger
  * /api/v1/cuadrillas/{id}:
@@ -158,29 +181,6 @@ cuadrillaRouter.patch(
     }
     const cuadrilla = await cuadrillaService.update(idParsed.data.id, bodyParsed.data, req.user!);
     res.json(cuadrilla);
-  }
-);
-
-// ─── Asignaciones ─────────────────────────────────────────────────────────────
-
-/**
- * @swagger
- * /api/v1/cuadrillas/asignaciones:
- *   get:
- *     summary: Listar asignaciones con filtros
- *     tags: [Cuadrillas]
- */
-cuadrillaRouter.get(
-  '/asignaciones/lista',
-  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
-  async (req: Request, res: Response): Promise<void> => {
-    const parsed = filtrosAsignacionSchema.safeParse(req.query);
-    if (!parsed.success) {
-      res.status(400).json({ errors: parsed.error.flatten().fieldErrors });
-      return;
-    }
-    const result = await cuadrillaService.getAsignaciones(parsed.data, req.user!);
-    res.json(result);
   }
 );
 

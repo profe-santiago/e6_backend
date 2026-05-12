@@ -18,25 +18,6 @@ cuadrillaRouter.use(authenticate);
 
 // ─── Cuadrillas ──────────────────────────────────────────────────────────────
 
-/**
- * @swagger
- * /api/v1/cuadrillas:
- *   get:
- *     summary: Listar cuadrillas
- *     tags: [Cuadrillas]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: municipioId
- *         schema: { type: integer }
- *       - in: query
- *         name: activa
- *         schema: { type: boolean }
- *     responses:
- *       200:
- *         description: Lista paginada de cuadrillas con carga de trabajo
- */
 cuadrillaRouter.get(
   '/',
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
@@ -51,15 +32,6 @@ cuadrillaRouter.get(
   }
 );
 
-/**
- * @swagger
- * /api/v1/cuadrillas/sugeridas/{municipioId}:
- *   get:
- *     summary: Cuadrillas ordenadas por disponibilidad (menos carga primero)
- *     tags: [Cuadrillas]
- *     security:
- *       - bearerAuth: []
- */
 cuadrillaRouter.get(
   '/sugeridas/:municipioId',
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
@@ -77,15 +49,12 @@ cuadrillaRouter.get(
 // ─── Asignaciones ─────────────────────────────────────────────────────────────
 
 /**
- * @swagger
- * /api/v1/cuadrillas/asignaciones:
- *   get:
- *     summary: Listar asignaciones con filtros
- *     tags: [Cuadrillas]
+ * OPERADOR puede listar asignaciones (para ver las suyas)
+ * COORDINADOR/ADMIN/SUPER_ADMIN ven todas
  */
 cuadrillaRouter.get(
   '/asignaciones/lista',
-  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR', 'OPERADOR'),
   async (req: Request, res: Response): Promise<void> => {
     const parsed = filtrosAsignacionSchema.safeParse(req.query);
     if (!parsed.success) {
@@ -97,13 +66,6 @@ cuadrillaRouter.get(
   }
 );
 
-/**
- * @swagger
- * /api/v1/cuadrillas/{id}:
- *   get:
- *     summary: Obtener cuadrilla por ID
- *     tags: [Cuadrillas]
- */
 cuadrillaRouter.get(
   '/:id',
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
@@ -118,32 +80,6 @@ cuadrillaRouter.get(
   }
 );
 
-/**
- * @swagger
- * /api/v1/cuadrillas:
- *   post:
- *     summary: Crear cuadrilla
- *     tags: [Cuadrillas]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [nombre, municipioId]
- *             properties:
- *               nombre:
- *                 type: string
- *                 example: "Cuadrilla Norte"
- *               descripcion:
- *                 type: string
- *                 example: "Atiende zona norte de la ciudad"
- *               municipioId:
- *                 type: integer
- *                 example: 1
- */
 cuadrillaRouter.post(
   '/',
   authorize('SUPER_ADMIN', 'ADMIN'),
@@ -158,13 +94,6 @@ cuadrillaRouter.post(
   }
 );
 
-/**
- * @swagger
- * /api/v1/cuadrillas/{id}:
- *   patch:
- *     summary: Actualizar cuadrilla (nombre, descripción, activar/desactivar)
- *     tags: [Cuadrillas]
- */
 cuadrillaRouter.patch(
   '/:id',
   authorize('SUPER_ADMIN', 'ADMIN'),
@@ -184,29 +113,6 @@ cuadrillaRouter.patch(
   }
 );
 
-/**
- * @swagger
- * /api/v1/cuadrillas/asignaciones:
- *   post:
- *     summary: Asignar cuadrilla a un reporte
- *     tags: [Cuadrillas]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [cuadrillaId, reporteId]
- *             properties:
- *               cuadrillaId:
- *                 type: integer
- *               reporteId:
- *                 type: integer
- *               nota:
- *                 type: string
- */
 cuadrillaRouter.post(
   '/asignaciones',
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
@@ -222,15 +128,11 @@ cuadrillaRouter.post(
 );
 
 /**
- * @swagger
- * /api/v1/cuadrillas/asignaciones/{id}/estado:
- *   patch:
- *     summary: Cambiar estado de asignación (EN_CURSO, COMPLETADA, CANCELADA)
- *     tags: [Cuadrillas]
+ * OPERADOR puede cambiar el estado de una asignación (EN_CURSO, COMPLETADA, CANCELADA)
  */
 cuadrillaRouter.patch(
   '/asignaciones/:id/estado',
-  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR', 'OPERADOR'),
   async (req: Request, res: Response): Promise<void> => {
     const idParsed = idParamSchema.safeParse(req.params);
     if (!idParsed.success) {

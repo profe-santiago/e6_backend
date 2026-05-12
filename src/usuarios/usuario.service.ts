@@ -5,6 +5,7 @@ import { usuarioRepository } from './usuario.repository';
 import {
   CreateAdminInput,
   CreateCoordinadorInput,
+  CreateOperadorInput,
   FiltrosUsuarioInput,
 } from './usuario.schema';
 import { TokenPayload } from '../auth/auth.types';
@@ -106,6 +107,39 @@ export const usuarioService = {
       rol:         'COORDINADOR',
       municipioId: comunidad.municipioId,
       comunidadId: data.comunidadId,
+    });
+  },
+
+  /**
+   * Crea un OPERADOR de cuadrilla — solo ADMIN o SUPER_ADMIN
+   * El operador solo puede ver y actualizar asignaciones de cuadrilla
+   */
+  createOperador: async (data: CreateOperadorInput, user: TokenPayload) => {
+    if (!['SUPER_ADMIN', 'ADMIN'].includes(user.rol)) {
+      throw new AppError(403, 'Solo ADMIN o SUPER_ADMIN pueden crear operadores');
+    }
+
+    if (user.rol === 'ADMIN' && user.municipioId !== data.municipioId) {
+      throw new AppError(403, 'No puedes crear operadores fuera de tu municipio');
+    }
+
+    const municipio = await prisma.municipio.findUnique({ where: { id: data.municipioId } });
+    if (!municipio) {
+      throw new AppError(404, 'Municipio no encontrado');
+    }
+
+    const existing = await usuarioRepository.findByEmail(data.email);
+    if (existing) {
+      throw new AppError(400, 'El email ya está registrado');
+    }
+
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    return usuarioRepository.create({
+      email:       data.email,
+      passwordHash,
+      nombre:      data.nombre,
+      rol:         'OPERADOR',
+      municipioId: data.municipioId,
     });
   },
 

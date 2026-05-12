@@ -19,8 +19,7 @@ import { alertaRouter } from './alertas/alerta.router';
 import { irsuRouter } from './irsu/irsu.router';
 import { AppError } from './lib/app-error';
 import { perfilRouter } from './perfil/perfil.router';
-
-
+import { rankingRouter } from './ranking/ranking.router';
 
 export const app = express();
 
@@ -52,16 +51,14 @@ app.use('/api/v1/codigos-postales', codigoPostalRouter);
 app.use('/api/v1/comunidades', comunidadRouter);
 app.use('/api/v1/usuarios', usuarioRouter);
 app.use('/api/v1/alertas', alertaRouter);
-app.use('/api/v1/irsu', irsuRouter);;
-app.use('/api/v1/reportes', reporteRouter)
+app.use('/api/v1/irsu', irsuRouter);
+app.use('/api/v1/reportes', reporteRouter);
 app.use('/api/v1/reportes/:reporteId/fotos', reporteFotoRouter);
 app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
 app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
-<<<<<<< HEAD
 app.use('/api/perfil', perfilRouter);
-=======
+app.use('/api/v1/ranking', rankingRouter);
 app.use('/uploads', express.static(path.resolve('uploads')));
->>>>>>> adbfa1a (add: middleware and updated service and router to accept multipart files)
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -69,7 +66,6 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
     res.status(err.statusCode).json({ error: err.message });
     return;
   }
-  // Errores no controlados
   const message = err instanceof Error ? err.message : 'Error interno del servidor';
   res.status(500).json({ error: message });
 });

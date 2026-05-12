@@ -23,7 +23,7 @@ export const comunidadService = {
       filtros.municipioId;
 
     const skip = (filtros.page - 1) * filtros.limit;
-    const take = filtros.limit;
+    const take = filtros.limit; 
 
     const [comunidades, total] = await Promise.all([
       comunidadRepository.findAll({ municipioId, status: filtros.status, skip, take }),

@@ -2,173 +2,624 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../lib/app-error';
 import { irsuRepository } from './irsu.repository';
 import { alertaService } from '../alertas/alerta.service';
-import { Categoria } from '@prisma/client';
+
+import { Categoria, Prisma } from '@prisma/client';
+
 import { IrsuResultado, IrsuCategoria } from './irsu.types';
-import { DashboardStatsInput, FiltrosHistorialInput } from './irsu.schema';
+import {
+  DashboardStatsInput,
+  FiltrosHistorialInput,
+} from './irsu.schema';
+
 import { TokenPayload } from '../auth/auth.types';
 
 const PESOS_CATEGORIA: Record<Categoria, number> = {
-  SEGURIDAD:       1.5,
+  SEGURIDAD: 1.5,
   INFRAESTRUCTURA: 1.3,
-  VIALIDAD:        1.2,
-  BLOQUEOS:        1.0,
+  VIALIDAD: 1.2,
+  BLOQUEOS: 1.0,
 };
 
 function calcularColor(irsu: number): string {
-  if (irsu > 100) return '#EF4444';
-  if (irsu > 50)  return '#F59E0B';
+  if (irsu >= 70) return '#EF4444';
+  if (irsu >= 40) return '#F59E0B';
   return '#22C55E';
 }
 
+function redondear(valor: number, decimales = 2): number {
+  return Number(valor.toFixed(decimales));
+}
+
+/**
+ * Regresión lineal simple
+ */
 function calcularTendencia(valores: number[]): number {
   const n = valores.length;
+
   if (n < 2) return 0;
+
   const x = valores.map((_, i) => i);
-  const y = valores;
-  const sumX  = x.reduce((a, b) => a + b, 0);
-  const sumY  = y.reduce((a, b) => a + b, 0);
-  const sumXY = x.reduce((acc, xi, i) => acc + xi * y[i], 0);
-  const sumX2 = x.reduce((acc, xi) => acc + xi * xi, 0);
-  const pendiente = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-  return Math.round(pendiente * 100) / 100;
+
+  const sumX = x.reduce((a, b) => a + b, 0);
+  const sumY = valores.reduce((a, b) => a + b, 0);
+
+  const sumXY = x.reduce(
+    (acc, xi, i) => acc + xi * valores[i],
+    0
+  );
+
+  const sumX2 = x.reduce(
+    (acc, xi) => acc + xi * xi,
+    0
+  );
+
+  const denominador = n * sumX2 - sumX * sumX;
+
+  if (denominador === 0) return 0;
+
+  return redondear(
+    (n * sumXY - sumX * sumY) / denominador
+  );
+}
+
+/**
+ * Normaliza el valor a 0-100
+ */
+function normalizar(valor: number): number {
+  return Math.min(100, Math.max(0, valor));
 }
 
 function calcularIrsu(params: {
-  frecuencia: number; gravedadPromedio: number; tendencia: number;
-  pesoCategoria: number; resueltos: number;
-}): number {
-  const { frecuencia, gravedadPromedio, tendencia, pesoCategoria, resueltos } = params;
-  const T = Math.max(1, Math.abs(tendencia));
-  const R = Math.max(1, resueltos);
-  return Math.round((frecuencia * gravedadPromedio * T * pesoCategoria) / R * 100) / 100;
+  frecuencia: number;
+  gravedadPromedio: number;
+  tendencia: number;
+  pesoCategoria: number;
+  totalResueltos: number;
+}) {
+  const {
+    frecuencia,
+    gravedadPromedio,
+    tendencia,
+    pesoCategoria,
+    totalResueltos,
+  } = params;
+
+  /**
+   * Si la tendencia es positiva empeora.
+   * Si es negativa mejora.
+   */
+  const factorTendencia =
+    tendencia > 0
+      ? 1 + tendencia
+      : 1;
+
+  /**
+   * Tasa de resolución
+   */
+  const total = frecuencia + totalResueltos;
+
+  const tasaResolucion =
+    total === 0
+      ? 0
+      : totalResueltos / total;
+
+  /**
+   * Fórmula base
+   */
+  const valor =
+    frecuencia *
+    gravedadPromedio *
+    pesoCategoria *
+    factorTendencia *
+    (1 - tasaResolucion);
+
+  return redondear(normalizar(valor));
 }
 
 export const irsuService = {
-  calcular: async (comunidadId: number): Promise<IrsuResultado> => {
-    const [reportesActivos, resueltos, historialPrevio] = await Promise.all([
+  calcular: async (
+    comunidadId: number
+  ): Promise<IrsuResultado> => {
+    const [
+      reportesActivos,
+      totalResueltos,
+      historialPrevio,
+    ] = await Promise.all([
       irsuRepository.getReportesActivos(comunidadId),
-      irsuRepository.countReportesResueltos(comunidadId),
-      irsuRepository.getHistorial(comunidadId, 10),
+
+      irsuRepository.countReportesResueltos(
+        comunidadId
+      ),
+
+      irsuRepository.getHistorialGlobal(
+        comunidadId,
+        10
+      ),
     ]);
 
-    const totalReportes = reportesActivos.length;
+    const totalReportes =
+      reportesActivos.length;
 
+    /**
+     * Sin reportes
+     */
     if (totalReportes === 0) {
-      await irsuRepository.actualizarComunidad(comunidadId, 0, '#22C55E');
-      return { comunidadId, valor: 0, totalReportes: 0, gravedadPromedio: 0, tendencia: 0, porCategoria: [] };
+      await prisma.comunidad.update({
+        where: { id: comunidadId },
+
+        data: {
+          irsuActual: 0,
+          color: '#22C55E',
+        },
+      });
+
+      return {
+        comunidadId,
+        valor: 0,
+        totalReportes: 0,
+        gravedadPromedio: 0,
+        tendencia: 0,
+        porCategoria: [],
+      };
     }
 
+    /**
+     * Promedio gravedad
+     */
     const gravedadPromedio =
-      reportesActivos.reduce((acc, r) => acc + r.gravedad, 0) / totalReportes;
-    const valoresPrevios = historialPrevio.map((h) => h.valor).reverse();
-    const tendencia = calcularTendencia(valoresPrevios);
+      reportesActivos.reduce(
+        (acc, r) => acc + r.gravedad,
+        0
+      ) / totalReportes;
+
+    /**
+     * Tendencia histórica
+     */
+    const valoresPrevios =
+      historialPrevio
+        .map((h) => h.valor)
+        .reverse();
+
+    const tendencia =
+      calcularTendencia(valoresPrevios);
+
+    /**
+     * Agrupar reportes por categoría
+     */
+    const agrupados =
+      reportesActivos.reduce(
+        (acc, reporte) => {
+          if (!acc[reporte.categoria]) {
+            acc[reporte.categoria] = [];
+          }
+
+          acc[reporte.categoria].push(reporte);
+
+          return acc;
+        },
+        {} as Record<
+          Categoria,
+          typeof reportesActivos
+        >
+      );
+
+    /**
+     * Peso promedio global
+     */
     const pesoPromedio =
-      reportesActivos.reduce((acc, r) => acc + PESOS_CATEGORIA[r.categoria], 0) / totalReportes;
+      reportesActivos.reduce(
+        (acc, r) =>
+          acc +
+          PESOS_CATEGORIA[r.categoria],
+        0
+      ) / totalReportes;
 
-    const valorGlobal = calcularIrsu({
-      frecuencia: totalReportes,
-      gravedadPromedio: Math.round(gravedadPromedio * 100) / 100,
-      tendencia, pesoCategoria: pesoPromedio, resueltos,
-    });
+    /**
+     * IRSU global
+     */
+    const valorGlobal =
+      calcularIrsu({
+        frecuencia: totalReportes,
 
-    const categorias = Object.values(Categoria) as Categoria[];
+        gravedadPromedio:
+          redondear(gravedadPromedio),
+
+        tendencia,
+
+        pesoCategoria:
+          redondear(pesoPromedio),
+
+        totalResueltos,
+      });
+
     const porCategoria: IrsuCategoria[] = [];
 
-    for (const categoria of categorias) {
-      const reportesCat = reportesActivos.filter((r) => r.categoria === categoria);
-      if (reportesCat.length === 0) continue;
-      const gravedadCat = reportesCat.reduce((acc, r) => acc + r.gravedad, 0) / reportesCat.length;
-      const valorCat = calcularIrsu({
-        frecuencia: reportesCat.length,
-        gravedadPromedio: Math.round(gravedadCat * 100) / 100,
-        tendencia, pesoCategoria: PESOS_CATEGORIA[categoria], resueltos,
+    /**
+     * Operaciones batch
+     */
+    const historialData:
+      Prisma.IrsuHistorialCreateManyInput[] =
+      [];
+
+    const alertasPromises:
+      Promise<unknown>[] = [];
+
+    /**
+     * Categorías
+     */
+    for (const categoria of Object.keys(
+      agrupados
+    ) as Categoria[]) {
+      const reportesCat =
+        agrupados[categoria];
+
+      const totalCategoria =
+        reportesCat.length;
+
+      const gravedadCategoria =
+        reportesCat.reduce(
+          (acc, r) => acc + r.gravedad,
+          0
+        ) / totalCategoria;
+
+      const valorCategoria =
+        calcularIrsu({
+          frecuencia: totalCategoria,
+
+          gravedadPromedio:
+            redondear(gravedadCategoria),
+
+          tendencia,
+
+          pesoCategoria:
+            PESOS_CATEGORIA[categoria],
+
+          totalResueltos,
+        });
+
+      const categoriaResult: IrsuCategoria = {
+        categoria,
+        valor: valorCategoria,
+        totalReportes: totalCategoria,
+        gravedadPromedio:
+          redondear(gravedadCategoria),
+      };
+
+      porCategoria.push(categoriaResult);
+
+      historialData.push({
+        comunidadId,
+
+        categoria,
+
+        valor: valorCategoria,
+
+        totalReportes: totalCategoria,
+
+        gravedadPromedio:
+          redondear(gravedadCategoria),
+
+        tendencia,
       });
-      porCategoria.push({ categoria, valor: valorCat, totalReportes: reportesCat.length, gravedadPromedio: Math.round(gravedadCat * 100) / 100 });
-      await irsuRepository.guardarHistorial({ comunidadId, categoria, valor: valorCat, totalReportes: reportesCat.length, gravedadPromedio: Math.round(gravedadCat * 100) / 100, tendencia });
-      await alertaService.generarSiCorresponde(comunidadId, categoria, valorCat);
+
+      alertasPromises.push(
+        alertaService.generarSiCorresponde(
+          comunidadId,
+          categoria,
+          valorCategoria
+        )
+      );
     }
 
-    await irsuRepository.guardarHistorial({ comunidadId, valor: valorGlobal, totalReportes, gravedadPromedio: Math.round(gravedadPromedio * 100) / 100, tendencia });
-    await irsuRepository.actualizarComunidad(comunidadId, valorGlobal, calcularColor(valorGlobal));
+    /**
+     * Historial global
+     */
+    historialData.push({
+      comunidadId,
 
-    return { comunidadId, valor: valorGlobal, totalReportes, gravedadPromedio: Math.round(gravedadPromedio * 100) / 100, tendencia, porCategoria };
-  },
+      categoria: null,
 
-  calcularTodas: async () => {
-    const comunidades = await prisma.comunidad.findMany({ where: { status: 'ACTIVO' }, select: { id: true } });
-    const resultados  = await Promise.allSettled(comunidades.map((c) => irsuService.calcular(c.id)));
+      valor: valorGlobal,
+
+      totalReportes,
+
+      gravedadPromedio:
+        redondear(gravedadPromedio),
+
+      tendencia,
+    });
+
+    /**
+     * Transacción
+     */
+    await prisma.$transaction(async (tx) => {
+      await tx.irsuHistorial.createMany({
+        data: historialData,
+      });
+
+      await tx.comunidad.update({
+        where: { id: comunidadId },
+
+        data: {
+          irsuActual: valorGlobal,
+          color: calcularColor(valorGlobal),
+        },
+      });
+    });
+
+    /**
+     * Alertas fuera de transacción
+     */
+    await Promise.all(alertasPromises);
+
     return {
-      total:    comunidades.length,
-      exitosos: resultados.filter((r) => r.status === 'fulfilled').length,
-      fallidos: resultados.filter((r) => r.status === 'rejected').length,
+      comunidadId,
+
+      valor: valorGlobal,
+
+      totalReportes,
+
+      gravedadPromedio:
+        redondear(gravedadPromedio),
+
+      tendencia,
+
+      porCategoria,
     };
   },
 
-  getHistorial: async (comunidadId: number, filtros: FiltrosHistorialInput) => {
-    const comunidad = await prisma.comunidad.findUnique({
-      where:  { id: comunidadId },
-      select: { id: true, irsuActual: true, color: true, nombre: true },
-    });
-    if (!comunidad) throw new AppError(404, 'Comunidad no encontrada');
-    const historial = await irsuRepository.findHistorial({ comunidadId, ...filtros });
-    return { comunidad, historial };
+  calcularTodas: async () => {
+    const comunidades =
+      await prisma.comunidad.findMany({
+        where: {
+          status: 'ACTIVO',
+        },
+
+        select: {
+          id: true,
+        },
+      });
+
+    /**
+     * Procesamiento por bloques
+     */
+    const chunkSize = 10;
+
+    let exitosos = 0;
+    let fallidos = 0;
+
+    for (
+      let i = 0;
+      i < comunidades.length;
+      i += chunkSize
+    ) {
+      const chunk =
+        comunidades.slice(
+          i,
+          i + chunkSize
+        );
+
+      const resultados =
+        await Promise.allSettled(
+          chunk.map((c) =>
+            irsuService.calcular(c.id)
+          )
+        );
+
+      exitosos += resultados.filter(
+        (r) => r.status === 'fulfilled'
+      ).length;
+
+      fallidos += resultados.filter(
+        (r) => r.status === 'rejected'
+      ).length;
+    }
+
+    return {
+      total: comunidades.length,
+      exitosos,
+      fallidos,
+    };
+  },
+
+  getHistorial: async (
+    comunidadId: number,
+    filtros: FiltrosHistorialInput
+  ) => {
+    const comunidad =
+      await prisma.comunidad.findUnique({
+        where: {
+          id: comunidadId,
+        },
+
+        select: {
+          id: true,
+          nombre: true,
+          irsuActual: true,
+          color: true,
+        },
+      });
+
+    if (!comunidad) {
+      throw new AppError(
+        404,
+        'Comunidad no encontrada'
+      );
+    }
+
+    const historial =
+      await irsuRepository.findHistorial({
+        comunidadId,
+        ...filtros,
+      });
+
+    return {
+      comunidad,
+      historial,
+    };
   },
 
   getDashboardStats: async (
     filtros: DashboardStatsInput,
     user: TokenPayload
   ) => {
-    const dias    = filtros.periodo === '7D' ? 7 : filtros.periodo === '30D' ? 30 : 90;
-    const desde   = new Date();
-    desde.setDate(desde.getDate() - dias);
+    const dias =
+      filtros.periodo === '7D'
+        ? 7
+        : filtros.periodo === '30D'
+        ? 30
+        : 90;
 
-    // Filtra por municipio si es ADMIN o COORDINADOR
-    const comunidadWhere =
-      user.rol === 'COORDINADOR' && user.comunidadId
-        ? { id: user.comunidadId }
-        : user.rol === 'ADMIN' && user.municipioId
-        ? { municipioId: user.municipioId }
+    const desde = new Date();
+
+    desde.setDate(
+      desde.getDate() - dias
+    );
+
+    /**
+     * Filtro comunidades
+     */
+    const comunidadWhere:
+      Prisma.ComunidadWhereInput =
+      user.rol === 'COORDINADOR' &&
+      user.comunidadId
+        ? {
+            id: user.comunidadId,
+          }
+        : user.rol === 'ADMIN' &&
+          user.municipioId
+        ? {
+            municipioId:
+              user.municipioId,
+          }
         : {};
 
-    // Historial IRSU global (categoria null = global) agrupado por día
-    const historial = await prisma.irsuHistorial.findMany({
-      where: {
-        categoria: null,   // solo globales, no por categoría
-        createdAt: { gte: desde },
-        comunidad: comunidadWhere,
-      },
-      select: {
-        valor:      true,
-        createdAt:  true,
-        comunidadId: true,
-      },
-      orderBy: { createdAt: 'asc' },
-    });
+    /**
+     * Historial global
+     */
+    const historial =
+      await prisma.irsuHistorial.findMany({
+        where: {
+          categoria: null,
 
-    // Agrupa por día y promedia el IRSU de todas las comunidades ese día
-    const porDia: Record<string, number[]> = {};
-    historial.forEach(h => {
-      const dia = h.createdAt.toISOString().slice(0, 10);
-      if (!porDia[dia]) porDia[dia] = [];
-      porDia[dia].push(h.valor);
-    });
+          createdAt: {
+            gte: desde,
+          },
 
-    const serie = Object.entries(porDia).map(([fecha, valores]) => ({
+          comunidad: comunidadWhere,
+        },
+
+        select: {
+          valor: true,
+          createdAt: true,
+        },
+
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+
+    /**
+     * Agrupar por día
+     */
+    const porDia:
+      Record<string, number[]> = {};
+
+    for (const item of historial) {
+      const fecha =
+        item.createdAt
+          .toISOString()
+          .split('T')[0];
+
+      if (!porDia[fecha]) {
+        porDia[fecha] = [];
+      }
+
+      porDia[fecha].push(item.valor);
+    }
+
+    const serie = Object.entries(
+      porDia
+    ).map(([fecha, valores]) => ({
       fecha,
-      irsu: Math.round(
-        (valores.reduce((a, b) => a + b, 0) / valores.length) * 10
-      ) / 10,
+
+      irsu: redondear(
+        valores.reduce(
+          (a, b) => a + b,
+          0
+        ) / valores.length,
+        1
+      ),
     }));
 
-    // KPIs adicionales
-    const [totalReportes, pendientes, enProceso, resueltos] = await Promise.all([
-      prisma.reporte.count({ where: { deletedAt: null } }),
-      prisma.reporte.count({ where: { deletedAt: null, estado: 'PENDIENTE' } }),
-      prisma.reporte.count({ where: { deletedAt: null, estado: 'EN_PROCESO' } }),
-      prisma.reporte.count({ where: { deletedAt: null, estado: 'RESUELTO' } }),
+    /**
+     * Filtros reportes
+     */
+    const reporteWhere:
+      Prisma.ReporteWhereInput = {
+      deletedAt: null,
+
+      ...(user.rol ===
+        'COORDINADOR' &&
+      user.comunidadId
+        ? {
+            comunidadId:
+              user.comunidadId,
+          }
+        : {}),
+
+      ...(user.rol === 'ADMIN' &&
+      user.municipioId
+        ? {
+            comunidad: {
+              municipioId:
+                user.municipioId,
+            },
+          }
+        : {}),
+    };
+
+    const [
+      totalReportes,
+      pendientes,
+      enProceso,
+      resueltos,
+    ] = await Promise.all([
+      prisma.reporte.count({
+        where: reporteWhere,
+      }),
+
+      prisma.reporte.count({
+        where: {
+          ...reporteWhere,
+          estado: 'PENDIENTE',
+        },
+      }),
+
+      prisma.reporte.count({
+        where: {
+          ...reporteWhere,
+          estado: 'EN_PROCESO',
+        },
+      }),
+
+      prisma.reporte.count({
+        where: {
+          ...reporteWhere,
+          estado: 'RESUELTO',
+        },
+      }),
     ]);
 
-    return { serie, kpis: { totalReportes, pendientes, enProceso, resueltos } };
-  },
+    return {
+      serie,
 
+      kpis: {
+        totalReportes,
+        pendientes,
+        enProceso,
+        resueltos,
+      },
+    };
+  },
 };

@@ -95,8 +95,9 @@ model Comunidad {
   municipio     Municipio       @relation(fields: [municipioId], references: [id])
   cpId          Int?                                     // Código postal principal de la comunidad (opcional)
   codigoPostal  CodigoPostal?   @relation(fields: [cpId], references: [id])
-  usuarios      Usuario[]
-  reportes      Reporte[]
+  usuarios         Usuario[]
+  usuariosComunidad UsuarioComunidad[]  // ← NUEVO, agrega esta línea
+  reportes         Reporte[]
   alertas       Alerta[]
   irsuHistorial IrsuHistorial[]
   createdAt     DateTime        @default(now())
@@ -110,12 +111,14 @@ model Usuario {
   email            String   @unique @db.VarChar(150)
   passwordHash     String
   nombre           String?  @db.VarChar(100)
+  avatarUrl        String?  @db.VarChar(500)    // ← NUEVO
   rol              Rol      @default(USUARIO)
-  activo           Boolean  @default(true)               // false = cuenta desactivada por admin
-  municipioId      Int?                                  // Obligatorio para ADMIN y COORDINADOR
+  activo           Boolean  @default(true)
+  municipioId      Int?
   municipio        Municipio? @relation(fields: [municipioId], references: [id])
-  comunidadId      Int?                                  // Obligatorio para COORDINADOR
+  comunidadId      Int?
   comunidad        Comunidad? @relation(fields: [comunidadId], references: [id])
+  comunidades      UsuarioComunidad[]           // ← NUEVO
   reportes         Reporte[]
   votos            Voto[]
   historial        ReporteHistorial[]
@@ -207,4 +210,17 @@ model IrsuHistorial {
   tendencia        Float                                 // Pendiente de regresión lineal: positivo=empeora, negativo=mejora
   createdAt        DateTime   @default(now())
   @@map("irsu_historial")
+}
+
+model UsuarioComunidad {
+  id          Int       @id @default(autoincrement())
+  usuarioId   Int
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  comunidadId Int
+  comunidad   Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
+  esPrincipal Boolean   @default(false)
+  creadoEn    DateTime  @default(now())
+
+  @@unique([usuarioId, comunidadId])
+  @@map("usuario_comunidades")
 }

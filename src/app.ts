@@ -17,6 +17,8 @@ import { reporteHistorialRouter } from './reporte-historial/reporte-historial.ro
 import { alertaRouter } from './alertas/alerta.router';
 import { irsuRouter } from './irsu/irsu.router';
 import { AppError } from './lib/app-error';
+import { perfilRouter } from './perfil/perfil.router';
+
 
 
 export const app = express();
@@ -54,6 +56,7 @@ app.use('/api/v1/reportes', reporteRouter)
 app.use('/api/v1/reportes/:reporteId/fotos', reporteFotoRouter);
 app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
 app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
+app.use('/api/perfil', perfilRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

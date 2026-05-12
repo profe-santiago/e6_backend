@@ -85,7 +85,7 @@ reporteFotoRouter.get(
 reporteFotoRouter.post(
   '/',
 
-  authenticate,
+  optionalAuth,
 
   uploadReporteFotos.array('fotos', 10),
 
@@ -123,11 +123,10 @@ reporteFotoRouter.post(
       return;
     }
 
-    const fotos =
-      await reporteFotoService.add(
+    const fotos = await reporteFotoService.add(
         paramParsed.data.reporteId,
         files,
-        req.user!
+        req.user
       );
 
     res.json(fotos);

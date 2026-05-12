@@ -52,6 +52,15 @@ enum EstadoAlerta {
   CERRADA      // Problema resuelto
 }
 
+
+enum EstadoAsignacion {
+  ASIGNADA
+  EN_CURSO
+  COMPLETADA
+  CANCELADA
+}
+
+
 model Estado {
   id         Int         @id @default(autoincrement())
   nombre     String      @db.VarChar(100)
@@ -69,6 +78,7 @@ model Municipio {
   comunidades     Comunidad[]
   codigosPostales CodigoPostal[]
   usuarios        Usuario[]
+  cuadrillas    Cuadrilla[]
   @@map("municipios")
 }
 
@@ -123,6 +133,7 @@ model Usuario {
   votos            Voto[]
   historial        ReporteHistorial[]
   alertasAsignadas Alerta[]
+  asignacionesCuadrilla AsignacionCuadrilla[]
   createdAt        DateTime @default(now())
   @@map("usuarios")
 }
@@ -149,6 +160,7 @@ model Reporte {
   historial    ReporteHistorial[]
   createdAt    DateTime      @default(now())
   deletedAt    DateTime?                                 // null = activo; non-null = eliminado (soft delete)
+  asignaciones  AsignacionCuadrilla[]
   @@map("reportes")
 }
 
@@ -223,4 +235,33 @@ model UsuarioComunidad {
 
   @@unique([usuarioId, comunidadId])
   @@map("usuario_comunidades")
+}
+
+model Cuadrilla {
+  id           Int                   @id @default(autoincrement())
+  nombre       String                @db.VarChar(100)
+  descripcion  String?               @db.Text
+  activa       Boolean               @default(true)
+  municipioId  Int
+  municipio    Municipio             @relation(fields: [municipioId], references: [id])
+  asignaciones AsignacionCuadrilla[]
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  @@map("cuadrillas")
+}
+
+model AsignacionCuadrilla {
+  id           Int              @id @default(autoincrement())
+  cuadrillaId  Int
+  cuadrilla    Cuadrilla        @relation(fields: [cuadrillaId], references: [id])
+  reporteId    Int
+  reporte      Reporte          @relation(fields: [reporteId], references: [id])
+  estado       EstadoAsignacion @default(ASIGNADA)
+  nota         String?          @db.Text
+  asignadoEn   DateTime         @default(now())
+  iniciadaEn   DateTime?
+  completadaEn DateTime?
+  asignadoPor  Int
+  usuario      Usuario          @relation(fields: [asignadoPor], references: [id])
+  @@map("asignaciones_cuadrilla")
 }

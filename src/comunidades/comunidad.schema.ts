@@ -34,7 +34,7 @@ export const filtrosComunidadSchema = z.object({
   municipioId: z.coerce.number().int().positive().optional(),
   status:      z.nativeEnum(EstadoComunidad).optional(),
   page:        z.coerce.number().int().positive().default(1),
-  limit:       z.coerce.number().int().min(1).max(100).default(20),
+  limit:       z.coerce.number().int().min(1).max(13000).default(20),
 });
 
 export type SlugParam             = z.infer<typeof slugParamSchema>;

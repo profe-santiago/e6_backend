@@ -12,6 +12,13 @@ import { optionalAuth } from '../middleware/optional-auth.middleware';
 
 export const reporteRouter = Router();
 
+reporteRouter.get('/stats', optionalAuth, async (req: Request, res: Response): Promise<void> => {
+  const where = {};
+
+  const stats = await reporteService.getStats(where, req.user);
+  res.json(stats);
+});
+
 /**
  * @swagger
  * /api/v1/reportes:

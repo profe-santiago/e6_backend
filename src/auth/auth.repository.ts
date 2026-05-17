@@ -1,21 +1,20 @@
 // Acceso a datos. Abstrae Prisma del resto de la aplicación.
 // Solo esta capa conoce @prisma/client.
-import { PrismaClient, Usuario} from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { Usuario } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 export const authRepository = {
-    findByEmail: (email:string): Promise<Usuario | null> => {
-        return prisma.usuario.findUnique({ where: {email}});
-    },
+  findByEmail: (email: string): Promise<Usuario | null> => {
+    return prisma.usuario.findUnique({ where: { email } });
+  },
 
-    create: (data: {
+  create: (data: {
     email:        string;
     passwordHash: string;
     nombre?:      string;
     municipioId?: number;
     comunidadId?: number;
-    }): Promise<Usuario> => {
-        return prisma.usuario.create({ data });
-    },
+  }): Promise<Usuario> => {
+    return prisma.usuario.create({ data });
+  },
 };

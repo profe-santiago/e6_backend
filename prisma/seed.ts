@@ -10,8 +10,8 @@ import readline from 'readline';
 const DATA_DIR = path.join(__dirname, 'data');
 const FILE_ESTADOS     = path.join(DATA_DIR, 'Estados.csv');
 const FILE_MUNICIPIOS  = path.join(DATA_DIR, 'Municipios.csv');
-const FILE_COMUNIDADES = path.join(DATA_DIR, 'Comunidades.csv');
-const FILE_CP          = path.join(DATA_DIR, 'CP.txt');
+const FILE_COMUNIDADES = path.join(DATA_DIR, 'Comunidades_oaxaca.csv');
+const FILE_CP = path.join(DATA_DIR, 'CP_oaxaca.txt');
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma  = new PrismaClient({ adapter });

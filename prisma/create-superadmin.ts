@@ -19,5 +19,12 @@ async function main() {
 }
 
 main()
-  .catch(console.error)
+  .catch((e) => {
+    if (e.code === 'P2002') {
+      console.log('ℹ SUPER_ADMIN ya existe, omitiendo...');
+    } else {
+      console.error(e);
+      process.exit(1);
+    }
+  })
   .finally(() => prisma.$disconnect());

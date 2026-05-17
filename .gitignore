@@ -3,3 +3,4 @@ dist/
 .env
 .DS_Store
 /generated/prisma
+/uploads

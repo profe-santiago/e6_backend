@@ -1,0 +1,861 @@
+{
+  "info": {
+    "name": "IRSU — Sistema de Reportes Ciudadanos",
+    "description": "Colección completa de la API REST del Sistema de Reportes Ciudadanos Geolocalizados con índice IRSU.\n\n**Base URL:** `{{base_url}}`\n\n**Autenticación:** Bearer JWT. Después de hacer login, copia el token en la variable `token` del entorno.\n\n**Entornos incluidos:**\n- Local: http://localhost:3000\n- Producción: https://e6backend-production.up.railway.app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://e6backend-production.up.railway.app", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "reporte_id", "value": "1", "type": "string" },
+    { "key": "comunidad_slug", "value": "", "type": "string" },
+    { "key": "usuario_id", "value": "1", "type": "string" },
+    { "key": "alerta_id", "value": "1", "type": "string" },
+    { "key": "cuadrilla_id", "value": "1", "type": "string" },
+    { "key": "asignacion_id", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/health",
+            "description": "Verifica que el servidor esté activo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar ciudadano",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('token', body.token);",
+                  "  console.log('Token guardado:', body.token.substring(0, 30) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ciudadano@ejemplo.mx\",\n  \"password\": \"MiPassword123!\",\n  \"nombre\": \"Juan Pérez\"\n}"
+            },
+            "description": "Registra un nuevo ciudadano. El token JWT se guarda automáticamente en la variable `token`."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('token', body.token);",
+                  "  console.log('Token guardado:', body.token.substring(0, 30) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@irsu.mx\",\n  \"password\": \"SuperAdmin2024!\"\n}"
+            },
+            "description": "Login con credenciales. El token JWT se guarda automáticamente en la variable `token`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Perfil",
+      "item": [
+        {
+          "name": "Mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/perfil/me",
+            "description": "Perfil completo del usuario autenticado con sus comunidades suscritas."
+          }
+        },
+        {
+          "name": "Actualizar nombre",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/perfil/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Pérez García\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mis comunidades",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/perfil/me/comunidades"
+          }
+        },
+        {
+          "name": "Suscribirse a comunidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/perfil/me/comunidades",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comunidadId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Establecer comunidad principal",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/perfil/me/comunidades/1/principal"
+          }
+        },
+        {
+          "name": "Desuscribirse de comunidad",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/perfil/me/comunidades/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/usuarios?page=1&limit=20",
+              "query": [
+                { "key": "rol", "value": "USUARIO", "disabled": true },
+                { "key": "activo", "value": "true", "disabled": true },
+                { "key": "municipioId", "value": "1", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/usuarios/{{usuario_id}}"
+          }
+        },
+        {
+          "name": "Crear ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/usuarios/admin",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin.municipio@irsu.mx\",\n  \"password\": \"Admin2024!\",\n  \"nombre\": \"Admin Municipal\",\n  \"municipioId\": 1\n}"
+            },
+            "description": "Solo SUPER_ADMIN puede crear administradores."
+          }
+        },
+        {
+          "name": "Crear COORDINADOR",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/usuarios/coordinador",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"coord.colonia@irsu.mx\",\n  \"password\": \"Coord2024!\",\n  \"nombre\": \"Coordinador Colonia\",\n  \"comunidadId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear OPERADOR",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/usuarios/operador",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"operador1@irsu.mx\",\n  \"password\": \"Operador2024!\",\n  \"nombre\": \"Operador Cuadrilla Norte\",\n  \"municipioId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Desactivar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/usuarios/{{usuario_id}}/desactivar"
+          }
+        },
+        {
+          "name": "Activar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/usuarios/{{usuario_id}}/activar"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estados",
+      "item": [
+        {
+          "name": "Listar todos los estados",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/estados"
+          }
+        },
+        {
+          "name": "Estado por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/estados/id/20"
+          }
+        },
+        {
+          "name": "Estado por clave INEGI",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/estados/clave/20",
+            "description": "Clave de 2 dígitos. Oaxaca = 20"
+          }
+        },
+        {
+          "name": "Estado por nombre",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/estados/nombre/Oaxaca"
+          }
+        },
+        {
+          "name": "Municipios de un estado",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/estados/20/municipios"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Municipios",
+      "item": [
+        {
+          "name": "Listar todos los municipios",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/municipios"
+          }
+        },
+        {
+          "name": "Municipio por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/municipios/id/1"
+          }
+        },
+        {
+          "name": "Municipio por clave INEGI",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/municipios/clave/20067",
+            "description": "Clave de 5 dígitos. Oaxaca de Juárez = 20067"
+          }
+        },
+        {
+          "name": "Municipio por nombre",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/municipios/nombre/Oaxaca de Juárez"
+          }
+        },
+        {
+          "name": "Comunidades activas de un municipio",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/municipios/1/comunidades"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Códigos Postales",
+      "item": [
+        {
+          "name": "Buscar por código postal",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/codigos-postales?codigo=68000",
+              "query": [{ "key": "codigo", "value": "68000" }]
+            }
+          }
+        },
+        {
+          "name": "CP por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/codigos-postales/id/1"
+          }
+        },
+        {
+          "name": "CPs de un municipio",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/codigos-postales/municipio/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comunidades",
+      "item": [
+        {
+          "name": "Listar comunidades",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/comunidades?page=1&limit=20",
+              "query": [
+                { "key": "municipioId", "value": "1", "disabled": true },
+                { "key": "status", "value": "ACTIVO", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Comunidad por slug",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/comunidades/{{comunidad_slug}}"
+          }
+        },
+        {
+          "name": "Crear comunidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/comunidades",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Colonia Centro\",\n  \"municipioId\": 1,\n  \"color\": \"#3B82F6\"\n}"
+            },
+            "description": "Solo ADMIN o SUPER_ADMIN. La comunidad se crea en estado PENDIENTE."
+          }
+        },
+        {
+          "name": "Actualizar comunidad",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/comunidades/{{comunidad_slug}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVO\",\n  \"color\": \"#22C55E\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "item": [
+        {
+          "name": "Listar reportes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reportes?page=1&limit=20",
+              "query": [
+                { "key": "comunidadId", "value": "1", "disabled": true },
+                { "key": "categoria", "value": "SEGURIDAD", "disabled": true },
+                { "key": "estado", "value": "PENDIENTE", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Stats de reportes",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/reportes/stats",
+            "description": "Conteo de reportes por estado."
+          }
+        },
+        {
+          "name": "Obtener reporte por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}"
+          }
+        },
+        {
+          "name": "Crear reporte (anónimo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/v1/reportes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Bache peligroso en Tinoco y Palacios\",\n  \"descripcion\": \"Bache de aproximadamente 50cm de diámetro frente al número 23\",\n  \"gravedad\": 4,\n  \"categoria\": \"VIALIDAD\",\n  \"fuente\": \"APP_MOVIL\",\n  \"latitud\": 17.0666,\n  \"longitud\": -96.7237,\n  \"comunidadId\": 1\n}"
+            },
+            "description": "No requiere autenticación. Máximo 3 reportes por día por IP (configurable)."
+          }
+        },
+        {
+          "name": "Crear reporte (autenticado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/reportes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Luminaria apagada en calle Reforma\",\n  \"descripcion\": \"Llevan 3 días sin luz en este tramo\",\n  \"gravedad\": 3,\n  \"categoria\": \"INFRAESTRUCTURA\",\n  \"fuente\": \"APP_MOVIL\",\n  \"latitud\": 17.0670,\n  \"longitud\": -96.7241,\n  \"comunidadId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar reporte",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Bache muy peligroso en Tinoco y Palacios\",\n  \"gravedad\": 5\n}"
+            },
+            "description": "Solo el autor puede editar. No aplica a reportes RESUELTO o RECHAZADO."
+          }
+        },
+        {
+          "name": "Eliminar reporte (soft delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}",
+            "description": "Marca el reporte como eliminado (deletedAt). No se borra físicamente."
+          }
+        },
+        {
+          "name": "Cambiar estado de reporte",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_PROCESO\",\n  \"nota\": \"Cuadrilla asignada, atenderán mañana\"\n}"
+            },
+            "description": "Solo SUPER_ADMIN, ADMIN o COORDINADOR. Registra entrada en historial automáticamente."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reporte Fotos",
+      "item": [
+        {
+          "name": "Fotos de un reporte",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/fotos"
+          }
+        },
+        {
+          "name": "Subir fotos",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/fotos",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "fotos", "type": "file", "description": "Imagen JPEG/PNG/WebP. Máximo 10 fotos, 5MB cada una." }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Eliminar foto",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/fotos/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Votos",
+      "item": [
+        {
+          "name": "Votos de un reporte",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}", "disabled": true }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/votos",
+            "description": "Si se envía token, el campo `yaVote` indica si el usuario ya votó."
+          }
+        },
+        {
+          "name": "Votar por reporte",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/votos"
+          }
+        },
+        {
+          "name": "Quitar voto",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/reportes/{{reporte_id}}/votos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Historial de Reporte",
+      "item": [
+        {
+          "name": "Historial de cambios de estado",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/reportes/{{reporte_id}}/historial?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Solo SUPER_ADMIN, ADMIN o COORDINADOR."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alertas",
+      "item": [
+        {
+          "name": "Listar alertas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/alertas?page=1&limit=20",
+              "query": [
+                { "key": "nivel", "value": "ROJA", "disabled": true },
+                { "key": "estado", "value": "ACTIVA", "disabled": true },
+                { "key": "comunidadId", "value": "1", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle de alerta",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/alertas/{{alerta_id}}"
+          }
+        },
+        {
+          "name": "Tomar alerta",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/alertas/{{alerta_id}}/tomar",
+            "description": "Cambia estado de ACTIVA a EN_ATENCION. Solo SUPER_ADMIN, ADMIN o COORDINADOR."
+          }
+        },
+        {
+          "name": "Asignar alerta a usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/alertas/{{alerta_id}}/asignar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Cerrar alerta",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/alertas/{{alerta_id}}/cerrar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nota\": \"Problema atendido por cuadrilla municipal\"\n}"
+            },
+            "description": "La alerta debe estar EN_ATENCION antes de cerrarla."
+          }
+        }
+      ]
+    },
+    {
+      "name": "IRSU",
+      "item": [
+        {
+          "name": "Calcular IRSU de una comunidad",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/irsu/{{comunidad_slug}}",
+            "description": "Calcula el índice IRSU global y por categoría. Genera alertas automáticamente si supera umbrales."
+          }
+        },
+        {
+          "name": "Historial IRSU de una comunidad",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/irsu/{{comunidad_slug}}/historial?limit=30",
+              "query": [
+                { "key": "categoria", "value": "SEGURIDAD", "disabled": true },
+                { "key": "desde", "value": "2025-01-01", "disabled": true },
+                { "key": "hasta", "value": "2025-12-31", "disabled": true },
+                { "key": "limit", "value": "30" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Dashboard stats (admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/irsu/stats/dashboard?periodo=30D",
+              "query": [{ "key": "periodo", "value": "30D", "description": "7D | 30D | 90D" }]
+            },
+            "description": "Serie temporal del IRSU y KPIs de reportes. Solo SUPER_ADMIN, ADMIN o COORDINADOR."
+          }
+        },
+        {
+          "name": "Recalcular IRSU de todas las comunidades",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/irsu/recalcular/todas",
+            "description": "Solo SUPER_ADMIN. Recalcula en lotes de 10 comunidades."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cuadrillas",
+      "item": [
+        {
+          "name": "Listar cuadrillas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cuadrillas?page=1&limit=50",
+              "query": [
+                { "key": "municipioId", "value": "1", "disabled": true },
+                { "key": "activa", "value": "true", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "50" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear cuadrilla",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/cuadrillas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Cuadrilla Norte\",\n  \"descripcion\": \"Encargada del sector norte del municipio\",\n  \"municipioId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Detalle de cuadrilla",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/cuadrillas/{{cuadrilla_id}}"
+          }
+        },
+        {
+          "name": "Actualizar cuadrilla",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/cuadrillas/{{cuadrilla_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Cuadrillas sugeridas (por carga)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/v1/cuadrillas/sugeridas/1",
+            "description": "Cuadrillas activas del municipio ordenadas por menor carga de trabajo."
+          }
+        },
+        {
+          "name": "Listar asignaciones",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/cuadrillas/asignaciones/lista?page=1&limit=20",
+              "query": [
+                { "key": "cuadrillaId", "value": "1", "disabled": true },
+                { "key": "estado", "value": "ASIGNADA", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Asignar cuadrilla a reporte",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/cuadrillas/asignaciones",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cuadrillaId\": 1,\n  \"reporteId\": 1,\n  \"nota\": \"Llevar equipo de excavación\"\n}"
+            },
+            "description": "Si el reporte está PENDIENTE pasa automáticamente a EN_PROCESO."
+          }
+        },
+        {
+          "name": "Cambiar estado de asignación",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/v1/cuadrillas/asignaciones/{{asignacion_id}}/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EN_CURSO\",\n  \"nota\": \"Cuadrilla en sitio\"\n}"
+            },
+            "description": "Si pasa a COMPLETADA, el reporte se marca RESUELTO automáticamente."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ranking",
+      "item": [
+        {
+          "name": "Ranking de ciudadanos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/ranking?limit=10",
+              "query": [{ "key": "limit", "value": "10" }]
+            },
+            "description": "Top ciudadanos por cantidad de reportes creados."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 # Feedback – Equipo 6: Sistema de Reportes Ciudadanos Geolocalizados
 **Stack:** Node.js + Express + TypeScript · React Native Expo · PostgreSQL (Prisma ORM)  
-**Fecha de revisión:** 22 de abril de 2025
+**Fecha de revisión:** 27 de abril de 2026 *(actualizado)*
 
 ---
 
 ## Resumen general
 
-El equipo entrega un backend bien estructurado con una cobertura de dominio amplia y pensada: reportes ciudadanos con geolocalización, sistema de votos, historial de cambios de estado, alertas, fotos adjuntas y un índice IRSU. La arquitectura multicapas está bien aplicada y la lógica de negocio dentro de los services demuestra comprensión genuina de los conceptos del curso.
+El equipo entrega un backend sólido con amplia cobertura de dominio: reportes ciudadanos con geolocalización, sistema de votos, historial de cambios de estado, alertas, fotos adjuntas e índice IRSU. En esta última entrega aplicaron varias de las mejoras sugeridas de forma correcta y completa, lo cual se valora positivamente.
 
 ---
 
@@ -25,66 +25,17 @@ modulo/
   └── modulo.types.ts       → tipos TypeScript del módulo
 ```
 
-Esta consistencia es valiosa: cualquier desarrollador que entre al proyecto sabe exactamente dónde encontrar cada cosa en cualquier módulo. La arquitectura está presente y es uniforme — no solo en algunos módulos sino en los 12 módulos del sistema.
+Esta consistencia es uniforme en los 12 módulos del sistema.
 
 ### DTOs con Zod como contratos de entrada
 
-Los esquemas Zod (`CreateReporteInput`, `UpdateReporteInput`, `CambiarEstadoInput`, `FiltrosReporteInput`) definen con precisión qué datos acepta cada operación. Esto actúa como un contrato explícito: el service nunca recibe datos sin validar, y la API comunica claramente qué espera de los clientes.
+Los esquemas Zod (`CreateReporteInput`, `UpdateReporteInput`, `CambiarEstadoInput`, `FiltrosReporteInput`) definen con precisión qué datos acepta cada operación. El service nunca recibe datos sin validar.
 
-### Lógica de negocio real y bien ubicada en los services
+### Clase `AppError` implementada correctamente ✅ *(nuevo)*
 
-`reporte.service.ts` no es solo un puente de datos — contiene reglas de negocio reales y bien implementadas, todas en el lugar correcto (el service, no el router ni el repository):
-
-- Verificar que la comunidad exista y esté activa antes de crear un reporte.
-- Límite de 3 reportes diarios para usuarios anónimos por IP.
-- Solo el autor puede editar o eliminar sus propios reportes.
-- No se puede editar un reporte ya resuelto o rechazado.
-- Solo coordinadores pueden cambiar estado, y solo dentro de su propia comunidad.
-
-Esto es exactamente lo que se busca: reglas de dominio en la capa de negocio, no dispersas en el router o hardcodeadas en el repositorio.
-
-### Control de acceso con middleware de autenticación doble
-
-El diseño de tener `auth.middleware.ts` (autenticación obligatoria) y `optional-auth.middleware.ts` (autenticación opcional) es inteligente: permite que ciertos endpoints sirvan tanto a usuarios anónimos como autenticados con comportamiento diferente, sin duplicar lógica. El middleware opcional inyecta el usuario si el token está presente, o continúa sin él si no lo está.
-
-### Swagger / OpenAPI configurado
-
-La documentación de la API está disponible en `/api/docs` con `swagger-jsdoc`. Los comentarios JSDoc en los routers generan la documentación automáticamente. El `app.ts` muestra la configuración correcta del spec con `info`, `components` y `securitySchemes`.
-
-### Manejo de errores consistente
-
-Los errores se crean con `Object.assign(new Error(...), { statusCode: ... })` y el handler global al final del `app.ts` los captura y convierte en respuestas HTTP con el status code correcto. El cliente siempre recibe un objeto `{ error: message }` estructurado.
-
-### Soft Delete con trazabilidad
-
-El método `softDelete` en el repositorio de reportes marca el registro como eliminado en lugar de borrarlo físicamente. En un sistema ciudadano donde los reportes tienen valor histórico, esto es la decisión correcta. El módulo `reporte-historial` complementa esto registrando cada cambio de estado, creando un log de auditoría completo.
-
----
-
-## Áreas de mejora 🔧
-
-### README muy incompleto
-
-El README actual solo tiene dos comandos: la migración de Prisma y el seed. No hay descripción del sistema, instrucciones para configurar las variables de entorno, cómo correr el backend, ni diagrama de arquitectura. Esto es el punto más crítico antes de la presentación porque es lo primero que cualquier evaluador abre.
-
-### Ruta duplicada en `app.ts`
-
-En el archivo `app.ts` el router de reportes está registrado dos veces:
+Crearon `src/lib/app-error.ts` con una implementación sólida que incluye `Object.setPrototypeOf` para garantizar que `instanceof` funcione correctamente incluso con transpilación de TypeScript:
 
 ```ts
-app.use('/api/v1/reportes', reporteRouter);
-// ... otras rutas ...
-app.use('/api/v1/reportes', reporteRouter);  // ← duplicado
-```
-
-El primer registro siempre responde, por lo que el segundo nunca se alcanza. No rompe el sistema, pero es un descuido que cualquier revisor notará. Hay que eliminar la línea duplicada.
-
-### El manejo de errores puede mejorar con una clase propia
-
-El patrón actual `Object.assign(new Error(...), { statusCode: ... })` funciona, pero es frágil: no tiene tipo en TypeScript y requiere que cada desarrollador recuerde la misma sintaxis. Una clase propia es más clara y type-safe:
-
-```ts
-// src/lib/app-error.ts
 export class AppError extends Error {
   constructor(
     public readonly statusCode: number,
@@ -92,32 +43,84 @@ export class AppError extends Error {
   ) {
     super(message);
     this.name = 'AppError';
+    Object.setPrototypeOf(this, AppError.prototype);
   }
 }
 ```
 
-Y usarla así en cualquier service:
+Este detalle (`Object.setPrototypeOf`) es importante: sin él, `instanceof AppError` puede fallar en entornos donde TypeScript compila a ES5, ya que la cadena de prototipos no queda correctamente enlazada. Es una implementación de nivel profesional.
+
+### Error handler global usa `instanceof` correctamente ✅ *(nuevo)*
+
+El handler en `app.ts` ahora distingue entre errores controlados y no controlados usando `instanceof AppError`:
 
 ```ts
-import { AppError } from '../lib/app-error';
-
-throw new AppError(404, 'Reporte no encontrado');
-throw new AppError(403, 'Solo puedes editar tus propios reportes');
-```
-
-El handler global queda igual pero con un `instanceof` más confiable:
-
-```ts
-app.use((err: any, _req, res, _next) => {
-  const status  = err instanceof AppError ? err.statusCode : 500;
-  const message = err.message || 'Error interno';
-  res.status(status).json({ error: message });
+app.use((err: unknown, _req, res, _next) => {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({ error: err.message });
+    return;
+  }
+  const message = err instanceof Error ? err.message : 'Error interno del servidor';
+  res.status(500).json({ error: message });
 });
 ```
 
+Esto es exactamente lo correcto: los errores de negocio (404, 403, 400, 429) se responden con su código preciso; cualquier otro error inesperado cae como 500.
+
+### `AppError` integrada en el service ✅ *(nuevo)*
+
+`reporte.service.ts` ya usa `AppError` de forma consistente en todos los casos:
+
+```ts
+throw new AppError(404, 'Reporte no encontrado');
+throw new AppError(400, 'Solo se pueden crear reportes en comunidades activas');
+throw new AppError(429, `Los usuarios anónimos tienen un límite de ${LIMITE_ANONIMO} reportes por día`);
+throw new AppError(403, 'Solo puedes editar tus propios reportes');
+```
+
+### `LIMITE_ANONIMO` configurable desde variable de entorno ✅ *(nuevo)*
+
+```ts
+const LIMITE_ANONIMO = Number(process.env.LIMITE_REPORTES_ANONIMO ?? 3);
+```
+
+El valor ya no está hardcodeado — puede cambiarse sin tocar el código. El `?? 3` como fallback garantiza que el sistema funcione aunque la variable no esté definida.
+
+### Bug de ruta duplicada corregido ✅ *(nuevo)*
+
+El `app.ts` ya no tiene el router de reportes registrado dos veces. Las rutas están limpias y sin duplicados.
+
+### Lógica de negocio real y bien ubicada en los services
+
+`reporte.service.ts` contiene reglas de dominio reales en el lugar correcto: límite de reportes anónimos por IP, restricción de edición por autor y estado, cambio de estado restringido a coordinadores de la propia comunidad. Toda esta lógica está en el service, no en el router ni en el repository.
+
+### Control de acceso con middleware de autenticación doble
+
+`auth.middleware.ts` (autenticación obligatoria) y `optional-auth.middleware.ts` (autenticación opcional) permiten que ciertos endpoints sirvan tanto a usuarios anónimos como autenticados con comportamiento diferente sin duplicar lógica.
+
+### Swagger / OpenAPI configurado
+
+La documentación de la API está disponible en `/api/docs` con `swagger-jsdoc`. Los comentarios JSDoc en los routers generan la documentación automáticamente.
+
+### Soft Delete con trazabilidad
+
+`softDelete` marca el registro como eliminado en lugar de borrarlo físicamente. El módulo `reporte-historial` registra cada cambio de estado, creando un log de auditoría completo.
+
+---
+
+## Áreas de mejora 🔧
+
+### README muy incompleto
+
+El README sigue siendo el punto más crítico. No hay descripción del sistema, instrucciones de configuración ni diagrama de arquitectura. Antes de la presentación final deben tener al menos:
+- Descripción del sistema y para qué sirve.
+- Variables de entorno requeridas (puede ser un `.env.example` comentado).
+- Instrucciones para correr el proyecto localmente.
+- Diagrama de arquitectura (ver guía `guia_diagrama_arquitectura.md` en la carpeta del curso).
+
 ### Sin diagrama de arquitectura
 
-Dado que el sistema tiene muchos módulos con relaciones entre sí (reportes → fotos, reportes → votos, reportes → historial, comunidades → reportes → alertas → IRSU), un diagrama de capas o de módulos sería muy valioso tanto para la evaluación como para la presentación final.
+El sistema tiene 12 módulos con relaciones entre sí. Un diagrama de capas mostrando los módulos principales y sus dependencias sería muy valioso para la presentación final.
 
 ---
 
@@ -131,40 +134,35 @@ Dado que el sistema tiene muchos módulos con relaciones entre sí (reportes →
 | Diseño RESTful | ✅ Bien aplicado |
 | Control de acceso por roles | ✅ Bien pensado |
 | Swagger / OpenAPI | ✅ Configurado |
-| Manejo de errores | ✅ Consistente (mejorable con clase propia) |
+| Clase `AppError` | ✅ Implementada correctamente con `setPrototypeOf` *(nuevo)* |
+| Error handler con `instanceof` | ✅ Correcto *(nuevo)* |
+| `LIMITE_ANONIMO` configurable | ✅ Desde variable de entorno *(nuevo)* |
+| Bug ruta duplicada | ✅ Corregido *(nuevo)* |
 | Soft Delete + Historial de auditoría | ✅ Buenas prácticas |
 | README | ❌ Muy incompleto |
 | Diagrama de arquitectura | ❌ No encontrado |
-| Bug ruta duplicada | ⚠️ Debe corregirse |
 
 ---
 
 ## Recomendación final
 
-El backend es de los más completos y mejor razonados del grupo. La lógica de negocio está bien ubicada y el dominio del problema está claramente comprendido. Lo que hace falta es documentación: README completo con instrucciones de ejecución y diagrama de arquitectura. Corrijan también la ruta duplicada antes de la presentación — es un detalle pequeño pero visible. Si la demo funciona end-to-end con el frontend móvil, tienen un proyecto muy sólido.
+El equipo respondió al feedback anterior de forma completa y correcta: `AppError`, el error handler, el límite configurable y la ruta duplicada están todos resueltos. La implementación de `Object.setPrototypeOf` demuestra atención al detalle. Lo que queda es exclusivamente documentación: README con instrucciones y diagrama de arquitectura. Si eso está listo antes de la presentación, el proyecto está en muy buen estado.
 
 ---
 
 ## Sugerencias adicionales de buenas prácticas
 
-Estas son mejoras aplicables en el tiempo que queda, sin afectar la funcionalidad:
-
-**1. Crear un archivo `.env.example` en el repositorio**
-Agregar un archivo con los nombres de las variables necesarias (sin valores reales). Cualquier persona que clone el proyecto sabrá qué configurar:
+**1. Agregar un archivo `.env.example` en el repositorio**
+El servicio ya lee `LIMITE_REPORTES_ANONIMO` desde variables de entorno. Documentar todas las variables necesarias en un `.env.example`:
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/reportes_db
 JWT_SECRET=your_secret_here
 PORT=3000
+LIMITE_REPORTES_ANONIMO=3
 ```
 
-**2. Agregar una constante para el límite de reportes anónimos**
-En `reporte.service.ts` el valor `3` está hardcodeado como `const LIMITE_ANONIMO = 3`. Esto ya está bien hecho. Sugerencia adicional: moverlo a un archivo de configuración o leerlo desde una variable de entorno para poder cambiarlo sin tocar el código:
-```ts
-const LIMITE_ANONIMO = Number(process.env.LIMITE_REPORTES_ANONIMO ?? 3);
-```
-
-**3. Usar el tipo `void` en middlewares Express que no retornan nada**
-En los routers, algunos handlers tienen el tipo de retorno implícito. Ser explícito con `Promise<void>` o `void` en los handlers que no retornan un valor mejora la claridad:
+**2. Usar el tipo `void` en handlers Express que no retornan nada**
+Ser explícito con `Promise<void>` en los handlers mejora la legibilidad y ayuda a TypeScript a detectar retornos accidentales:
 ```ts
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   const reportes = await reporteService.getAll(...);
@@ -172,16 +170,19 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
 });
 ```
 
-**4. Revisar que todos los módulos tengan índices de error HTTP consistentes**
-Verificar que todos los services usen los mismos status codes para situaciones similares: `404` para "no encontrado", `403` para "sin permiso", `400` para "datos inválidos", `429` para "límite excedido". La consistencia en los códigos HTTP es parte del contrato de la API.
-
-**5. Documentar el schema de Prisma con comentarios**
-Los modelos del schema de Prisma pueden incluir comentarios que expliquen campos no obvios. Por ejemplo, qué significa `deviceIp`, cuándo se usa `deletedAt`, o cuáles son los posibles valores de `estado`. Esto hace el schema auto-documentado:
+**3. Documentar el schema de Prisma con comentarios**
+Los modelos pueden incluir comentarios que expliquen campos no obvios:
 ```prisma
 model Reporte {
-  id        Int      @id @default(autoincrement())
-  estado    String   // PENDIENTE | EN_PROCESO | RESUELTO | RECHAZADO
-  deviceIp  String?  // IP del dispositivo, solo para reportes anónimos
-  deletedAt DateTime? // null si no ha sido eliminado (soft delete)
+  id        Int       @id @default(autoincrement())
+  estado    String    // PENDIENTE | EN_PROCESO | RESUELTO | RECHAZADO
+  deviceIp  String?   // Solo para reportes anónimos (control de límite diario)
+  deletedAt DateTime? // null = activo, non-null = soft deleted
 }
 ```
+
+**4. Verificar status codes consistentes en todos los módulos**
+Con la clase `AppError` ya en su lugar, es buen momento para revisar que todos los módulos usen los mismos códigos para situaciones similares: `404` para "no encontrado", `403` para "sin permiso", `400` para "datos inválidos", `429` para "límite excedido".
+
+**5. Agregar el campo `updatedAt` con `@updatedAt` en los modelos de Prisma**
+Si no está ya, agregar `updatedAt DateTime @updatedAt` a los modelos principales permite saber cuándo fue la última modificación sin esfuerzo adicional — útil para el historial y para debugging.

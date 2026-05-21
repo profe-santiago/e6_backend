@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '../src/lib/prisma';
 
 async function main() {
-  const passwordHash = await bcrypt.hash('SuperAdmin2024!', 10);
+  const passwordHash = await bcrypt.hash('B1n4r10$', 10);
 
   const superadmin = await prisma.usuario.create({
     data: {

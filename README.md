@@ -321,9 +321,7 @@ Logout → POST /auth/logout → refreshToken revocado en BD
 | `JWT_SECRET` | Clave para firmar los JWT | `clave_secreta_larga` |
 | `JWT_EXPIRES_IN` | Duración del access token | `30m` |
 | `REFRESH_TOKEN_EXPIRES_DAYS` | Duración del refresh token | `7` |
-```
- 
----
+
 
 ## Scripts disponibles
  

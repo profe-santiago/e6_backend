@@ -14,7 +14,12 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-// Tipo inferido aytomáticamente desde el schema
+export const refreshSchema = z.object({
+  refreshToken: z.string().min(1, 'refreshToken requerido'),
+});
+
+// Tipo inferido automáticamente desde el schema
+export type RefreshInput = z.infer<typeof refreshSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 

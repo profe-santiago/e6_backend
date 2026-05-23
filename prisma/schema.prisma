@@ -125,6 +125,7 @@ model Usuario {
   avatarUrl        String?  @db.VarChar(500)
   rol              Rol      @default(USUARIO)
   activo           Boolean  @default(true)
+  refreshTokens    RefreshToken[]
   municipioId      Int?
   municipio        Municipio? @relation(fields: [municipioId], references: [id])
   comunidadId      Int?
@@ -265,4 +266,16 @@ model AsignacionCuadrilla {
   asignadoPor  Int
   usuario      Usuario          @relation(fields: [asignadoPor], references: [id])
   @@map("asignaciones_cuadrilla")
+}
+
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique
+  usuarioId Int
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("refresh_tokens")
 }

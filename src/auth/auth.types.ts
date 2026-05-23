@@ -10,6 +10,7 @@ export interface TokenPayload {
 
 export interface AuthResponse {
   token: string;
+  refreshToken: string;
   usuario: {
     id: number;
     email: string;

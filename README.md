@@ -1,176 +1,3 @@
-
-Claude está respondiendo
-
-feedback_equipo6_ReportesCiudadanos.md
-166 líneas
-
-md
-
-KyriuxDev/e6_backend
-master
-
-GITHUB
-
-Que falta?
-
-20 may
-
-Inventarió componentes faltantes del proyecto
-Inventarió componentes faltantes del proyecto
-Revisando el feedback original contra lo que ya está en el repositorio, los pendientes críticos ya están resueltos:
-
-Tests, Docker y CI/CD estaban en 0 y eran las prioridades máximas. Ahora tienes tests/unit/irsu.utils.test.ts con 20+ casos, tests/integration/auth.test.ts y tests/integration/reportes.test.ts, un Dockerfile multistage, docker-compose.yml, docker-entrypoint.sh, y el workflow .github/workflows/ci.yml completo con PostgreSQL como servicio.
-
-Lo que todavía falta según el feedback:
-
-🔴 Despliegue en la nube (0/10) — No hay URL de producción visible. Railway soporta Node.js + PostgreSQL y el seed tardará varios minutos — documentarlo. Es el único pendiente crítico que no está resuelto.
-
-🟡 Diagrama de arquitectura y ER en README (afecta Documentación 7/10) — El README describe la arquitectura en texto pero falta un diagrama visual (Mermaid, draw.io) y un modelo ER — con 12+ entidades sería muy valioso.
-
-🟡 Frontend React Native Expo — No está en el repositorio revisado. Debe incluirse o documentarse su estado.
-
-🟢 Sección de patrones de diseño en README — No hay sección formal que los identifique por nombre, ubicación y justificación. También podrían documentar el patrón Strategy implícito en el cálculo IRSU, que ya está extraído limpiamente en irsu.utils.ts.
-
-🟢 Colección Postman — Falta colección exportada como .json. Tienen Swagger, pero una colección Postman facilita la demo.
-
-En resumen: el trabajo más urgente antes de la presentación es el despliegue en Railway y, si el tiempo lo permite, agregar los diagramas Mermaid al README.
-
-ya está desplegado en la nub, pero el readme esta incompleto, entonces quiero hacer que esté completo, el front también lo tengo en otro repositorio, yya está avvanzado, y tambien como dices podemos hacer la colección de postman
-
-20 may
-
-Identificó tareas pendientes y deliberó qué información solicitar primero
-Identificó tareas pendientes y deliberó qué información solicitar primero
-Perfecto, con el código que ya tengo puedo generar todo. Solo necesito un dato antes de armar el README completo:
-
-Mientras tanto te cuento el plan completo para que sepas qué vamos a generar:
-
-README.md completo con diagrama de arquitectura en Mermaid, modelo ER en Mermaid, sección de patrones de diseño identificados por nombre y ubicación, URLs de producción, y estado del frontend.
-
-Colección Postman como .json exportable — con todos los endpoints organizados por módulo (auth, reportes, comunidades, alertas, IRSU, cuadrillas, etc.), variables de entorno para el token JWT, y ejemplos de request body para cada uno.
-
-Escríbeme la URL cuando la tengas y arrancamos.
-
-P: ¿Cuál es la URL de producción del backend desplegado?
-R: e6backend-production.up.railway.app
-
-20 may
-
-Orchestrated comprehensive documentation y colección API
-Orchestrated comprehensive documentation y colección API
-Ahora la colección Postman:
-
-
-Creó un archivo, archivo leído
-Creó un archivo, archivo leído
-Aquí tienes los dos archivos listos:
-
-README.md — incluye todo lo que faltaba:
-
-URLs de producción (Railway) con tabla de accesos
-Diagrama de capas en Mermaid (flujo request → middleware → router → service → repository → DB)
-Modelo ER en Mermaid con las 14 entidades y sus relaciones
-Sección de patrones de diseño con 8 patrones identificados por nombre, archivo exacto y justificación
-Instrucciones de Docker y de tests
-Referencia a la colección Postman
-IRSU_API.postman_collection.json — colección completa con:
-
-~50 endpoints organizados en 12 carpetas (Auth, Perfil, Usuarios, Reportes, Alertas, IRSU, Cuadrillas, etc.)
-Variables de colección: base_url apuntando a producción, token, reporte_id, etc.
-Script automático en Register y Login que guarda el JWT en {{token}} para que los demás requests funcionen de inmediato
-Queries opcionales comentados con los filtros disponibles de cada endpoint
-Para importar la colección: Postman → Import → selecciona el .json.
-
-
-Readme
-Documento · MD 
-
-Irsu api.postman collection
-Código · JSON 
-donde pongo lo de postman?
-
-20 may
-
-Verificó la ubicación recomendada del archivo Postman
-Verificó la ubicación recomendada del archivo Postman
-En la raíz del repositorio, junto al README.md:
-
-e6_backend/
-├── README.md
-├── IRSU_API.postman_collection.json   ← aquí
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-├── prisma/
-└── src/
-El README ya hace referencia a ese nombre exacto en la sección de documentación, así que solo es copiar el archivo ahí y hacer commit.
-
-KyriuxDev/frontend
-main
-
-GITHUB
-
-bien te comparto mi frontend y tambien explicame como pruebo lo de postman
-
-12:16 a.m.
-
-Analizó frontend React Native y estructuró guía Postman
-Analizó frontend React Native y estructuró guía Postman
-Con el frontend ya puedo completar el README también. Primero te explico Postman, que es lo más urgente.
-
-Cómo usar la colección Postman
-1. Importar
-
-Abre Postman → botón Import (arriba a la izquierda) → arrastra el archivo IRSU_API.postman_collection.json o selecciónalo. Aparecerá la carpeta "IRSU — Sistema de Reportes Ciudadanos" con todas las subcarpetas.
-
-2. El token se guarda solo
-
-La colección tiene un script automático en los requests de Login y Registrar ciudadano. Cuando el request devuelve 200/201, guarda el JWT en la variable {{token}}. No tienes que hacer nada manual.
-
-3. Flujo básico para probar
-
-1. Abre Auth → Login
-2. Cambia el body a:  superadmin@irsu.mx / SuperAdmin2024!
-3. Send → el token se guarda automáticamente en {{token}}
-4. Todos los demás requests ya lo usan con Bearer {{token}}
-4. Variables de la colección
-
-Haz clic en los tres puntos de la colección → Edit → pestaña Variables. Verás:
-
-Variable	Valor actual	Para qué sirve
-base_url	https://e6backend-production.up.railway.app	Ya apunta a producción
-token	(vacío, se llena al hacer login)	JWT para autenticación
-reporte_id	1	Cambia al ID de un reporte real
-comunidad_slug	(vacío)	Llena con el slug de una comunidad
-5. Orden recomendado para la demo
-
-Auth → Login                          (guarda token)
-Reportes → Listar reportes            (no requiere token)
-Reportes → Crear reporte (anónimo)    (no requiere token)
-IRSU → Recalcular IRSU de todas       (requiere SUPER_ADMIN)
-Alertas → Listar alertas              (requiere token)
-Cuadrillas → Crear cuadrilla          (requiere ADMIN+)
-Cuadrillas → Asignar cuadrilla a reporte
-Ahora actualizo el README para incluir el frontend:
-
-
-Ejecutó un comando, editó un archivo, archivo leído
-Ejecutó un comando, editó un archivo, archivo leído
-El README ya incluye la sección del frontend con el stack real, la variable de entorno, las pantallas por rol y las características principales que vi en el código.
-
-Un detalle importante que noté: en src/lib/axios.ts el baseURL se lee de EXPO_PUBLIC_API_URL, y en src/utils/getImageUrl.ts y src/hooks/useProfile.ts le quitan el sufijo /api/v1 para construir las URLs de imágenes y del perfil (/api/perfil/me). Asegúrate de que esa variable esté configurada exactamente como https://e6backend-production.up.railway.app/api/v1 en el .env del frontend, o esas rutas van a fallar.
-
-
-Readme
-Documento · MD 
-ya está en railway, pero no tenngo comunidades activas, como las activo, ya que soloo quiero activas las de oaxaca
-
-12:23 a.m.
-
-
-
-Claude es IA y puede cometer errores. Por favor, verifica nuevamente las respuestas.
-Readme · MD
 # Sistema de Reportes Ciudadanos Geolocalizados — Backend
  
 API REST para la gestión de reportes ciudadanos con geolocalización, sistema de votos, historial de cambios de estado, alertas automáticas y el índice **IRSU** (Índice de Riesgo Social Urbano) por comunidad.
@@ -465,6 +292,39 @@ erDiagram
  
 ---
  
+## Autenticación
+ 
+El sistema usa **JWT de corta duración + Refresh Token** almacenado en base de datos.
+ 
+| Endpoint | Método | Auth | Descripción |
+|---|---|---|---|
+| `/api/v1/auth/register` | POST | No | Registro de ciudadano |
+| `/api/v1/auth/login` | POST | No | Login — retorna `token` y `refreshToken` |
+| `/api/v1/auth/refresh` | POST | No | Renueva el access token sin contraseña |
+| `/api/v1/auth/logout` | POST | No | Revoca el refresh token |
+ 
+### Flujo de tokens
+ 
+```
+Login → { token (JWT, 30min), refreshToken (UUID, 7 días) }
+ 
+Token expirado → POST /auth/refresh → nuevo token + nuevo refreshToken
+                                      (el anterior queda revocado — rotación)
+ 
+Logout → POST /auth/logout → refreshToken revocado en BD
+```
+ 
+### Variables de entorno relacionadas
+ 
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `JWT_SECRET` | Clave para firmar los JWT | `clave_secreta_larga` |
+| `JWT_EXPIRES_IN` | Duración del access token | `30m` |
+| `REFRESH_TOKEN_EXPIRES_DAYS` | Duración del refresh token | `7` |
+```
+ 
+---
+
 ## Scripts disponibles
  
 ```bash

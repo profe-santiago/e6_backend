@@ -38,6 +38,9 @@ services:
       APP_DESCRIPTION:          Sistema de Reportes Ciudadanos Geolocalizados
       APP_VERSION:              1.0.0
       LIMITE_REPORTES_ANONIMO:  3
+      CLOUDINARY_CLOUD_NAME:    duu0t49mv
+      CLOUDINARY_API_KEY:       612746898342626
+      CLOUDINARY_API_SECRET:    tFRrLBRxw2xluLWCw6SyIjRm3AI
       # Cambiar a "true" SOLO la primera vez para cargar datos geográficos (~5-10 min)
       SEED_DATA:                "false"
     ports:

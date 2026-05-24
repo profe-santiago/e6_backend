@@ -49,7 +49,7 @@ export const reporteFotoService = {
       throw new AppError(400, `Máximo ${MAX_FOTOS} fotos`);
     }
 
-    const urls = files.map((file) => `/uploads/reports/${file.filename}`);
+    const urls = files.map((file) => file.path);
     await reporteFotoRepository.addMany(reporteId, urls);
     return reporteFotoRepository.findByReporte(reporteId);
   },

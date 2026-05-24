@@ -1,38 +1,41 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import multer from 'multer';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { cloudinary } from '../lib/cloudinary';
 
-const uploadDir = path.resolve("uploads/reports");
+const reportesStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:         'irsu/reportes',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, quality: 'auto' }],
+  } as any,
+});
 
-if (!fs.existsSync(uploadDir)) {
-	fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-	destination: (_, __, cb) => {
-		cb(null, uploadDir);
-	},
-
-	filename: (_, file, cb) => {
-		const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-
-		cb(null, `${unique}${path.extname(file.originalname)}`);
-	},
+const avatarsStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:         'irsu/avatars',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 400, height: 400, crop: 'fill', quality: 'auto' }],
+  } as any,
 });
 
 export const uploadReporteFotos = multer({
-	storage,
+  storage: reportesStorage,
+  limits:  { files: 10, fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Solo imágenes'));
+    }
+    cb(null, true);
+  },
+});
 
-	limits: {
-		files: 10,
-		fileSize: 5 * 1024 * 1024,
-	},
-
-	fileFilter: (_, file, cb) => {
-		if (!file.mimetype.startsWith("image/")) {
-			return cb(new Error("Solo imágenes"));
-		}
-
-		cb(null, true);
-	},
+export const uploadAvatar = multer({
+  storage: avatarsStorage,
+  limits:  { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    allowed.includes(file.mimetype) ? cb(null, true) : cb(new Error('Formato no permitido'));
+  },
 });

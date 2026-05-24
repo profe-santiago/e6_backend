@@ -38,7 +38,7 @@ export const perfilService = {
 
   async actualizarAvatar(usuarioId: number, file: Express.Multer.File | undefined) {
     if (!file) throw new AppError(400, 'No se recibió ningún archivo');
-    const avatarUrl = `/uploads/avatars/${file.filename}`;
+    const avatarUrl = file.path;
     await perfilRepository.actualizarAvatar(usuarioId, avatarUrl);
     return { avatarUrl };
   },

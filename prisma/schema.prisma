@@ -6,67 +6,12 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Rol {
-  SUPER_ADMIN   // Acceso total al sistema
-  ADMIN         // Administrador de un municipio
-  COORDINADOR   // Coordinador de una comunidad específica
-  USUARIO       // Ciudadano registrado
-  OPERADOR      // Operador de cuadrilla — solo ve y actualiza sus asignaciones
-}
-
-enum Categoria {
-  INFRAESTRUCTURA
-  VIALIDAD
-  BLOQUEOS
-  SEGURIDAD
-}
-
-enum EstadoReporte {
-  PENDIENTE   // Recién creado, sin atender
-  EN_PROCESO  // Siendo atendido por una autoridad
-  RESUELTO    // Problema resuelto
-  RECHAZADO   // Reporte inválido o duplicado
-}
-
-enum FuenteReporte {
-  APP_MOVIL
-  WEB
-  TWITTER
-  FACEBOOK
-}
-
-enum EstadoComunidad {
-  PENDIENTE    // Recién creada, pendiente de aprobación
-  ACTIVO       // Comunidad operativa y visible en el mapa
-  RECHAZADO    // Solicitud de comunidad rechazada
-  SUSPENDIDO   // Comunidad temporalmente inactiva
-}
-
-enum NivelAlerta {
-  AMARILLA  // IRSU > 50: situación de atención moderada
-  ROJA      // IRSU > 100: situación crítica
-}
-
-enum EstadoAlerta {
-  ACTIVA       // Generada automáticamente, sin atender
-  EN_ATENCION  // Tomada por un coordinador o admin
-  CERRADA      // Problema resuelto
-}
-
-
-enum EstadoAsignacion {
-  ASIGNADA
-  EN_CURSO
-  COMPLETADA
-  CANCELADA
-}
-
-
 model Estado {
   id         Int         @id @default(autoincrement())
   nombre     String      @db.VarChar(100)
   clave      String      @unique @db.Char(2)
   municipios Municipio[]
+
   @@map("estados")
 }
 
@@ -75,11 +20,12 @@ model Municipio {
   nombre          String         @db.VarChar(200)
   clave           String         @unique @db.Char(5)
   estadoId        Int
-  estado          Estado         @relation(fields: [estadoId], references: [id])
-  comunidades     Comunidad[]
   codigosPostales CodigoPostal[]
+  comunidades     Comunidad[]
+  cuadrillas      Cuadrilla[]
+  estado          Estado         @relation(fields: [estadoId], references: [id])
   usuarios        Usuario[]
-  cuadrillas    Cuadrilla[]
+
   @@map("municipios")
 }
 
@@ -90,150 +36,171 @@ model CodigoPostal {
   municipioId Int
   municipio   Municipio   @relation(fields: [municipioId], references: [id])
   comunidades Comunidad[]
+
   @@index([codigo])
   @@map("codigos_postales")
 }
 
 model Comunidad {
-  id            Int             @id @default(autoincrement())
-  nombre        String          @db.VarChar(200)
-  slug          String          @unique @db.VarChar(250)
-  status        EstadoComunidad @default(PENDIENTE)
-  irsuActual    Float           @default(0)
-  color         String          @default("#3B82F6") @db.VarChar(7)
-  logoUrl       String?
-  municipioId   Int
-  municipio     Municipio       @relation(fields: [municipioId], references: [id])
-  cpId          Int?
-  codigoPostal  CodigoPostal?   @relation(fields: [cpId], references: [id])
-  usuarios         Usuario[]
+  id                Int                @id @default(autoincrement())
+  nombre            String             @db.VarChar(200)
+  slug              String             @unique @db.VarChar(250)
+  status            EstadoComunidad    @default(PENDIENTE)
+  irsuActual        Float              @default(0)
+  color             String             @default("#3B82F6") @db.VarChar(7)
+  logoUrl           String?
+  municipioId       Int
+  cpId              Int?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  alertas           Alerta[]
+  codigoPostal      CodigoPostal?      @relation(fields: [cpId], references: [id])
+  municipio         Municipio          @relation(fields: [municipioId], references: [id])
+  irsuHistorial     IrsuHistorial[]
+  reportes          Reporte[]
   usuariosComunidad UsuarioComunidad[]
-  reportes         Reporte[]
-  alertas       Alerta[]
-  irsuHistorial IrsuHistorial[]
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  usuarios          Usuario[]
+
   @@unique([municipioId, nombre])
   @@map("comunidades")
 }
 
 model Usuario {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique @db.VarChar(150)
-  passwordHash     String
-  nombre           String?  @db.VarChar(100)
-  avatarUrl        String?  @db.VarChar(500)
-  rol              Rol      @default(USUARIO)
-  activo           Boolean  @default(true)
-  refreshTokens    RefreshToken[]
-  municipioId      Int?
-  municipio        Municipio? @relation(fields: [municipioId], references: [id])
-  comunidadId      Int?
-  comunidad        Comunidad? @relation(fields: [comunidadId], references: [id])
-  comunidades      UsuarioComunidad[]
-  reportes         Reporte[]
-  votos            Voto[]
-  historial        ReporteHistorial[]
-  alertasAsignadas Alerta[]
+  id                    Int                   @id @default(autoincrement())
+  email                 String                @unique @db.VarChar(150)
+  passwordHash          String
+  nombre                String?               @db.VarChar(100)
+  rol                   Rol                   @default(USUARIO)
+  activo                Boolean               @default(true)
+  municipioId           Int?
+  comunidadId           Int?
+  createdAt             DateTime              @default(now())
+  avatarUrl             String?               @db.VarChar(500)
+  alertasAsignadas      Alerta[]
   asignacionesCuadrilla AsignacionCuadrilla[]
-  createdAt        DateTime @default(now())
+  historial             ReporteHistorial[]
+  reportes              Reporte[]
+  comunidades           UsuarioComunidad[]
+  comunidad             Comunidad?            @relation(fields: [comunidadId], references: [id])
+  municipio             Municipio?            @relation(fields: [municipioId], references: [id])
+  votos                 Voto[]
+  refreshTokens         RefreshToken[]
+
   @@map("usuarios")
 }
 
+model RefreshToken {
+  id         Int       @id @default(autoincrement())
+  token      String    @unique
+  usuarioId  Int
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
 model Reporte {
-  id           Int           @id @default(autoincrement())
-  titulo       String        @db.VarChar(120)
-  descripcion  String?       @db.Text
+  id           Int                   @id @default(autoincrement())
+  titulo       String                @db.VarChar(120)
+  descripcion  String?
   gravedad     Int
   categoria    Categoria
-  estado       EstadoReporte @default(PENDIENTE)
-  fuente       FuenteReporte @default(APP_MOVIL)
+  estado       EstadoReporte         @default(PENDIENTE)
+  fuente       FuenteReporte         @default(APP_MOVIL)
   latitud      Float
   longitud     Float
-  deviceIp     String?       @db.VarChar(45)
-  sincronizado Boolean       @default(true)
-  voteCount    Int           @default(0)
+  deviceIp     String?               @db.VarChar(45)
+  sincronizado Boolean               @default(true)
+  voteCount    Int                   @default(0)
   usuarioId    Int?
-  usuario      Usuario?      @relation(fields: [usuarioId], references: [id])
   comunidadId  Int
-  comunidad    Comunidad     @relation(fields: [comunidadId], references: [id])
-  fotos        ReporteFoto[]
-  votos        Voto[]
-  historial    ReporteHistorial[]
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime              @default(now())
   deletedAt    DateTime?
-  asignaciones  AsignacionCuadrilla[]
+  asignaciones AsignacionCuadrilla[]
+  fotos        ReporteFoto[]
+  historial    ReporteHistorial[]
+  comunidad    Comunidad             @relation(fields: [comunidadId], references: [id])
+  usuario      Usuario?              @relation(fields: [usuarioId], references: [id])
+  votos        Voto[]
+
   @@map("reportes")
 }
 
 model ReporteFoto {
-  id        Int      @id @default(autoincrement())
-  url       String   @db.Text
+  id        Int     @id @default(autoincrement())
+  url       String
   reporteId Int
-  reporte   Reporte  @relation(fields: [reporteId], references: [id])
+  reporte   Reporte @relation(fields: [reporteId], references: [id])
+
   @@map("reporte_fotos")
 }
 
 model Voto {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   usuarioId Int
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
   reporteId Int
-  reporte   Reporte  @relation(fields: [reporteId], references: [id])
+  reporte   Reporte @relation(fields: [reporteId], references: [id])
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
   @@unique([usuarioId, reporteId])
   @@map("votos")
 }
 
 model ReporteHistorial {
-  id             Int           @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   reporteId      Int
-  reporte        Reporte       @relation(fields: [reporteId], references: [id])
   cambiadoPor    Int
-  usuario        Usuario       @relation(fields: [cambiadoPor], references: [id])
   estadoAnterior EstadoReporte?
   estadoNuevo    EstadoReporte
-  nota           String?       @db.Text
-  createdAt      DateTime      @default(now())
+  nota           String?
+  createdAt      DateTime       @default(now())
+  usuario        Usuario        @relation(fields: [cambiadoPor], references: [id])
+  reporte        Reporte        @relation(fields: [reporteId], references: [id])
+
   @@map("reporte_historial")
 }
 
 model Alerta {
   id          Int          @id @default(autoincrement())
   comunidadId Int
-  comunidad   Comunidad    @relation(fields: [comunidadId], references: [id])
   categoria   Categoria
   nivel       NivelAlerta
   estado      EstadoAlerta @default(ACTIVA)
   irsuValor   Float
   asignadoA   Int?
-  usuario     Usuario?     @relation(fields: [asignadoA], references: [id])
   atendidaEn  DateTime?
   cerradaEn   DateTime?
   createdAt   DateTime     @default(now())
+  usuario     Usuario?     @relation(fields: [asignadoA], references: [id])
+  comunidad   Comunidad    @relation(fields: [comunidadId], references: [id])
+
   @@map("alertas")
 }
 
 model IrsuHistorial {
   id               Int        @id @default(autoincrement())
   comunidadId      Int
-  comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
   categoria        Categoria?
   valor            Float
   totalReportes    Int
   gravedadPromedio Float
   tendencia        Float
   createdAt        DateTime   @default(now())
+  comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
+
   @@map("irsu_historial")
 }
 
 model UsuarioComunidad {
   id          Int       @id @default(autoincrement())
   usuarioId   Int
-  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   comunidadId Int
-  comunidad   Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
   esPrincipal Boolean   @default(false)
   creadoEn    DateTime  @default(now())
+  comunidad   Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@unique([usuarioId, comunidadId])
   @@map("usuario_comunidades")
@@ -242,40 +209,84 @@ model UsuarioComunidad {
 model Cuadrilla {
   id           Int                   @id @default(autoincrement())
   nombre       String                @db.VarChar(100)
-  descripcion  String?               @db.Text
+  descripcion  String?
   activa       Boolean               @default(true)
   municipioId  Int
-  municipio    Municipio             @relation(fields: [municipioId], references: [id])
-  asignaciones AsignacionCuadrilla[]
   createdAt    DateTime              @default(now())
   updatedAt    DateTime              @updatedAt
+  asignaciones AsignacionCuadrilla[]
+  municipio    Municipio             @relation(fields: [municipioId], references: [id])
+
   @@map("cuadrillas")
 }
 
 model AsignacionCuadrilla {
   id           Int              @id @default(autoincrement())
   cuadrillaId  Int
-  cuadrilla    Cuadrilla        @relation(fields: [cuadrillaId], references: [id])
   reporteId    Int
-  reporte      Reporte          @relation(fields: [reporteId], references: [id])
   estado       EstadoAsignacion @default(ASIGNADA)
-  nota         String?          @db.Text
+  nota         String?
   asignadoEn   DateTime         @default(now())
   iniciadaEn   DateTime?
   completadaEn DateTime?
   asignadoPor  Int
   usuario      Usuario          @relation(fields: [asignadoPor], references: [id])
+  cuadrilla    Cuadrilla        @relation(fields: [cuadrillaId], references: [id])
+  reporte      Reporte          @relation(fields: [reporteId], references: [id])
+
   @@map("asignaciones_cuadrilla")
 }
 
-model RefreshToken {
-  id        Int       @id @default(autoincrement())
-  token     String    @unique
-  usuarioId Int
-  usuario   Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  revokedAt DateTime?
-  createdAt DateTime  @default(now())
+enum Rol {
+  SUPER_ADMIN
+  ADMIN
+  COORDINADOR
+  USUARIO
+  OPERADOR
+}
 
-  @@map("refresh_tokens")
+enum Categoria {
+  INFRAESTRUCTURA
+  VIALIDAD
+  BLOQUEOS
+  SEGURIDAD
+}
+
+enum EstadoReporte {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  RECHAZADO
+}
+
+enum FuenteReporte {
+  APP_MOVIL
+  WEB
+  TWITTER
+  FACEBOOK
+}
+
+enum EstadoComunidad {
+  PENDIENTE
+  ACTIVO
+  RECHAZADO
+  SUSPENDIDO
+}
+
+enum NivelAlerta {
+  AMARILLA
+  ROJA
+}
+
+enum EstadoAlerta {
+  ACTIVA
+  EN_ATENCION
+  CERRADA
+}
+
+enum EstadoAsignacion {
+  ASIGNADA
+  EN_CURSO
+  COMPLETADA
+  CANCELADA
 }

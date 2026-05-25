@@ -111,4 +111,107 @@ describe('[Integration] Auth', () => {
       expect(perfilRes.body.email).toBe(TEST_EMAIL);
     });
   });
+
+  // ── Refresh ───────────────────────────────────────────────────────────────
+  describe('POST /api/v1/auth/refresh', () => {
+    it('200 — emite nuevo token con refreshToken válido', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+
+      const { refreshToken } = loginRes.body;
+      expect(typeof refreshToken).toBe('string');
+
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('refreshToken');
+      expect(res.body.refreshToken).not.toBe(refreshToken); // rotación
+    });
+
+    it('401 — el refreshToken anterior queda revocado tras la rotación', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+
+      const { refreshToken: tokenOriginal } = loginRes.body;
+
+      // Primer uso válido
+      await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken: tokenOriginal });
+
+      // Reutilizar el mismo token debe fallar (ya fue rotado)
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken: tokenOriginal });
+
+      expect(res.status).toBe(401);
+    });
+
+    it('401 — rechaza refreshToken inexistente', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken: 'token-que-no-existe-uuid-falso' });
+
+      expect(res.status).toBe(401);
+    });
+
+    it('400 — rechaza body sin refreshToken', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({});
+
+      expect(res.status).toBe(400);
+    });
+  });
+
+  // ── Logout ────────────────────────────────────────────────────────────────
+  describe('POST /api/v1/auth/logout', () => {
+    it('204 — cierra sesión y revoca el refreshToken', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+
+      const { refreshToken } = loginRes.body;
+
+      const logoutRes = await request(app)
+        .post('/api/v1/auth/logout')
+        .send({ refreshToken });
+
+      expect(logoutRes.status).toBe(204);
+    });
+
+    it('204 — es idempotente: hacer logout dos veces no lanza error', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+
+      const { refreshToken } = loginRes.body;
+
+      await request(app).post('/api/v1/auth/logout').send({ refreshToken });
+      const res = await request(app).post('/api/v1/auth/logout').send({ refreshToken });
+
+      expect(res.status).toBe(204);
+    });
+
+    it('401 — después del logout el refreshToken ya no sirve para renovar', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+
+      const { refreshToken } = loginRes.body;
+
+      await request(app).post('/api/v1/auth/logout').send({ refreshToken });
+
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken });
+
+      expect(res.status).toBe(401);
+    });
+  });
 });

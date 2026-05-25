@@ -74,6 +74,14 @@ describe('normalizar', () => {
     expect(normalizar(55)).toBe(55);
     expect(normalizar(0.5)).toBe(0.5);
   });
+
+  it('valor fraccionario justo encima del máximo se recorta a 100', () => {
+    expect(normalizar(100.001)).toBe(100);
+  });
+
+  it('valor fraccionario negativo se recorta a 0', () => {
+    expect(normalizar(-0.001)).toBe(0);
+  });
 });
 
 // ─── calcularColor ────────────────────────────────────────────────────────────
@@ -91,6 +99,22 @@ describe('calcularColor', () => {
   it('retorna verde (#22C55E) para IRSU < 40', () => {
     expect(calcularColor(0)).toBe('#22C55E');
     expect(calcularColor(39)).toBe('#22C55E');
+  });
+
+  it('frontera inferior amarillo: 39.99 sigue siendo verde', () => {
+    expect(calcularColor(39.99)).toBe('#22C55E');
+  });
+
+  it('frontera exacta amarillo: 40.00 ya es amarillo', () => {
+    expect(calcularColor(40.00)).toBe('#F59E0B');
+  });
+
+  it('frontera inferior rojo: 69.99 sigue siendo amarillo', () => {
+    expect(calcularColor(69.99)).toBe('#F59E0B');
+  });
+
+  it('frontera exacta rojo: 70.00 ya es rojo', () => {
+    expect(calcularColor(70.00)).toBe('#EF4444');
   });
 });
 
@@ -168,5 +192,26 @@ describe('calcularIrsu', () => {
       pesoCategoria: 1.5, totalResueltos: 1000,
     });
     expect(muchoResueltos).toBeLessThan(pocoResueltos);
+  });
+
+  it('no lanza excepción cuando frecuencia y totalResueltos son 0 (protección contra división por cero)', () => {
+    expect(() =>
+      calcularIrsu({ frecuencia: 0, gravedadPromedio: 5, tendencia: 1, pesoCategoria: 1.5, totalResueltos: 0 })
+    ).not.toThrow();
+    expect(
+      calcularIrsu({ frecuencia: 0, gravedadPromedio: 5, tendencia: 1, pesoCategoria: 1.5, totalResueltos: 0 })
+    ).toBe(0);
+  });
+
+  it('tendencia negativa produce el mismo índice que tendencia cero (factorTendencia fijado a 1)', () => {
+    const base = { frecuencia: 8, gravedadPromedio: 3, pesoCategoria: 1.3, totalResueltos: 2 };
+    expect(calcularIrsu({ ...base, tendencia: -5 })).toBe(calcularIrsu({ ...base, tendencia: 0 }));
+  });
+
+  it('resultado tiene máximo 2 decimales — 300/13 se redondea a 23.08', () => {
+    // 10 × 3 × 1 × 1 × (10/13) = 300/13 = 23.076923…
+    const irsu = calcularIrsu({ frecuencia: 10, gravedadPromedio: 3, tendencia: 0, pesoCategoria: 1, totalResueltos: 3 });
+    expect(irsu).toBe(23.08);
+    expect((irsu.toString().split('.')[1] ?? '').length).toBeLessThanOrEqual(2);
   });
 });

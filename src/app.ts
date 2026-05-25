@@ -21,6 +21,7 @@ import { AppError } from './lib/app-error';
 import { perfilRouter } from './perfil/perfil.router';
 import { rankingRouter } from './ranking/ranking.router';
 import { cuadrillaRouter } from './cuadrillas/cuadrilla.router';
+import { estadisticasRouter } from './estadisticas/estadisticas.router';
 
 export const app = express();
 
@@ -63,6 +64,7 @@ app.use('/api/perfil', perfilRouter);
 app.use('/api/v1/ranking', rankingRouter);
 app.use('/uploads', express.static(path.resolve('uploads')));
 app.use('/api/v1/cuadrillas', cuadrillaRouter);
+app.use('/api/v1/estadisticas', estadisticasRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

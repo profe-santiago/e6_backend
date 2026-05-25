@@ -5,40 +5,23 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 
-// ─── Configuración ───────────────────────────────────────────────────────────
-
 const DATA_DIR = path.join(__dirname, 'data');
-const FILE_ESTADOS     = path.join(DATA_DIR, 'Estados.csv');
-const FILE_MUNICIPIOS  = path.join(DATA_DIR, 'Municipios.csv');
-const FILE_COMUNIDADES = path.join(DATA_DIR, 'Comunidades.csv');
-const FILE_CP          = path.join(DATA_DIR, 'CP.txt');
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma  = new PrismaClient({ adapter });
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
 const pad = (val: string, n: number) => val?.trim().padStart(n, '0') || '0'.repeat(n);
 
-function toSlug(text: string, suffix: string): string {
-  return (
-    text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-') + '-' + suffix
-  );
-}
-
-/** Lector para archivos CSV estándar (Estados, Municipios, Comunidades) */
 async function readCsv(filePath: string): Promise<Record<string, string>[]> {
   const rows: Record<string, string>[] = [];
   const rl = readline.createInterface({
     input: fs.createReadStream(filePath, { encoding: 'utf-8' }),
     crlfDelay: Infinity,
   });
-
   let headers: string[] = [];
   for await (const line of rl) {
     if (!line.trim()) continue;
-    if (headers.length === 0) {
+    if (!headers.length) {
       const sep = line.includes('\t') ? '\t' : ',';
       headers = line.split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
       continue;
@@ -51,118 +34,139 @@ async function readCsv(filePath: string): Promise<Record<string, string>[]> {
   return rows;
 }
 
-// ─── Main ────────────────────────────────────────────────────────────────────
-
 async function main() {
-  console.log('Iniciando Seed masivo...\n');
+  console.log('\n🚀 Seed — Sistema IRSU (Oaxaca)\n');
 
-  // 1. ESTADOS
-  console.log('Procesando Estados...');
-  const estadosData = (await readCsv(FILE_ESTADOS)).map(r => ({
-    clave:  pad(r['CVE_ENT'], 2),
-    nombre: r['NOM_ENT'].trim(),
-  }));
-  await prisma.estado.createMany({ data: estadosData, skipDuplicates: true });
-  
-  const estadoMap = new Map<string, number>();
-  (await prisma.estado.findMany()).forEach(e => estadoMap.set(e.clave, e.id));
+  // ── 1. ESTADO DE OAXACA ───────────────────────────────────────────────────
+  console.log('Cargando estado de Oaxaca...');
+  const todosEstados = await readCsv(path.join(DATA_DIR, 'Estados.csv'));
+  const oaxacaRow    = todosEstados.find(r => pad(r['CVE_ENT'], 2) === '20');
+  if (!oaxacaRow) throw new Error('No se encontró Oaxaca en Estados.csv');
 
-  // 2. MUNICIPIOS
-  console.log('Procesando Municipios...');
-  const municipiosData = (await readCsv(FILE_MUNICIPIOS))
-    .filter(r => r['CVE_ENT'] && r['CVE_MUN'])
-    .map(r => {
-      const cvEnt = pad(r['CVE_ENT'], 2);
-      return { 
-        clave: cvEnt + pad(r['CVE_MUN'], 3), 
-        nombre: r['NOM_MUN'].trim(), 
-        estadoId: estadoMap.get(cvEnt)! 
-      };
-    }).filter(m => m.estadoId);
-
-  await prisma.municipio.createMany({ data: municipiosData, skipDuplicates: true });
-  
-  const municipioMap = new Map<string, number>();
-  (await prisma.municipio.findMany()).forEach(m => municipioMap.set(m.clave, m.id));
-
-  // 3. COMUNIDADES
-  console.log('🏘️  Procesando Comunidades...');
-  const comunidadesRaw = (await readCsv(FILE_COMUNIDADES))
-    .filter(r => r['CVE_ENT'] && r['CVE_MUN'] && r['NOM_LOC'])
-    .map(r => {
-      const claveM = pad(r['CVE_ENT'], 2) + pad(r['CVE_MUN'], 3);
-      const nombre = r['NOM_LOC'].trim();
-      return { 
-        nombre, 
-        slug: toSlug(nombre, `${claveM}-${pad(r['CVE_LOC'], 4)}`), 
-        municipioId: municipioMap.get(claveM) 
-      };
-    }).filter(c => c.municipioId);
-
-  const comboSeen = new Set<string>();
-  const comunidadesUnicas = comunidadesRaw.filter(c => {
-    const key = `${c.municipioId}-${c.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`;
-    if (comboSeen.has(key)) return false;
-    comboSeen.add(key);
-    return true;
+  await prisma.estado.upsert({
+    where:  { clave: '20' },
+    update: {},
+    create: { clave: '20', nombre: oaxacaRow['NOM_ENT'].trim() },
   });
+  const estado = await prisma.estado.findUnique({ where: { clave: '20' } });
+  console.log(`Estado: ${estado!.nombre} (id: ${estado!.id})`);
 
-  for (let i = 0; i < comunidadesUnicas.length; i += 2000) {
-    await prisma.comunidad.createMany({
-      data: comunidadesUnicas.slice(i, i + 2000) as any,
-      skipDuplicates: true,
-    });
-  }
+  // ── 2. MUNICIPIOS DE OAXACA ───────────────────────────────────────────────
+  console.log('Cargando municipios de Oaxaca...');
+  const municipiosOax = (await readCsv(path.join(DATA_DIR, 'Municipios_oaxaca.csv')))
+    .map(r => ({
+      clave:    '20' + pad(r['CVE_MUN'], 3),
+      nombre:   r['NOM_MUN'].trim(),
+      estadoId: estado!.id,
+    }));
 
-  // 4. CÓDIGOS POSTALES (SEPOMEX) - LÓGICA REPARADA
-  console.log('Procesando Códigos Postales (CP.txt)...');
-  
-  const cpRows: any[] = [];
+  await prisma.municipio.createMany({ data: municipiosOax, skipDuplicates: true });
+  const municipios  = await prisma.municipio.findMany({ where: { estadoId: estado!.id } });
+  const municipioMap = new Map<string, number>();
+  municipios.forEach(m => municipioMap.set(m.clave, m.id));
+  console.log(`${municipios.length} municipios cargados`);
+
+  // ── 3. CÓDIGOS POSTALES (CP_oaxaca.txt) ───────────────────────────────────
+  console.log('Cargando códigos postales...');
+  const cpRows: { codigo: string; colonia: string; municipioId: number }[] = [];
+
   const rlCP = readline.createInterface({
-    input: fs.createReadStream(FILE_CP, { encoding: 'latin1' }),
+    input: fs.createReadStream(path.join(DATA_DIR, 'CP_oaxaca.txt'), { encoding: 'latin1' }),
     crlfDelay: Infinity,
   });
 
-  let cpHeaders: string[] = [];
+  let cpHeader = true;
   for await (const line of rlCP) {
-    // Saltamos avisos legales hasta encontrar la cabecera real
-    if (!cpHeaders.length) {
-      if (line.includes('d_codigo')) {
-        cpHeaders = line.split('|').map(h => h.trim());
-      }
-      continue;
-    }
+    if (cpHeader) { cpHeader = false; continue; }
+    const cols = line.split('|');
+    if (cols.length < 12) continue;
 
-    const values = line.split('|');
-    if (values.length < 10) continue;
+    const codigo    = pad(cols[0].trim(), 5);
+    const colonia   = cols[1].trim();
+    const cveMun    = '20' + cols[11].trim().padStart(3, '0');
+    const municipioId = municipioMap.get(cveMun);
 
-    const row: any = {};
-    cpHeaders.forEach((h, i) => { row[h] = values[i] || ''; });
-    
-    const claveM = pad(row['c_estado'], 2) + pad(row['c_mnpio'], 3);
-    const mId = municipioMap.get(claveM);
-
-    if (mId) {
-      cpRows.push({
-        codigo: pad(row['d_codigo'], 5),
-        colonia: row['d_asenta'].trim(),
-        municipioId: mId
-      });
+    if (municipioId && codigo && colonia) {
+      cpRows.push({ codigo, colonia, municipioId });
     }
   }
 
-  console.log(`   Insertando ${cpRows.length} códigos postales...`);
   for (let i = 0; i < cpRows.length; i += 5000) {
     await prisma.codigoPostal.createMany({
       data: cpRows.slice(i, i + 5000),
       skipDuplicates: true,
     });
-    process.stdout.write(`\r   Progreso CP: ${Math.min(i + 5000, cpRows.length)}/${cpRows.length}`);
+    process.stdout.write(`\r   CPs: ${Math.min(i + 5000, cpRows.length)}/${cpRows.length}`);
+  }
+  console.log(`\n${cpRows.length} códigos postales cargados`);
+
+  // ── 4. COMUNIDADES (comunidades_oaxaca.csv) ───────────────────────────────
+  console.log('Cargando comunidades...');
+
+  // Cargar CPs en memoria para hacer match por codigo+colonia
+  const cpsEnBD = await prisma.codigoPostal.findMany({
+    select: { id: true, codigo: true, colonia: true },
+  });
+  const cpMap = new Map<string, number>();
+  for (const cp of cpsEnBD) {
+    const norm = cp.colonia.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    cpMap.set(`${cp.codigo}-${norm}`, cp.id);
   }
 
-  console.log('\n\n✅ Seed completado con éxito.');
+  const rlCom = readline.createInterface({
+    input: fs.createReadStream(path.join(DATA_DIR, 'comunidades_oaxaca.csv'), { encoding: 'utf-8' }),
+    crlfDelay: Infinity,
+  });
+
+  let comHeader = true;
+  let buffer: any[] = [];
+  let creadas = 0;
+  let sinCpId = 0;
+  const slugsSeen = new Set<string>();
+
+  const flush = async () => {
+    if (!buffer.length) return;
+    await prisma.comunidad.createMany({ data: buffer, skipDuplicates: true });
+    creadas += buffer.length;
+    buffer   = [];
+    process.stdout.write(`\r   Comunidades: ${creadas}`);
+  };
+
+  for await (const line of rlCom) {
+    if (comHeader) { comHeader = false; continue; }
+    const cols = line.trim().split(',');
+    if (cols.length < 5) continue;
+
+    const [cp, nombre, , cveMun, slugBase] = cols;
+    const municipioId = municipioMap.get('20' + cveMun.padStart(3, '0'));
+    if (!municipioId) continue;
+
+    const norm  = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const cpId  = cpMap.get(`${cp.padStart(5, '0')}-${norm}`);
+    if (!cpId) sinCpId++;
+
+    let slug = slugBase.trim();
+    if (slugsSeen.has(slug)) slug = `${slug}-${creadas + buffer.length}`;
+    slugsSeen.add(slug);
+
+    buffer.push({
+      nombre,
+      slug,
+      status:     'ACTIVO',
+      municipioId,
+      cpId:       cpId ?? undefined,
+      irsuActual: 0,
+      color:      '#3B82F6',
+    });
+
+    if (buffer.length >= 500) await flush();
+  }
+  await flush();
+
+  console.log(`\n${creadas} comunidades creadas (${sinCpId} sin cpId)`);
+  console.log('\nSeed completado.\n');
 }
 
 main()
-  .catch(e => { console.error('\n❌ Error:', e); process.exit(1); })
+  .catch(e => { console.error('\nError:', e); process.exit(1); })
   .finally(() => prisma.$disconnect());

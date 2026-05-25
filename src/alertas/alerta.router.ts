@@ -59,7 +59,8 @@ alertaRouter.use(authenticate);
  */
 alertaRouter.get(
   '/',
-  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  authenticate,
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR', 'USUARIO'),
   async (req: Request, res: Response): Promise<void> => {
     const parsed = filtrosAlertaSchema.safeParse(req.query);
     if (!parsed.success) {
@@ -93,7 +94,8 @@ alertaRouter.get(
  */
 alertaRouter.get(
   '/:id',
-  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
+  authenticate,
+  authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR', 'USUARIO'),
   async (req: Request, res: Response): Promise<void> => {
     const parsed = idParamSchema.safeParse(req.params);
     if (!parsed.success) {
@@ -129,6 +131,7 @@ alertaRouter.get(
  */
 alertaRouter.patch(
   '/:id/tomar',
+  authenticate,
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
   async (req: Request, res: Response): Promise<void> => {
     const parsed = idParamSchema.safeParse(req.params);
@@ -178,6 +181,7 @@ alertaRouter.patch(
  */
 alertaRouter.patch(
   '/:id/asignar',
+  authenticate,
   authorize('SUPER_ADMIN', 'ADMIN'),
   async (req: Request, res: Response): Promise<void> => {
     const idParsed = idParamSchema.safeParse(req.params);
@@ -185,13 +189,11 @@ alertaRouter.patch(
       res.status(400).json({ errors: idParsed.error.flatten().fieldErrors });
       return;
     }
-
     const bodyParsed = asignarAlertaSchema.safeParse(req.body);
     if (!bodyParsed.success) {
       res.status(400).json({ errors: bodyParsed.error.flatten().fieldErrors });
       return;
     }
-
     const alerta = await alertaService.asignar(
       idParsed.data.id,
       bodyParsed.data,
@@ -234,6 +236,7 @@ alertaRouter.patch(
  */
 alertaRouter.patch(
   '/:id/cerrar',
+  authenticate,
   authorize('SUPER_ADMIN', 'ADMIN', 'COORDINADOR'),
   async (req: Request, res: Response): Promise<void> => {
     const idParsed = idParamSchema.safeParse(req.params);
@@ -241,14 +244,11 @@ alertaRouter.patch(
       res.status(400).json({ errors: idParsed.error.flatten().fieldErrors });
       return;
     }
-
-    // La nota es opcional, validamos si viene
     const bodyParsed = cerrarAlertaSchema.safeParse(req.body);
     if (!bodyParsed.success) {
       res.status(400).json({ errors: bodyParsed.error.flatten().fieldErrors });
       return;
     }
-
     const alerta = await alertaService.cerrar(idParsed.data.id, req.user!);
     res.json(alerta);
   }

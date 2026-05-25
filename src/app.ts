@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { config } from './config';
@@ -17,7 +18,10 @@ import { reporteHistorialRouter } from './reporte-historial/reporte-historial.ro
 import { alertaRouter } from './alertas/alerta.router';
 import { irsuRouter } from './irsu/irsu.router';
 import { AppError } from './lib/app-error';
-
+import { perfilRouter } from './perfil/perfil.router';
+import { rankingRouter } from './ranking/ranking.router';
+import { cuadrillaRouter } from './cuadrillas/cuadrilla.router';
+import { estadisticasRouter } from './estadisticas/estadisticas.router';
 
 export const app = express();
 
@@ -34,7 +38,9 @@ const swaggerSpec = swaggerJsdoc({
       },
     },
   },
-  apis: ['./src/**/*.router.ts'],
+  apis: process.env.NODE_ENV === 'production'
+  ? ['./dist/**/*.router.js']
+  : ['./src/**/*.router.ts'],
 });
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -49,11 +55,16 @@ app.use('/api/v1/codigos-postales', codigoPostalRouter);
 app.use('/api/v1/comunidades', comunidadRouter);
 app.use('/api/v1/usuarios', usuarioRouter);
 app.use('/api/v1/alertas', alertaRouter);
-app.use('/api/v1/irsu', irsuRouter);;
-app.use('/api/v1/reportes', reporteRouter)
+app.use('/api/v1/irsu', irsuRouter);
+app.use('/api/v1/reportes', reporteRouter);
 app.use('/api/v1/reportes/:reporteId/fotos', reporteFotoRouter);
 app.use('/api/v1/reportes/:reporteId/votos', votoRouter);
 app.use('/api/v1/reportes/:reporteId/historial', reporteHistorialRouter);
+app.use('/api/perfil', perfilRouter);
+app.use('/api/v1/ranking', rankingRouter);
+app.use('/uploads', express.static(path.resolve('uploads')));
+app.use('/api/v1/cuadrillas', cuadrillaRouter);
+app.use('/api/v1/estadisticas', estadisticasRouter);
 
 // Error handler global — Express 5 propaga async errors aquí automáticamente
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -61,7 +72,6 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
     res.status(err.statusCode).json({ error: err.message });
     return;
   }
-  // Errores no controlados
   const message = err instanceof Error ? err.message : 'Error interno del servidor';
   res.status(500).json({ error: message });
 });

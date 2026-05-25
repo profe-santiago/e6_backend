@@ -7,8 +7,12 @@ export const createReporteSchema = z.object({
   gravedad:    z.number().int().min(1).max(5),
   categoria:   z.nativeEnum(Categoria),
   fuente:      z.nativeEnum(FuenteReporte).default('APP_MOVIL'),
-  latitud:     z.number().min(-90).max(90),
-  longitud:    z.number().min(-180).max(180),
+  latitud:     z.number()
+    .min(14.53, { message: 'La latitud debe estar dentro del territorio mexicano (mín 14.53°N)' })
+    .max(32.72, { message: 'La latitud debe estar dentro del territorio mexicano (máx 32.72°N)' }),
+  longitud:    z.number()
+    .min(-118.60, { message: 'La longitud debe estar dentro del territorio mexicano (mín 118.60°O)' })
+    .max(-86.69,  { message: 'La longitud debe estar dentro del territorio mexicano (máx 86.69°O)' }),
   comunidadId: z.number().int().positive(),
   fotos:       z.array(z.string().url()).max(10).optional(),
   sincronizado: z.boolean().default(true),

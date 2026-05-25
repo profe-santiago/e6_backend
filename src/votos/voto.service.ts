@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 import { AppError } from '../lib/app-error';
 import { votoRepository } from './voto.repository';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 import { VotoResumen } from './voto.types';
 
 async function getReporteOr404(reporteId: number) {
@@ -14,14 +14,14 @@ async function getReporteOr404(reporteId: number) {
 }
 
 export const votoService = {
-  getByReporte: async (reporteId: number, user?: JwtPayload): Promise<VotoResumen> => {
+  getByReporte: async (reporteId: number, user?: TokenPayload): Promise<VotoResumen> => {
     await getReporteOr404(reporteId);
     const votos  = await votoRepository.findByReporte(reporteId);
     const yaVote = user ? votos.some((v) => v.usuarioId === user.sub) : false;
     return { total: votos.length, yaVote, usuarios: votos.map((v) => v.usuario) };
   },
 
-  votar: async (reporteId: number, user: JwtPayload) => {
+  votar: async (reporteId: number, user: TokenPayload) => {
     await getReporteOr404(reporteId);
     const existente = await votoRepository.findOne(reporteId, user.sub);
     if (existente) throw new AppError(400, 'Ya votaste por este reporte');
@@ -29,7 +29,7 @@ export const votoService = {
     return { message: 'Voto registrado' };
   },
 
-  quitarVoto: async (reporteId: number, user: JwtPayload) => {
+  quitarVoto: async (reporteId: number, user: TokenPayload) => {
     await getReporteOr404(reporteId);
     const existente = await votoRepository.findOne(reporteId, user.sub);
     if (!existente) throw new AppError(400, 'No has votado por este reporte');

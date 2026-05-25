@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Rol } from '@prisma/client';
 import { config } from '../config';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload  } from '../auth/auth.types';
 
 // Extiende el tipo Request de Express globalmente
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload;
+      user?: TokenPayload;
     }
   }
 }
@@ -23,7 +23,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
 
   try {
     const token = header.split(' ')[1];
-    req.user = jwt.verify(token, config.JWT_SECRET) as unknown as JwtPayload;
+    req.user = jwt.verify(token, config.JWT_SECRET) as unknown as TokenPayload;
     next();
   } catch {
     res.status(401).json({ error: 'Token inválido o expirado' });

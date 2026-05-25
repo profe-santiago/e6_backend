@@ -1,0 +1,571 @@
+CVEGEO,CVE_ENT,NOM_ENT,NOM_ABR,CVE_MUN,NOM_MUN,CVE_CAB,NOM_CAB,POB_TOTAL,POB_MASCULINA,POB_FEMENINA,TOTAL DE VIVIENDAS HABITADAS
+20001,20,Oaxaca,Oax.,001,Abejones,0001,Abejones,841,360,481,217
+20002,20,Oaxaca,Oax.,002,Acatlán de Pérez Figueroa,0001,Acatlán de Pérez Figueroa,45167,21980,23187,13012
+20003,20,Oaxaca,Oax.,003,Asunción Cacalotepec,0001,Asunción Cacalotepec,2547,1229,1318,795
+20004,20,Oaxaca,Oax.,004,Asunción Cuyotepeji,0001,Asunción Cuyotepeji,1107,523,584,341
+20005,20,Oaxaca,Oax.,005,Asunción Ixtaltepec,0001,Asunción Ixtaltepec,15261,7550,7711,4955
+20006,20,Oaxaca,Oax.,006,Asunción Nochixtlán,0001,Asunción Nochixtlán,20464,9577,10887,5344
+20007,20,Oaxaca,Oax.,007,Asunción Ocotlán,0001,Asunción Ocotlán,2395,1091,1304,769
+20008,20,Oaxaca,Oax.,008,Asunción Tlacolulita,0001,Asunción Tlacolulita,734,355,379,268
+20009,20,Oaxaca,Oax.,009,Ayotzintepec,0001,Ayotzintepec,6857,3283,3574,1948
+20010,20,Oaxaca,Oax.,010,El Barrio de la Soledad,0001,El Barrio de la Soledad,13474,6502,6972,4336
+20011,20,Oaxaca,Oax.,011,Calihualá,0001,Calihualá,1402,690,712,340
+20012,20,Oaxaca,Oax.,012,Candelaria Loxicha,0001,Candelaria Loxicha,11166,5450,5716,2465
+20013,20,Oaxaca,Oax.,013,Ciénega de Zimatlán,0001,Ciénega de Zimatlán,3043,1464,1579,896
+20014,20,Oaxaca,Oax.,014,Ciudad Ixtepec,0001,Ciudad Ixtepec,28082,13299,14783,8608
+20015,20,Oaxaca,Oax.,015,Coatecas Altas,0001,Coatecas Altas,5356,2527,2829,1212
+20016,20,Oaxaca,Oax.,016,Coicoyán de las Flores,0001,Coicoyán de las Flores,9563,4460,5103,1677
+20017,20,Oaxaca,Oax.,017,La Compañía,0001,La Compañía,3607,1701,1906,1061
+20018,20,Oaxaca,Oax.,018,Concepción Buenavista,0001,Concepción Buenavista,752,375,377,237
+20019,20,Oaxaca,Oax.,019,Concepción Pápalo,0001,Concepción Pápalo,2754,1376,1378,855
+20020,20,Oaxaca,Oax.,020,Constancia del Rosario,0001,Constancia del Rosario,4847,2175,2672,1057
+20021,20,Oaxaca,Oax.,021,Cosolapa,0001,Cosolapa,14488,6846,7642,4128
+20022,20,Oaxaca,Oax.,022,Cosoltepec,0001,Cosoltepec,803,385,418,297
+20023,20,Oaxaca,Oax.,023,Cuilápam de Guerrero,0001,Cuilápam de Guerrero,26882,12863,14019,6984
+20024,20,Oaxaca,Oax.,024,Cuyamecalco Villa de Zaragoza,0001,Cuyamecalco Villa de Zaragoza,3644,1847,1797,1024
+20025,20,Oaxaca,Oax.,025,Chahuites,0001,Chahuites,11356,5569,5787,3278
+20026,20,Oaxaca,Oax.,026,Chalcatongo de Hidalgo,0001,Chalcatongo de Hidalgo,9035,4237,4798,2570
+20027,20,Oaxaca,Oax.,027,Chiquihuitlán de Benito Juárez,0001,Chiquihuitlán de Benito Juárez,2179,994,1185,744
+20028,20,Oaxaca,Oax.,028,Heroica Ciudad de Ejutla de Crespo,0001,Heroica Ciudad de Ejutla de Crespo,23148,11079,12069,6077
+20029,20,Oaxaca,Oax.,029,Eloxochitlán de Flores Magón,0001,Eloxochitlán de Flores Magón,4215,1995,2220,1166
+20030,20,Oaxaca,Oax.,030,El Espinal,0001,El Espinal,8730,4239,4491,2584
+20031,20,Oaxaca,Oax.,031,Tamazulápam del Espíritu Santo,0001,Tamazulápam del Espíritu Santo,7185,3204,3981,2038
+20032,20,Oaxaca,Oax.,032,Fresnillo de Trujano,0001,Fresnillo de Trujano,1077,538,539,319
+20033,20,Oaxaca,Oax.,033,Guadalupe Etla,0001,Guadalupe Etla,2929,1397,1532,772
+20034,20,Oaxaca,Oax.,034,Guadalupe de Ramírez,0001,Guadalupe de Ramírez,1288,614,674,387
+20035,20,Oaxaca,Oax.,035,Guelatao de Juárez,0001,Guelatao de Juárez,657,325,332,166
+20036,20,Oaxaca,Oax.,036,Guevea de Humboldt,0001,Guevea de Humboldt,5256,2485,2771,1522
+20037,20,Oaxaca,Oax.,037,Mesones Hidalgo,0001,Mesones Hidalgo,4424,2051,2373,1133
+20038,20,Oaxaca,Oax.,038,Villa Hidalgo Yalálag,0001,Villa Hidalgo Yalálag,1885,900,985,529
+20039,20,Oaxaca,Oax.,039,Heroica Ciudad de Huajuapan de León,0001,Heroica Ciudad de Huajuapan de León,78313,37162,41151,20369
+20040,20,Oaxaca,Oax.,040,Huautepec,0001,Huautepec,6385,2977,3408,1650
+20041,20,Oaxaca,Oax.,041,Huautla de Jiménez,0001,Huautla de Jiménez,31710,14628,17082,8799
+20042,20,Oaxaca,Oax.,042,Ixtlán de Juárez,0001,Ixtlán de Juárez,8385,4036,4349,2318
+20043,20,Oaxaca,Oax.,043,Heroica Ciudad de Juchitán de Zaragoza,0001,Heroica Ciudad de Juchitán de Zaragoza,113570,54616,58954,28774
+20044,20,Oaxaca,Oax.,044,Loma Bonita,0001,Loma Bonita,40934,19493,21441,12804
+20045,20,Oaxaca,Oax.,045,Magdalena Apazco,0001,Magdalena Apazco,7888,3740,4148,2185
+20046,20,Oaxaca,Oax.,046,Magdalena Jaltepec,0001,Magdalena Jaltepec,2943,1339,1604,934
+20047,20,Oaxaca,Oax.,047,Santa Magdalena Jicotlán,0001,Santa Magdalena Jicotlán,81,41,40,30
+20048,20,Oaxaca,Oax.,048,Magdalena Mixtepec,0001,Magdalena Mixtepec,1433,692,741,283
+20049,20,Oaxaca,Oax.,049,Magdalena Ocotlán,0001,Magdalena Ocotlán,1184,585,599,315
+20050,20,Oaxaca,Oax.,050,Magdalena Peñasco,0001,Magdalena Peñasco,3750,1770,1980,983
+20051,20,Oaxaca,Oax.,051,Magdalena Teitipac,0001,Magdalena Teitipac,4764,2221,2543,1012
+20052,20,Oaxaca,Oax.,052,Magdalena Tequisistlán,0001,Magdalena Tequisistlán,5996,2939,3057,1888
+20053,20,Oaxaca,Oax.,053,Magdalena Tlacotepec,0001,Magdalena Tlacotepec,1297,622,675,421
+20054,20,Oaxaca,Oax.,054,Magdalena Zahuatlán,0001,Magdalena Zahuatlán,404,189,215,130
+20055,20,Oaxaca,Oax.,055,Mariscala de Juárez,0001,Mariscala de Juárez,3739,1787,1952,1076
+20056,20,Oaxaca,Oax.,056,Mártires de Tacubaya,0001,Mártires de Tacubaya,1446,710,736,411
+20057,20,Oaxaca,Oax.,057,Matías Romero Avendaño,0001,Matías Romero Avendaño,38183,18176,20007,11358
+20058,20,Oaxaca,Oax.,058,Mazatlán Villa de Flores,0001,Mazatlán Villa de Flores,12722,6233,6489,3591
+20059,20,Oaxaca,Oax.,059,Heroica Ciudad de Miahuatlán de Porfirio Díaz,0001,Heroica Ciudad de Miahuatlán de Porfirio Díaz,50375,24603,25772,13064
+20060,20,Oaxaca,Oax.,060,Mixistlán de la Reforma,0001,Mixistlán de la Reforma,2487,1142,1345,647
+20061,20,Oaxaca,Oax.,061,Monjas,0001,Monjas,2893,1331,1562,801
+20062,20,Oaxaca,Oax.,062,Natividad,0001,Natividad,498,222,276,155
+20063,20,Oaxaca,Oax.,063,Nazareno Etla,0001,Nazareno Etla,4293,2056,2237,1129
+20064,20,Oaxaca,Oax.,064,Nejapa de Madero,0001,Nejapa de Madero,8494,4167,4327,2382
+20065,20,Oaxaca,Oax.,065,Ixpantepec Nieves,0001,Ixpantepec Nieves,1079,487,592,350
+20066,20,Oaxaca,Oax.,066,Santiago Niltepec,0001,Santiago Niltepec,5342,2615,2727,1744
+20067,20,Oaxaca,Oax.,067,Oaxaca de Juárez,0001,Oaxaca de Juárez,270955,125852,145103,74590
+20068,20,Oaxaca,Oax.,068,Ocotlán de Morelos,0001,Ocotlán de Morelos,23751,11337,12414,6048
+20069,20,Oaxaca,Oax.,069,La Pe,0001,La Pe,3052,1515,1537,780
+20070,20,Oaxaca,Oax.,070,Pinotepa de Don Luis,0001,Pinotepa de Don Luis,6416,3162,3254,1666
+20071,20,Oaxaca,Oax.,071,Pluma Hidalgo,0001,Pluma Hidalgo,3255,1580,1675,861
+20072,20,Oaxaca,Oax.,072,San José del Progreso,0001,San José del Progreso,8059,3853,4206,2099
+20073,20,Oaxaca,Oax.,073,Putla Villa de Guerrero,0001,Putla Villa de Guerrero,34652,16189,18463,9376
+20074,20,Oaxaca,Oax.,074,Santa Catarina Quioquitani,0001,Santa Catarina Quioquitani,456,231,225,128
+20075,20,Oaxaca,Oax.,075,Reforma de Pineda,0001,Reforma de Pineda,2660,1282,1378,977
+20076,20,Oaxaca,Oax.,076,La Reforma,0001,La Reforma,3411,1675,1736,902
+20077,20,Oaxaca,Oax.,077,Reyes Etla,0001,Reyes Etla,4370,2105,2265,1085
+20078,20,Oaxaca,Oax.,078,Rojas de Cuauhtémoc,0001,Rojas de Cuauhtémoc,1301,633,668,378
+20079,20,Oaxaca,Oax.,079,Salina Cruz,0001,Salina Cruz,84438,40443,43995,25593
+20080,20,Oaxaca,Oax.,080,San Agustín Amatengo,0001,San Agustín Amatengo,1593,783,810,533
+20081,20,Oaxaca,Oax.,081,San Agustín Atenango,0001,San Agustín Atenango,1871,908,963,590
+20082,20,Oaxaca,Oax.,082,San Agustín Chayuco,0001,San Agustín Chayuco,4163,2023,2140,1175
+20083,20,Oaxaca,Oax.,083,San Agustín de las Juntas,0001,San Agustín de las Juntas,11391,5507,5884,2991
+20084,20,Oaxaca,Oax.,084,San Agustín Etla,0001,San Agustín Etla,4168,1984,2184,1201
+20085,20,Oaxaca,Oax.,085,San Agustín Loxicha,0001,San Agustín Loxicha,26194,12778,13416,5465
+20086,20,Oaxaca,Oax.,086,San Agustín Tlacotepec,0001,San Agustín Tlacotepec,1032,456,576,331
+20087,20,Oaxaca,Oax.,087,San Agustín Yatareni,0001,San Agustín Yatareni,5521,2590,2931,1428
+20088,20,Oaxaca,Oax.,088,San Andrés Cabecera Nueva,0001,San Andrés Cabecera Nueva,2881,1395,1486,807
+20089,20,Oaxaca,Oax.,089,San Andrés Dinicuiti,0001,San Andrés Dinicuiti,2308,1123,1185,616
+20090,20,Oaxaca,Oax.,090,San Andrés Huaxpaltepec,0001,San Andrés Huaxpaltepec,6234,2994,3240,1793
+20091,20,Oaxaca,Oax.,091,San Andrés Huayápam,0001,San Andrés Huayápam,6279,3000,3279,1850
+20092,20,Oaxaca,Oax.,092,San Andrés Ixtlahuaca,0001,San Andrés Ixtlahuaca,1776,845,931,494
+20093,20,Oaxaca,Oax.,093,San Andrés Lagunas,0001,San Andrés Lagunas,518,247,271,181
+20094,20,Oaxaca,Oax.,094,San Andrés Nuxiño,0001,San Andrés Nuxiño,1850,882,968,588
+20095,20,Oaxaca,Oax.,095,San Andrés Paxtlán,0001,San Andrés Paxtlán,4562,2295,2267,1030
+20096,20,Oaxaca,Oax.,096,San Andrés Sinaxtla,0001,San Andrés Sinaxtla,756,354,402,227
+20097,20,Oaxaca,Oax.,097,San Andrés Solaga,0001,San Andrés Solaga,1771,857,914,527
+20098,20,Oaxaca,Oax.,098,San Andrés Teotilálpam,0001,San Andrés Teotilálpam,4233,1994,2239,1121
+20099,20,Oaxaca,Oax.,099,San Andrés Tepetlapa,0001,San Andrés Tepetlapa,381,183,198,114
+20100,20,Oaxaca,Oax.,100,San Andrés Yaá,0001,San Andrés Yaá,393,184,209,154
+20101,20,Oaxaca,Oax.,101,San Andrés Zabache,0001,San Andrés Zabache,748,337,411,208
+20102,20,Oaxaca,Oax.,102,San Andrés Zautla,0001,San Andrés Zautla,5326,2555,2771,1424
+20103,20,Oaxaca,Oax.,103,San Antonino Castillo Velasco,0001,San Antonino Castillo Velasco,6064,2882,3182,1571
+20104,20,Oaxaca,Oax.,104,San Antonino el Alto,0001,San Antonino el Alto,2705,1346,1359,708
+20105,20,Oaxaca,Oax.,105,San Antonino Monte Verde,0001,San Antonino Monte Verde,7678,3532,4146,1916
+20106,20,Oaxaca,Oax.,106,San Antonio Acutla,0001,San Antonio Acutla,249,126,123,83
+20107,20,Oaxaca,Oax.,107,San Antonio de la Cal,0001,San Antonio de la Cal,26282,12392,13890,6218
+20108,20,Oaxaca,Oax.,108,San Antonio Huitepec,0001,San Antonio Huitepec,2936,1354,1582,808
+20109,20,Oaxaca,Oax.,109,San Antonio Nanahuatípam,0001,San Antonio Nanahuatípam,1232,605,627,339
+20110,20,Oaxaca,Oax.,110,San Antonio Sinicahua,0001,San Antonio Sinicahua,1668,740,928,439
+20111,20,Oaxaca,Oax.,111,San Antonio Tepetlapa,0001,San Antonio Tepetlapa,4873,2316,2557,1125
+20112,20,Oaxaca,Oax.,112,San Baltazar Chichicápam,0001,San Baltazar Chichicápam,2576,1225,1351,872
+20113,20,Oaxaca,Oax.,113,San Baltazar Loxicha,0001,San Baltazar Loxicha,3169,1525,1644,869
+20114,20,Oaxaca,Oax.,114,San Baltazar Yatzachi el Bajo,0001,San Baltazar Yatzachi el Bajo,674,325,349,243
+20115,20,Oaxaca,Oax.,115,San Bartolo Coyotepec,0001,San Bartolo Coyotepec,10391,4998,5393,2847
+20116,20,Oaxaca,Oax.,116,San Bartolomé Ayautla,0001,San Bartolomé Ayautla,4131,1951,2180,1130
+20117,20,Oaxaca,Oax.,117,San Bartolomé Loxicha,0001,San Bartolomé Loxicha,2213,1070,1143,621
+20118,20,Oaxaca,Oax.,118,San Bartolomé Quialana,0001,San Bartolomé Quialana,2389,994,1395,670
+20119,20,Oaxaca,Oax.,119,San Bartolomé Yucuañe,0001,San Bartolomé Yucuañe,735,325,410,218
+20120,20,Oaxaca,Oax.,120,San Bartolomé Zoogocho,0001,San Bartolomé Zoogocho,449,242,207,117
+20121,20,Oaxaca,Oax.,121,San Bartolo Soyaltepec,0001,San Bartolo Soyaltepec,596,289,307,206
+20122,20,Oaxaca,Oax.,122,San Bartolo Yautepec,0001,San Bartolo Yautepec,653,321,332,203
+20123,20,Oaxaca,Oax.,123,San Bernardo Mixtepec,0001,San Bernardo Mixtepec,2829,1355,1474,759
+20124,20,Oaxaca,Oax.,124,Heroica Villa de San Blas Atempa,0001,Heroica Villa de San Blas Atempa,19696,9771,9925,5093
+20125,20,Oaxaca,Oax.,125,San Carlos Yautepec,0001,San Carlos Yautepec,11662,5866,5796,2950
+20126,20,Oaxaca,Oax.,126,San Cristóbal Amatlán,0001,San Cristóbal Amatlán,5396,2578,2818,1382
+20127,20,Oaxaca,Oax.,127,San Cristóbal Amoltepec,0001,San Cristóbal Amoltepec,1252,576,676,395
+20128,20,Oaxaca,Oax.,128,San Cristóbal Lachirioag,0001,San Cristóbal Lachirioag,1342,636,706,485
+20129,20,Oaxaca,Oax.,129,San Cristóbal Suchixtlahuaca,0001,San Cristóbal Suchixtlahuaca,356,175,181,113
+20130,20,Oaxaca,Oax.,130,San Dionisio del Mar,0001,San Dionisio del Mar,5180,2587,2593,1620
+20131,20,Oaxaca,Oax.,131,San Dionisio Ocotepec,0001,San Dionisio Ocotepec,11411,5413,5998,2797
+20132,20,Oaxaca,Oax.,132,San Dionisio Ocotlán,0001,San Dionisio Ocotlán,1380,666,714,373
+20133,20,Oaxaca,Oax.,133,San Esteban Atatlahuca,0001,San Esteban Atatlahuca,3934,1878,2056,1203
+20134,20,Oaxaca,Oax.,134,San Felipe Jalapa de Díaz,0001,San Felipe Jalapa de Díaz,28500,13405,15095,6921
+20135,20,Oaxaca,Oax.,135,San Felipe Tejalápam,0001,San Felipe Tejalápam,8231,3940,4291,2042
+20136,20,Oaxaca,Oax.,136,San Felipe Usila,0001,San Felipe Usila,12191,5848,6343,2919
+20137,20,Oaxaca,Oax.,137,San Francisco Cahuacuá,0001,San Francisco Cahuacuá,3450,1697,1753,903
+20138,20,Oaxaca,Oax.,138,San Francisco Cajonos,0001,San Francisco Cajonos,451,212,239,165
+20139,20,Oaxaca,Oax.,139,San Francisco Chapulapa,0001,San Francisco Chapulapa,2195,1061,1134,575
+20140,20,Oaxaca,Oax.,140,San Francisco Chindúa,0001,San Francisco Chindúa,812,397,415,243
+20141,20,Oaxaca,Oax.,141,San Francisco del Mar,0036,San Francisco del Mar,8710,4374,4336,2459
+20142,20,Oaxaca,Oax.,142,San Francisco Huehuetlán,0001,San Francisco Huehuetlán,842,378,464,284
+20143,20,Oaxaca,Oax.,143,San Francisco Ixhuatán,0001,San Francisco Ixhuatán,9461,4766,4695,3035
+20144,20,Oaxaca,Oax.,144,San Francisco Jaltepetongo,0001,San Francisco Jaltepetongo,1075,514,561,352
+20145,20,Oaxaca,Oax.,145,San Francisco Lachigoló,0001,San Francisco Lachigoló,5215,2502,2713,1495
+20146,20,Oaxaca,Oax.,146,San Francisco Logueche,0001,San Francisco Logueche,2803,1324,1479,668
+20147,20,Oaxaca,Oax.,147,San Francisco Nuxaño,0001,San Francisco Nuxaño,376,193,183,121
+20148,20,Oaxaca,Oax.,148,San Francisco Ozolotepec,0001,San Francisco Ozolotepec,2182,1040,1142,502
+20149,20,Oaxaca,Oax.,149,San Francisco Sola,0001,San Francisco Sola,2019,947,1072,519
+20150,20,Oaxaca,Oax.,150,San Francisco Telixtlahuaca,0001,San Francisco Telixtlahuaca,13856,6674,7182,3394
+20151,20,Oaxaca,Oax.,151,San Francisco Teopan,0001,San Francisco Teopan,312,161,151,101
+20152,20,Oaxaca,Oax.,152,San Francisco Tlapancingo,0001,San Francisco Tlapancingo,2472,1144,1328,520
+20153,20,Oaxaca,Oax.,153,San Gabriel Mixtepec,0001,San Gabriel Mixtepec,4910,2395,2515,1276
+20154,20,Oaxaca,Oax.,154,San Ildefonso Amatlán,0001,San Ildefonso Amatlán,2329,1079,1250,672
+20155,20,Oaxaca,Oax.,155,San Ildefonso Sola,0001,San Ildefonso Sola,1060,513,547,260
+20156,20,Oaxaca,Oax.,156,San Ildefonso Villa Alta,0001,San Ildefonso Villa Alta,3677,1779,1898,1100
+20157,20,Oaxaca,Oax.,157,San Jacinto Amilpas,0001,San Jacinto Amilpas,16827,7989,8838,4787
+20158,20,Oaxaca,Oax.,158,San Jacinto Tlacotepec,0001,San Jacinto Tlacotepec,2233,1075,1158,598
+20159,20,Oaxaca,Oax.,159,San Jerónimo Coatlán,0001,San Jerónimo Coatlán,5537,2701,2836,1264
+20160,20,Oaxaca,Oax.,160,San Jerónimo Silacayoapilla,0001,San Jerónimo Silacayoapilla,1429,699,730,451
+20161,20,Oaxaca,Oax.,161,San Jerónimo Sosola,0001,San Jerónimo Sosola,2730,1305,1425,813
+20162,20,Oaxaca,Oax.,162,San Jerónimo Taviche,0001,San Jerónimo Taviche,2046,987,1059,491
+20163,20,Oaxaca,Oax.,163,San Jerónimo Tecóatl,0001,San Jerónimo Tecóatl,1577,732,845,455
+20164,20,Oaxaca,Oax.,164,San Jorge Nuchita,0001,San Jorge Nuchita,2881,1341,1540,777
+20165,20,Oaxaca,Oax.,165,San José Ayuquila,0001,San José Ayuquila,1629,765,864,458
+20166,20,Oaxaca,Oax.,166,San José Chiltepec,0001,San José Chiltepec,11310,5461,5849,3100
+20167,20,Oaxaca,Oax.,167,San José del Peñasco,0001,San José del Peñasco,2149,1022,1127,563
+20168,20,Oaxaca,Oax.,168,San José Estancia Grande,0001,San José Estancia Grande,938,457,481,274
+20169,20,Oaxaca,Oax.,169,San José Independencia,0001,San José Independencia,4251,2053,2198,1170
+20170,20,Oaxaca,Oax.,170,San José Lachiguiri,0001,San José Lachiguiri,3700,1752,1948,894
+20171,20,Oaxaca,Oax.,171,San José Tenango,0001,San José Tenango,18102,8566,9536,4847
+20172,20,Oaxaca,Oax.,172,San Juan Achiutla,0001,San Juan Achiutla,408,203,205,145
+20173,20,Oaxaca,Oax.,173,San Juan Atepec,0001,San Juan Atepec,1457,705,752,481
+20174,20,Oaxaca,Oax.,174,Ánimas Trujano,0001,Ánimas Trujano,4564,2170,2394,1223
+20175,20,Oaxaca,Oax.,175,San Juan Bautista Atatlahuca,0001,San Juan Bautista Atatlahuca,1424,680,744,395
+20176,20,Oaxaca,Oax.,176,San Juan Bautista Coixtlahuaca,0001,San Juan Bautista Coixtlahuaca,2725,1314,1411,837
+20177,20,Oaxaca,Oax.,177,San Juan Bautista Cuicatlán,0001,San Juan Bautista Cuicatlán,10365,5141,5224,3132
+20178,20,Oaxaca,Oax.,178,San Juan Bautista Guelache,0001,San Juan Bautista Guelache,6692,3167,3525,1787
+20179,20,Oaxaca,Oax.,179,San Juan Bautista Jayacatlán,0001,San Juan Bautista Jayacatlán,1447,703,744,409
+20180,20,Oaxaca,Oax.,180,San Juan Bautista Lo de Soto,0001,San Juan Bautista Lo de Soto,2344,1177,1167,751
+20181,20,Oaxaca,Oax.,181,San Juan Bautista Suchitepec,0001,San Juan Bautista Suchitepec,453,222,231,161
+20182,20,Oaxaca,Oax.,182,San Juan Bautista Tlacoatzintepec,0001,San Juan Bautista Tlacoatzintepec,2181,1006,1175,547
+20183,20,Oaxaca,Oax.,183,San Juan Bautista Tlachichilco,0001,San Juan Bautista Tlachichilco,1475,689,786,374
+20184,20,Oaxaca,Oax.,184,San Juan Bautista Tuxtepec,0001,San Juan Bautista Tuxtepec,159452,75967,83485,47234
+20185,20,Oaxaca,Oax.,185,San Juan Cacahuatepec,0001,San Juan Cacahuatepec,8939,4297,4642,2389
+20186,20,Oaxaca,Oax.,186,San Juan Cieneguilla,0001,San Juan Cieneguilla,524,271,253,172
+20187,20,Oaxaca,Oax.,187,San Juan Coatzóspam,0001,San Juan Coatzóspam,1808,874,934,525
+20188,20,Oaxaca,Oax.,188,San Juan Colorado,0001,San Juan Colorado,9609,4668,4941,2583
+20189,20,Oaxaca,Oax.,189,San Juan Comaltepec,0001,San Juan Comaltepec,3116,1523,1593,697
+20190,20,Oaxaca,Oax.,190,San Juan Cotzocón,0001,San Juan Cotzocón,22444,10843,11601,6172
+20191,20,Oaxaca,Oax.,191,San Juan Chicomezúchil,0001,San Juan Chicomezúchil,296,133,163,92
+20192,20,Oaxaca,Oax.,192,San Juan Chilateca,0001,San Juan Chilateca,1522,697,825,451
+20193,20,Oaxaca,Oax.,193,San Juan del Estado,0001,San Juan del Estado,2807,1342,1465,731
+20194,20,Oaxaca,Oax.,194,San Juan del Río,0001,San Juan del Río,1372,651,721,443
+20195,20,Oaxaca,Oax.,195,San Juan Diuxi,0001,San Juan Diuxi,1056,497,559,391
+20196,20,Oaxaca,Oax.,196,San Juan Evangelista Analco,0001,San Juan Evangelista Analco,407,192,215,135
+20197,20,Oaxaca,Oax.,197,San Juan Guelavía,0001,San Juan Guelavía,3288,1617,1671,987
+20198,20,Oaxaca,Oax.,198,San Juan Guichicovi,0001,San Juan Guichicovi,29802,13961,15841,9094
+20199,20,Oaxaca,Oax.,199,San Juan Ihualtepec,0001,San Juan Ihualtepec,494,226,268,144
+20200,20,Oaxaca,Oax.,200,San Juan Juquila Mixes,0001,San Juan Juquila Mixes,3703,1764,1939,1076
+20201,20,Oaxaca,Oax.,201,San Juan Juquila Vijanos,0001,San Juan Juquila Vijanos,1880,884,996,562
+20202,20,Oaxaca,Oax.,202,San Juan Lachao,0001,San Juan Lachao,4577,2195,2382,1092
+20203,20,Oaxaca,Oax.,203,San Juan Lachigalla,0001,San Juan Lachigalla,3538,1740,1798,831
+20204,20,Oaxaca,Oax.,204,San Juan Lajarcia,0001,San Juan Lajarcia,634,292,342,219
+20205,20,Oaxaca,Oax.,205,San Juan Lalana,0001,San Juan Lalana,16989,8244,8745,4497
+20206,20,Oaxaca,Oax.,206,San Juan de los Cués,0001,San Juan de los Cués,2421,1184,1237,722
+20207,20,Oaxaca,Oax.,207,San Juan Mazatlán,0001,San Juan Mazatlán,19032,9367,9665,5038
+20208,20,Oaxaca,Oax.,208,San Juan Mixtepec,0001,San Juan Mixtepec Distrito 08,6941,3309,3632,2340
+20209,20,Oaxaca,Oax.,209,San Juan Mixtepec,0001,San Juan Mixtepec Distrito 26,607,245,362,200
+20210,20,Oaxaca,Oax.,210,San Juan Ñumí,0001,San Juan Ñumí,5773,2618,3155,1679
+20211,20,Oaxaca,Oax.,211,San Juan Ozolotepec,0001,San Juan Ozolotepec,3411,1708,1703,763
+20212,20,Oaxaca,Oax.,212,San Juan Petlapa,0001,San Juan Petlapa,3117,1484,1633,836
+20213,20,Oaxaca,Oax.,213,San Juan Quiahije,0001,San Juan Quiahije,4203,1912,2291,890
+20214,20,Oaxaca,Oax.,214,San Juan Quiotepec,0001,San Juan Quiotepec,2033,1007,1026,547
+20215,20,Oaxaca,Oax.,215,San Juan Sayultepec,0001,San Juan Sayultepec,879,404,475,237
+20216,20,Oaxaca,Oax.,216,San Juan Tabaá,0001,San Juan Tabaá,1241,595,646,332
+20217,20,Oaxaca,Oax.,217,San Juan Tamazola,0001,San Juan Tamazola,3325,1616,1709,942
+20218,20,Oaxaca,Oax.,218,San Juan Teita,0001,San Juan Teita,544,260,284,166
+20219,20,Oaxaca,Oax.,219,San Juan Teitipac,0001,San Juan Teitipac,2668,1276,1392,755
+20220,20,Oaxaca,Oax.,220,San Juan Tepeuxila,0001,San Juan Tepeuxila,2692,1388,1304,835
+20221,20,Oaxaca,Oax.,221,San Juan Teposcolula,0001,San Juan Teposcolula,1494,723,771,431
+20222,20,Oaxaca,Oax.,222,San Juan Yaeé,0001,San Juan Yaeé,1426,687,739,459
+20223,20,Oaxaca,Oax.,223,San Juan Yatzona,0001,San Juan Yatzona,440,197,243,133
+20224,20,Oaxaca,Oax.,224,San Juan Yucuita,0001,San Juan Yucuita,643,305,338,192
+20225,20,Oaxaca,Oax.,225,San Lorenzo,0001,San Lorenzo,5903,2802,3101,1644
+20226,20,Oaxaca,Oax.,226,San Lorenzo Albarradas,0001,San Lorenzo Albarradas,2971,1505,1466,845
+20227,20,Oaxaca,Oax.,227,San Lorenzo Cacaotepec,0001,San Lorenzo Cacaotepec,18339,8859,9480,4983
+20228,20,Oaxaca,Oax.,228,San Lorenzo Cuaunecuiltitla,0001,San Lorenzo Cuaunecuiltitla,833,431,402,201
+20229,20,Oaxaca,Oax.,229,San Lorenzo Texmelúcan,0001,San Lorenzo Texmelúcan,9148,4117,5031,1648
+20230,20,Oaxaca,Oax.,230,San Lorenzo Victoria,0001,San Lorenzo Victoria,932,478,454,287
+20231,20,Oaxaca,Oax.,231,San Lucas Camotlán,0001,San Lucas Camotlán,3187,1539,1648,802
+20232,20,Oaxaca,Oax.,232,San Lucas Ojitlán,0001,San Lucas Ojitlán,22185,10616,11569,5408
+20233,20,Oaxaca,Oax.,233,San Lucas Quiaviní,0001,San Lucas Quiaviní,1720,728,992,444
+20234,20,Oaxaca,Oax.,234,San Lucas Zoquiápam,0001,San Lucas Zoquiápam,7163,3443,3720,1965
+20235,20,Oaxaca,Oax.,235,San Luis Amatlán,0001,San Luis Amatlán,3829,1793,2036,1093
+20236,20,Oaxaca,Oax.,236,San Marcial Ozolotepec,0001,San Marcial Ozolotepec,1372,630,742,342
+20237,20,Oaxaca,Oax.,237,San Marcos Arteaga,0001,San Marcos Arteaga,1568,734,834,449
+20238,20,Oaxaca,Oax.,238,Heroico San Martín de los Cansecos,0001,Heroico San Martín de los Cansecos,994,472,522,252
+20239,20,Oaxaca,Oax.,239,San Martín Huamelúlpam,0001,San Martín Huamelúlpam,1000,468,532,344
+20240,20,Oaxaca,Oax.,240,San Martín Itunyoso,0001,San Martín Itunyoso,2749,1251,1498,612
+20241,20,Oaxaca,Oax.,241,San Martín Lachilá,0001,San Martín Lachilá,1034,465,569,323
+20242,20,Oaxaca,Oax.,242,San Martín Peras,0001,San Martín Peras,12436,5854,6582,2317
+20243,20,Oaxaca,Oax.,243,San Martín Tilcajete,0001,San Martín Tilcajete,1975,922,1053,476
+20244,20,Oaxaca,Oax.,244,San Martín Toxpalan,0001,San Martín Toxpalan,3934,1891,2043,1051
+20245,20,Oaxaca,Oax.,245,San Martín Zacatepec,0001,San Martín Zacatepec,1324,664,660,361
+20246,20,Oaxaca,Oax.,246,San Mateo Cajonos,0001,San Mateo Cajonos,611,297,314,180
+20247,20,Oaxaca,Oax.,247,Capulálpam de Méndez,0001,Capulálpam de Méndez,1619,723,896,420
+20248,20,Oaxaca,Oax.,248,San Mateo del Mar,0001,San Mateo del Mar,15571,7791,7780,3898
+20249,20,Oaxaca,Oax.,249,San Mateo Yoloxochitlán,0001,San Mateo Yoloxochitlán,3831,1805,2026,977
+20250,20,Oaxaca,Oax.,250,San Mateo Etlatongo,0001,San Mateo Etlatongo,1239,606,633,381
+20251,20,Oaxaca,Oax.,251,San Mateo Nejápam,0001,San Mateo Nejápam,1217,564,653,302
+20252,20,Oaxaca,Oax.,252,San Mateo Peñasco,0001,San Mateo Peñasco,2384,1120,1264,616
+20253,20,Oaxaca,Oax.,253,San Mateo Piñas,0001,San Mateo Piñas,2021,1026,995,641
+20254,20,Oaxaca,Oax.,254,San Mateo Río Hondo,0001,San Mateo Río Hondo,3207,1571,1636,845
+20255,20,Oaxaca,Oax.,255,San Mateo Sindihui,0001,San Mateo Sindihui,1977,932,1045,504
+20256,20,Oaxaca,Oax.,256,San Mateo Tlapiltepec,0001,San Mateo Tlapiltepec,229,111,118,68
+20257,20,Oaxaca,Oax.,257,San Melchor Betaza,0001,San Melchor Betaza,1052,504,548,330
+20258,20,Oaxaca,Oax.,258,San Miguel Achiutla,0001,San Miguel Achiutla,698,350,348,251
+20259,20,Oaxaca,Oax.,259,San Miguel Ahuehuetitlán,0001,San Miguel Ahuehuetitlán,2142,1033,1109,527
+20260,20,Oaxaca,Oax.,260,San Miguel Aloápam,0001,San Miguel Aloápam,2191,998,1193,572
+20261,20,Oaxaca,Oax.,261,San Miguel Amatitlán,0001,San Miguel Amatitlán,6932,3343,3589,1583
+20262,20,Oaxaca,Oax.,262,San Miguel Amatlán,0001,San Miguel Amatlán,991,473,518,291
+20263,20,Oaxaca,Oax.,263,San Miguel Coatlán,0001,San Miguel Coatlán,3184,1459,1725,864
+20264,20,Oaxaca,Oax.,264,San Miguel Chicahua,0001,San Miguel Chicahua,2169,971,1198,631
+20265,20,Oaxaca,Oax.,265,San Miguel Chimalapa,0001,San Miguel Chimalapa,6711,3415,3296,2023
+20266,20,Oaxaca,Oax.,266,San Miguel del Puerto,0001,San Miguel del Puerto,8551,4268,4283,2380
+20267,20,Oaxaca,Oax.,267,San Miguel del Río,0001,San Miguel del Río,245,122,123,76
+20268,20,Oaxaca,Oax.,268,San Miguel Ejutla,0001,San Miguel Ejutla,1149,536,613,307
+20269,20,Oaxaca,Oax.,269,San Miguel el Grande,0001,San Miguel el Grande,4313,2008,2305,1320
+20270,20,Oaxaca,Oax.,270,San Miguel Huautla,0001,San Miguel Huautla,1311,615,696,390
+20271,20,Oaxaca,Oax.,271,San Miguel Mixtepec,0001,San Miguel Mixtepec,3194,1582,1612,624
+20272,20,Oaxaca,Oax.,272,San Miguel Panixtlahuaca,0001,San Miguel Panixtlahuaca,6252,2758,3494,1229
+20273,20,Oaxaca,Oax.,273,San Miguel Peras,0001,San Miguel Peras,3818,1822,1996,876
+20274,20,Oaxaca,Oax.,274,San Miguel Piedras,0001,San Miguel Piedras,1328,636,692,352
+20275,20,Oaxaca,Oax.,275,San Miguel Quetzaltepec,0001,San Miguel Quetzaltepec,7286,3530,3756,2053
+20276,20,Oaxaca,Oax.,276,San Miguel Santa Flor,0001,San Miguel Santa Flor,691,361,330,219
+20277,20,Oaxaca,Oax.,277,Villa Sola de Vega,0001,Villa Sola de Vega,12350,5955,6395,3221
+20278,20,Oaxaca,Oax.,278,San Miguel Soyaltepec,0001,Temascal,38682,18612,20070,10427
+20279,20,Oaxaca,Oax.,279,San Miguel Suchixtepec,0001,San Miguel Suchixtepec,2932,1401,1531,666
+20280,20,Oaxaca,Oax.,280,Villa Talea de Castro,0001,Villa Talea de Castro,2011,945,1066,709
+20281,20,Oaxaca,Oax.,281,San Miguel Tecomatlán,0001,San Miguel Tecomatlán,305,152,153,117
+20282,20,Oaxaca,Oax.,282,San Miguel Tenango,0001,San Miguel Tenango,653,334,319,226
+20283,20,Oaxaca,Oax.,283,San Miguel Tequixtepec,0001,San Miguel Tequixtepec,1044,496,548,318
+20284,20,Oaxaca,Oax.,284,San Miguel Tilquiápam,0001,San Miguel Tilquiápam,3141,1415,1726,689
+20285,20,Oaxaca,Oax.,285,San Miguel Tlacamama,0001,San Miguel Tlacamama,3668,1786,1882,1020
+20286,20,Oaxaca,Oax.,286,San Miguel Tlacotepec,0001,San Miguel Tlacotepec,3100,1432,1668,913
+20287,20,Oaxaca,Oax.,287,San Miguel Tulancingo,0001,San Miguel Tulancingo,307,134,173,103
+20288,20,Oaxaca,Oax.,288,San Miguel Yotao,0001,San Miguel Yotao,585,272,313,179
+20289,20,Oaxaca,Oax.,289,San Nicolás,0001,San Nicolás,1214,580,634,374
+20290,20,Oaxaca,Oax.,290,San Nicolás Hidalgo,0001,San Nicolás Hidalgo,1043,499,544,269
+20291,20,Oaxaca,Oax.,291,San Pablo Coatlán,0001,San Pablo Coatlán,4308,2107,2201,1102
+20292,20,Oaxaca,Oax.,292,San Pablo Cuatro Venados,0001,San Pablo Cuatro Venados,1510,718,792,346
+20293,20,Oaxaca,Oax.,293,San Pablo Etla,0001,San Pablo Etla,17116,8033,9083,5054
+20294,20,Oaxaca,Oax.,294,San Pablo Huitzo,0001,San Pablo Huitzo,7035,3318,3717,1903
+20295,20,Oaxaca,Oax.,295,San Pablo Huixtepec,0001,San Pablo Huixtepec,10020,4721,5299,2688
+20296,20,Oaxaca,Oax.,296,San Pablo Macuiltianguis,0001,San Pablo Macuiltianguis,955,478,477,307
+20297,20,Oaxaca,Oax.,297,San Pablo Tijaltepec,0001,San Pablo Tijaltepec,2751,1277,1474,610
+20298,20,Oaxaca,Oax.,298,San Pablo Villa de Mitla,0001,San Pablo Villa de Mitla,13587,6526,7061,3619
+20299,20,Oaxaca,Oax.,299,San Pablo Yaganiza,0001,San Pablo Yaganiza,1125,543,582,323
+20300,20,Oaxaca,Oax.,300,San Pedro Amuzgos,0001,San Pedro Amuzgos,6632,3080,3552,1888
+20301,20,Oaxaca,Oax.,301,San Pedro Apóstol,0001,San Pedro Apóstol,1594,747,847,454
+20302,20,Oaxaca,Oax.,302,San Pedro Atoyac,0001,San Pedro Atoyac,4559,2113,2446,1119
+20303,20,Oaxaca,Oax.,303,San Pedro Cajonos,0001,San Pedro Cajonos,1081,495,586,361
+20304,20,Oaxaca,Oax.,304,San Pedro Coxcaltepec Cántaros,0001,San Pedro Coxcaltepec Cántaros,716,334,382,231
+20305,20,Oaxaca,Oax.,305,San Pedro Comitancillo,0001,San Pedro Comitancillo,4333,2065,2268,1434
+20306,20,Oaxaca,Oax.,306,San Pedro el Alto,0001,San Pedro el Alto,4654,2256,2398,999
+20307,20,Oaxaca,Oax.,307,San Pedro Huamelula,0001,San Pedro Huamelula,9735,4802,4933,3105
+20308,20,Oaxaca,Oax.,308,San Pedro Huilotepec,0001,San Pedro Huilotepec,3307,1623,1684,869
+20309,20,Oaxaca,Oax.,309,San Pedro Ixcatlán,0001,San Pedro Ixcatlán,10368,4976,5392,2865
+20310,20,Oaxaca,Oax.,310,San Pedro Ixtlahuaca,0001,San Pedro Ixtlahuaca,14552,7118,7434,3706
+20311,20,Oaxaca,Oax.,311,San Pedro Jaltepetongo,0001,San Pedro Jaltepetongo,483,231,252,161
+20312,20,Oaxaca,Oax.,312,San Pedro Jicayán,0001,San Pedro Jicayán,11279,5272,6007,2691
+20313,20,Oaxaca,Oax.,313,San Pedro Jocotipac,0001,San Pedro Jocotipac,730,341,389,270
+20314,20,Oaxaca,Oax.,314,San Pedro Juchatengo,0001,San Pedro Juchatengo,1755,842,913,493
+20315,20,Oaxaca,Oax.,315,San Pedro Mártir,0001,San Pedro Mártir,1899,867,1032,491
+20316,20,Oaxaca,Oax.,316,San Pedro Mártir Quiechapa,0001,San Pedro Mártir Quiechapa,738,346,392,219
+20317,20,Oaxaca,Oax.,317,San Pedro Mártir Yucuxaco,0001,San Pedro Mártir Yucuxaco,1257,599,658,431
+20318,20,Oaxaca,Oax.,318,San Pedro Mixtepec,0001,San Pedro Mixtepec Distrito 22,49780,24008,25772,13918
+20319,20,Oaxaca,Oax.,319,San Pedro Mixtepec,0001,San Pedro Mixtepec Distrito 26,972,468,504,321
+20320,20,Oaxaca,Oax.,320,San Pedro Molinos,0001,San Pedro Molinos,706,339,367,226
+20321,20,Oaxaca,Oax.,321,San Pedro Nopala,0001,San Pedro Nopala,751,358,393,201
+20322,20,Oaxaca,Oax.,322,San Pedro Ocopetatillo,0001,San Pedro Ocopetatillo,786,348,438,245
+20323,20,Oaxaca,Oax.,323,San Pedro Ocotepec,0001,San Pedro Ocotepec,2404,1196,1208,556
+20324,20,Oaxaca,Oax.,324,San Pedro Pochutla,0001,San Pedro Pochutla,48204,23519,24685,12727
+20325,20,Oaxaca,Oax.,325,San Pedro Quiatoni,0001,San Pedro Quiatoni,11930,5781,6149,3137
+20326,20,Oaxaca,Oax.,326,San Pedro Sochiápam,0001,San Pedro Sochiápam,5052,2438,2614,1211
+20327,20,Oaxaca,Oax.,327,San Pedro Tapanatepec,0001,San Pedro Tapanatepec,15479,7614,7865,4561
+20328,20,Oaxaca,Oax.,328,San Pedro Taviche,0001,San Pedro Taviche,1441,691,750,359
+20329,20,Oaxaca,Oax.,329,San Pedro Teozacoalco,0001,San Pedro Teozacoalco,1153,575,578,350
+20330,20,Oaxaca,Oax.,330,San Pedro Teutila,0001,San Pedro Teutila,4296,2100,2196,1172
+20331,20,Oaxaca,Oax.,331,San Pedro Tidaá,0001,San Pedro Tidaá,982,451,531,332
+20332,20,Oaxaca,Oax.,332,San Pedro Topiltepec,0001,San Pedro Topiltepec,373,183,190,131
+20333,20,Oaxaca,Oax.,333,San Pedro Totolápam,0001,San Pedro Totolápam,3294,1637,1657,947
+20334,20,Oaxaca,Oax.,334,Villa de Tututepec,0001,Villa de Tututepec,50541,24533,26008,14836
+20335,20,Oaxaca,Oax.,335,San Pedro Yaneri,0001,San Pedro Yaneri,867,418,449,252
+20336,20,Oaxaca,Oax.,336,San Pedro Yólox,0001,San Pedro Yólox,1697,819,878,493
+20337,20,Oaxaca,Oax.,337,San Pedro y San Pablo Ayutla,0001,San Pedro y San Pablo Ayutla,5616,2533,3083,1610
+20338,20,Oaxaca,Oax.,338,Villa de Etla,0001,Villa de Etla,10361,4992,5369,2690
+20339,20,Oaxaca,Oax.,339,San Pedro y San Pablo Teposcolula,0001,San Pedro y San Pablo Teposcolula,4353,2054,2299,1227
+20340,20,Oaxaca,Oax.,340,San Pedro y San Pablo Tequixtepec,0001,San Pedro y San Pablo Tequixtepec,1747,800,947,625
+20341,20,Oaxaca,Oax.,341,San Pedro Yucunama,0001,San Pedro Yucunama,241,109,132,73
+20342,20,Oaxaca,Oax.,342,San Raymundo Jalpan,0001,San Raymundo Jalpan,4105,1919,2186,1291
+20343,20,Oaxaca,Oax.,343,San Sebastián Abasolo,0001,San Sebastián Abasolo,1999,948,1051,568
+20344,20,Oaxaca,Oax.,344,San Sebastián Coatlán,0001,San Sebastián Coatlán,2809,1359,1450,808
+20345,20,Oaxaca,Oax.,345,San Sebastián Ixcapa,0001,San Sebastián Ixcapa,4188,2034,2154,1215
+20346,20,Oaxaca,Oax.,346,San Sebastián Nicananduta,0001,San Sebastián Nicananduta,1542,704,838,483
+20347,20,Oaxaca,Oax.,347,San Sebastián Río Hondo,0001,San Sebastián Río Hondo,4202,2100,2102,1014
+20348,20,Oaxaca,Oax.,348,San Sebastián Tecomaxtlahuaca,0001,San Sebastián Tecomaxtlahuaca,8192,3909,4283,2298
+20349,20,Oaxaca,Oax.,349,San Sebastián Teitipac,0001,San Sebastián Teitipac,2189,1007,1182,638
+20350,20,Oaxaca,Oax.,350,San Sebastián Tutla,0001,San Sebastián Tutla,16878,7706,9172,5032
+20351,20,Oaxaca,Oax.,351,San Simón Almolongas,0001,San Simón Almolongas,2802,1333,1469,839
+20352,20,Oaxaca,Oax.,352,San Simón Zahuatlán,0001,San Simón Zahuatlán,4940,2469,2471,596
+20353,20,Oaxaca,Oax.,353,Santa Ana,0001,Santa Ana,2406,1188,1218,621
+20354,20,Oaxaca,Oax.,354,Santa Ana Ateixtlahuaca,0001,Santa Ana Ateixtlahuaca,477,238,239,142
+20355,20,Oaxaca,Oax.,355,Santa Ana Cuauhtémoc,0001,Santa Ana Cuauhtémoc,681,342,339,233
+20356,20,Oaxaca,Oax.,356,Santa Ana del Valle,0001,Santa Ana del Valle,2179,1076,1103,602
+20357,20,Oaxaca,Oax.,357,Santa Ana Tavela,0001,Santa Ana Tavela,848,409,439,269
+20358,20,Oaxaca,Oax.,358,Santa Ana Tlapacoyan,0001,Santa Ana Tlapacoyan,1958,925,1033,615
+20359,20,Oaxaca,Oax.,359,Santa Ana Yareni,0001,Santa Ana Yareni,637,281,356,234
+20360,20,Oaxaca,Oax.,360,Santa Ana Zegache,0001,Santa Ana Zegache,3981,1863,2118,1171
+20361,20,Oaxaca,Oax.,361,Santa Catalina Quierí,0001,Santa Catalina Quierí,825,366,459,252
+20362,20,Oaxaca,Oax.,362,Santa Catarina Cuixtla,0001,Santa Catarina Cuixtla,1495,675,820,435
+20363,20,Oaxaca,Oax.,363,Santa Catarina Ixtepeji,0001,Santa Catarina Ixtepeji,2675,1262,1413,772
+20364,20,Oaxaca,Oax.,364,Santa Catarina Juquila,0001,Santa Catarina Juquila,18654,8981,9673,4274
+20365,20,Oaxaca,Oax.,365,Santa Catarina Lachatao,0001,Santa Catarina Lachatao,1059,485,574,373
+20366,20,Oaxaca,Oax.,366,Santa Catarina Loxicha,0001,Santa Catarina Loxicha,3676,1729,1947,898
+20367,20,Oaxaca,Oax.,367,Santa Catarina Mechoacán,0001,Santa Catarina Mechoacán,4582,2238,2344,1149
+20368,20,Oaxaca,Oax.,368,Santa Catarina Minas,0001,Santa Catarina Minas,2067,1028,1039,551
+20369,20,Oaxaca,Oax.,369,Santa Catarina Quiané,0001,Santa Catarina Quiané,2193,1069,1124,657
+20370,20,Oaxaca,Oax.,370,Santa Catarina Tayata,0001,Santa Catarina Tayata,662,316,346,208
+20371,20,Oaxaca,Oax.,371,Santa Catarina Ticuá,0001,Santa Catarina Ticuá,986,428,558,352
+20372,20,Oaxaca,Oax.,372,Santa Catarina Yosonotú,0001,Santa Catarina Yosonotú,1316,591,725,458
+20373,20,Oaxaca,Oax.,373,Santa Catarina Zapoquila,0001,Santa Catarina Zapoquila,403,201,202,127
+20374,20,Oaxaca,Oax.,374,Santa Cruz Acatepec,0001,Santa Cruz Acatepec,1645,773,872,422
+20375,20,Oaxaca,Oax.,375,Santa Cruz Amilpas,0001,Santa Cruz Amilpas,13200,6190,7010,3575
+20376,20,Oaxaca,Oax.,376,Santa Cruz de Bravo,0001,Santa Cruz de Bravo,365,170,195,100
+20377,20,Oaxaca,Oax.,377,Santa Cruz Itundujia,0001,Santa Cruz Itundujia,10860,5180,5680,2995
+20378,20,Oaxaca,Oax.,378,Santa Cruz Mixtepec,0001,Santa Cruz Mixtepec,3720,1792,1928,969
+20379,20,Oaxaca,Oax.,379,Santa Cruz Nundaco,0001,Santa Cruz Nundaco,2951,1327,1624,784
+20380,20,Oaxaca,Oax.,380,Santa Cruz Papalutla,0001,Santa Cruz Papalutla,2242,1094,1148,645
+20381,20,Oaxaca,Oax.,381,Santa Cruz Tacache de Mina,0001,Santa Cruz Tacache de Mina,2940,1388,1552,791
+20382,20,Oaxaca,Oax.,382,Santa Cruz Tacahua,0001,Santa Cruz Tacahua,1182,561,621,352
+20383,20,Oaxaca,Oax.,383,Santa Cruz Tayata,0001,Santa Cruz Tayata,595,293,302,177
+20384,20,Oaxaca,Oax.,384,Santa Cruz Xitla,0001,Santa Cruz Xitla,4794,2281,2513,1137
+20385,20,Oaxaca,Oax.,385,Santa Cruz Xoxocotlán,0001,Santa Cruz Xoxocotlán,100402,47016,53386,27498
+20386,20,Oaxaca,Oax.,386,Santa Cruz Zenzontepec,0001,Santa Cruz Zenzontepec,19079,9243,9836,4470
+20387,20,Oaxaca,Oax.,387,Santa Gertrudis,0001,Santa Gertrudis,2891,1386,1505,838
+20388,20,Oaxaca,Oax.,388,Santa Inés del Monte,0001,Santa Inés del Monte,2809,1390,1419,643
+20389,20,Oaxaca,Oax.,389,Santa Inés Yatzeche,0001,Santa Inés Yatzeche,908,422,486,231
+20390,20,Oaxaca,Oax.,390,Santa Lucía del Camino,0001,Santa Lucía del Camino,50362,24171,26191,14259
+20391,20,Oaxaca,Oax.,391,Santa Lucía Miahuatlán,0001,Santa Lucía Miahuatlán,3375,1647,1728,822
+20392,20,Oaxaca,Oax.,392,Santa Lucía Monteverde,0001,Santa Lucía Monteverde,6726,3232,3494,1884
+20393,20,Oaxaca,Oax.,393,Santa Lucía Ocotlán,0001,Santa Lucía Ocotlán,4173,1971,2202,1027
+20394,20,Oaxaca,Oax.,394,Santa María Alotepec,0001,Santa María Alotepec,2796,1353,1443,809
+20395,20,Oaxaca,Oax.,395,Santa María Apazco,0001,Santa María Apazco,1629,740,889,506
+20396,20,Oaxaca,Oax.,396,Santa María la Asunción,0001,Santa María la Asunción,3259,1432,1827,943
+20397,20,Oaxaca,Oax.,397,Heroica Ciudad de Tlaxiaco,0001,Heroica Ciudad de Tlaxiaco,40123,18602,21521,10596
+20398,20,Oaxaca,Oax.,398,Ayoquezco de Aldama,0001,Ayoquezco de Aldama,4874,2360,2514,1381
+20399,20,Oaxaca,Oax.,399,Santa María Atzompa,0001,Santa María Atzompa,41921,19948,21973,11367
+20400,20,Oaxaca,Oax.,400,Santa María Camotlán,0001,Santa María Camotlán,1713,821,892,530
+20401,20,Oaxaca,Oax.,401,Santa María Colotepec,0001,Santa María Colotepec,27046,13241,13805,7079
+20402,20,Oaxaca,Oax.,402,Santa María Cortijo,0001,Santa María Cortijo,1067,518,549,326
+20403,20,Oaxaca,Oax.,403,Santa María Coyotepec,0001,Santa María Coyotepec,3751,1768,1983,1079
+20404,20,Oaxaca,Oax.,404,Santa María Chachoápam,0001,Santa María Chachoápam,761,367,394,247
+20405,20,Oaxaca,Oax.,405,Villa de Chilapa de Díaz,0001,Villa de Chilapa de Díaz,1815,829,986,559
+20406,20,Oaxaca,Oax.,406,Santa María Chilchotla,0001,Santa María Chilchotla,21469,10373,11096,5621
+20407,20,Oaxaca,Oax.,407,Santa María Chimalapa,0001,Santa María Chimalapa,9578,4790,4788,2642
+20408,20,Oaxaca,Oax.,408,Santa María del Rosario,0001,Santa María del Rosario,499,246,253,144
+20409,20,Oaxaca,Oax.,409,Santa María del Tule,0001,Santa María del Tule,8939,4139,4800,2574
+20410,20,Oaxaca,Oax.,410,Santa María Ecatepec,0001,Santa María Ecatepec,3418,1734,1684,894
+20411,20,Oaxaca,Oax.,411,Santa María Guelacé,0001,Santa María Guelacé,908,429,479,251
+20412,20,Oaxaca,Oax.,412,Santa María Guienagati,0001,Santa María Guienagati,3178,1554,1624,901
+20413,20,Oaxaca,Oax.,413,Santa María Huatulco,0001,Santa María Huatulco,50862,24854,26008,15176
+20414,20,Oaxaca,Oax.,414,Santa María Huazolotitlán,0001,Santa María Huazolotitlán,11995,5890,6105,3582
+20415,20,Oaxaca,Oax.,415,Santa María Ipalapa,0001,Santa María Ipalapa,4878,2302,2576,1292
+20416,20,Oaxaca,Oax.,416,Santa María Ixcatlán,0001,Santa María Ixcatlán,461,224,237,163
+20417,20,Oaxaca,Oax.,417,Santa María Jacatepec,0001,Santa María Jacatepec,9682,4588,5094,2618
+20418,20,Oaxaca,Oax.,418,Santa María Jalapa del Marqués,0001,Santa María Jalapa del Marqués,11735,5660,6075,3604
+20419,20,Oaxaca,Oax.,419,Santa María Jaltianguis,0001,Santa María Jaltianguis,592,278,314,176
+20420,20,Oaxaca,Oax.,420,Santa María Lachixío,0001,Santa María Lachixío,1679,760,919,402
+20421,20,Oaxaca,Oax.,421,Santa María Mixtequilla,0001,Santa María Mixtequilla,4690,2278,2412,1506
+20422,20,Oaxaca,Oax.,422,Santa María Nativitas,0001,Santa María Nativitas,603,276,327,197
+20423,20,Oaxaca,Oax.,423,Santa María Nduayaco,0001,Santa María Nduayaco,453,219,234,146
+20424,20,Oaxaca,Oax.,424,Santa María Ozolotepec,0001,Santa María Ozolotepec,3793,1835,1958,971
+20425,20,Oaxaca,Oax.,425,Santa María Pápalo,0001,Santa María Pápalo,2058,1028,1030,634
+20426,20,Oaxaca,Oax.,426,Santa María Peñoles,0001,Santa María Peñoles,8967,4323,4644,1712
+20427,20,Oaxaca,Oax.,427,Santa María Petapa,0001,Santa María Petapa,16706,8080,8626,4942
+20428,20,Oaxaca,Oax.,428,Santa María Quiegolani,0001,Santa María Quiegolani,2224,1134,1090,531
+20429,20,Oaxaca,Oax.,429,Santa María Sola,0001,Santa María Sola,1516,736,780,439
+20430,20,Oaxaca,Oax.,430,Santa María Tataltepec,0001,Santa María Tataltepec,317,154,163,92
+20431,20,Oaxaca,Oax.,431,Santa María Tecomavaca,0001,Santa María Tecomavaca,1830,891,939,486
+20432,20,Oaxaca,Oax.,432,Santa María Temaxcalapa,0001,Santa María Temaxcalapa,903,443,460,299
+20433,20,Oaxaca,Oax.,433,Santa María Temaxcaltepec,0001,Santa María Temaxcaltepec,2694,1222,1472,622
+20434,20,Oaxaca,Oax.,434,Santa María Teopoxco,0001,Santa María Teopoxco,3985,1790,2195,1126
+20435,20,Oaxaca,Oax.,435,Santa María Tepantlali,0001,Santa María Tepantlali,3576,1737,1839,919
+20436,20,Oaxaca,Oax.,436,Santa María Texcatitlán,0001,Santa María Texcatitlán,896,432,464,293
+20437,20,Oaxaca,Oax.,437,Santa María Tlahuitoltepec,0001,Santa María Tlahuitoltepec,9653,4575,5078,2452
+20438,20,Oaxaca,Oax.,438,Santa María Tlalixtac,0001,Santa María Tlalixtac,1839,924,915,471
+20439,20,Oaxaca,Oax.,439,Santa María Tonameca,0001,Santa María Tonameca,25347,12364,12983,6456
+20440,20,Oaxaca,Oax.,440,Santa María Totolapilla,0001,Santa María Totolapilla,812,396,416,296
+20441,20,Oaxaca,Oax.,441,Santa María Xadani,0001,Santa María Xadani,9234,4560,4674,2237
+20442,20,Oaxaca,Oax.,442,Santa María Yalina,0001,Santa María Yalina,250,112,138,83
+20443,20,Oaxaca,Oax.,443,Santa María Yavesía,0001,Santa María Yavesía,434,199,235,146
+20444,20,Oaxaca,Oax.,444,Santa María Yolotepec,0001,Santa María Yolotepec,481,226,255,155
+20445,20,Oaxaca,Oax.,445,Santa María Yosoyúa,0001,Santa María Yosoyúa,1699,813,886,379
+20446,20,Oaxaca,Oax.,446,Santa María Yucuhiti,0001,Santa María Yucuhiti,6008,2850,3158,1653
+20447,20,Oaxaca,Oax.,447,Santa María Zacatepec,0001,Santa María Zacatepec,17100,8146,8954,4450
+20448,20,Oaxaca,Oax.,448,Santa María Zaniza,0001,Santa María Zaniza,2469,1190,1279,504
+20449,20,Oaxaca,Oax.,449,Santa María Zoquitlán,0001,Santa María Zoquitlán,3294,1630,1664,1031
+20450,20,Oaxaca,Oax.,450,Santiago Amoltepec,0001,Santiago Amoltepec,13855,6785,7070,2994
+20451,20,Oaxaca,Oax.,451,Santiago Apoala,0001,Santiago Apoala,1019,469,550,325
+20452,20,Oaxaca,Oax.,452,Santiago Apóstol,0001,Santiago Apóstol,4421,2006,2415,1155
+20453,20,Oaxaca,Oax.,453,Santiago Astata,0001,Santiago Astata,3918,1948,1970,1282
+20454,20,Oaxaca,Oax.,454,Santiago Atitlán,0001,Santiago Atitlán,3556,1783,1773,885
+20455,20,Oaxaca,Oax.,455,Santiago Ayuquililla,0001,Santiago Ayuquililla,2904,1407,1497,764
+20456,20,Oaxaca,Oax.,456,Santiago Cacaloxtepec,0001,Santiago Cacaloxtepec,1667,802,865,494
+20457,20,Oaxaca,Oax.,457,Santiago Camotlán,0001,Santiago Camotlán,3346,1631,1715,902
+20458,20,Oaxaca,Oax.,458,Santiago Comaltepec,0001,Santiago Comaltepec,1157,540,617,342
+20459,20,Oaxaca,Oax.,459,Villa de Santiago Chazumba,0001,Villa de Santiago Chazumba,4877,2296,2581,1594
+20460,20,Oaxaca,Oax.,460,Santiago Choápam,0001,Santiago Choápam,5242,2491,2751,1393
+20461,20,Oaxaca,Oax.,461,Santiago del Río,0001,Santiago del Río,527,251,276,188
+20462,20,Oaxaca,Oax.,462,Santiago Huajolotitlán,0001,Santiago Huajolotitlán,4600,2213,2387,1256
+20463,20,Oaxaca,Oax.,463,Santiago Huauclilla,0001,Santiago Huauclilla,525,245,280,194
+20464,20,Oaxaca,Oax.,464,Santiago Ihuitlán Plumas,0001,Santiago Ihuitlán Plumas,341,155,186,116
+20465,20,Oaxaca,Oax.,465,Santiago Ixcuintepec,0001,Santiago Ixcuintepec,1636,775,861,413
+20466,20,Oaxaca,Oax.,466,Santiago Ixtayutla,0001,Santiago Ixtayutla,13880,6551,7329,3153
+20467,20,Oaxaca,Oax.,467,Santiago Jamiltepec,0001,Santiago Jamiltepec,19112,9159,9953,5525
+20468,20,Oaxaca,Oax.,468,Santiago Jocotepec,0019,Monte Negro,14198,6863,7335,3378
+20469,20,Oaxaca,Oax.,469,Santiago Juxtlahuaca,0001,Santiago Juxtlahuaca,34735,16527,18208,7595
+20470,20,Oaxaca,Oax.,470,Santiago Lachiguiri,0001,Santiago Lachiguiri,4394,2135,2259,1424
+20471,20,Oaxaca,Oax.,471,Santiago Lalopa,0001,Santiago Lalopa,431,203,228,128
+20472,20,Oaxaca,Oax.,472,Santiago Laollaga,0001,Santiago Laollaga,3361,1629,1732,1118
+20473,20,Oaxaca,Oax.,473,Santiago Laxopa,0001,Santiago Laxopa,1291,595,696,375
+20474,20,Oaxaca,Oax.,474,Santiago Llano Grande,0001,Santiago Llano Grande,3440,1716,1724,1054
+20475,20,Oaxaca,Oax.,475,Santiago Matatlán,0001,Santiago Matatlán,10175,4714,5461,2537
+20476,20,Oaxaca,Oax.,476,Santiago Miltepec,0001,Santiago Miltepec,421,210,211,143
+20477,20,Oaxaca,Oax.,477,Santiago Minas,0001,Santiago Minas,1327,652,675,357
+20478,20,Oaxaca,Oax.,478,Santiago Nacaltepec,0001,Santiago Nacaltepec,1599,735,864,565
+20479,20,Oaxaca,Oax.,479,Santiago Nejapilla,0001,Santiago Nejapilla,174,84,90,68
+20480,20,Oaxaca,Oax.,480,Santiago Nundiche,0001,Santiago Nundiche,1351,644,707,403
+20481,20,Oaxaca,Oax.,481,Santiago Nuyoó,0001,Santiago Nuyoó,1898,910,988,581
+20482,20,Oaxaca,Oax.,482,Santiago Pinotepa Nacional,0001,Santiago Pinotepa Nacional,55840,27214,28626,15557
+20483,20,Oaxaca,Oax.,483,Santiago Suchilquitongo,0001,Santiago Suchilquitongo,10886,5244,5642,2863
+20484,20,Oaxaca,Oax.,484,Santiago Tamazola,0001,Santiago Tamazola,4458,2102,2356,1127
+20485,20,Oaxaca,Oax.,485,Santiago Tapextla,0001,Santiago Tapextla,3134,1582,1552,805
+20486,20,Oaxaca,Oax.,486,Villa Tejúpam de la Unión,0001,Villa Tejúpam de la Unión,2419,1160,1259,695
+20487,20,Oaxaca,Oax.,487,Santiago Tenango,0001,Santiago Tenango,1966,969,997,588
+20488,20,Oaxaca,Oax.,488,Santiago Tepetlapa,0001,Santiago Tepetlapa,130,52,78,41
+20489,20,Oaxaca,Oax.,489,Santiago Tetepec,0001,Santiago Tetepec,4909,2378,2531,1350
+20490,20,Oaxaca,Oax.,490,Santiago Texcalcingo,0001,Santiago Texcalcingo,2974,1405,1569,762
+20491,20,Oaxaca,Oax.,491,Santiago Textitlán,0001,Santiago Textitlán,4930,2420,2510,908
+20492,20,Oaxaca,Oax.,492,Santiago Tilantongo,0001,Santiago Tilantongo,2764,1274,1490,909
+20493,20,Oaxaca,Oax.,493,Santiago Tillo,0001,Santiago Tillo,545,259,286,175
+20494,20,Oaxaca,Oax.,494,Santiago Tlazoyaltepec,0001,Santiago Tlazoyaltepec,6300,2906,3394,1300
+20495,20,Oaxaca,Oax.,495,Santiago Xanica,0001,Santiago Xanica,3029,1538,1491,809
+20496,20,Oaxaca,Oax.,496,Santiago Xiacuí,0001,Santiago Xiacuí,1893,906,987,538
+20497,20,Oaxaca,Oax.,497,Santiago Yaitepec,0001,Santiago Yaitepec,4233,1906,2327,954
+20498,20,Oaxaca,Oax.,498,Santiago Yaveo,0001,Santiago Yaveo,7593,3787,3806,2087
+20499,20,Oaxaca,Oax.,499,Santiago Yolomécatl,0001,Santiago Yolomécatl,1922,884,1038,540
+20500,20,Oaxaca,Oax.,500,Santiago Yosondúa,0001,Santiago Yosondúa,7991,3753,4238,2415
+20501,20,Oaxaca,Oax.,501,Santiago Yucuyachi,0001,Santiago Yucuyachi,998,493,505,327
+20502,20,Oaxaca,Oax.,502,Santiago Zacatepec,0001,Santiago Zacatepec,5089,2479,2610,1429
+20503,20,Oaxaca,Oax.,503,Santiago Zoochila,0001,Santiago Zoochila,425,206,219,124
+20504,20,Oaxaca,Oax.,504,Nuevo Zoquiápam,0001,Nuevo Zoquiápam,1590,762,828,404
+20505,20,Oaxaca,Oax.,505,Santo Domingo Ingenio,0001,Santo Domingo Ingenio,7681,3765,3916,2501
+20506,20,Oaxaca,Oax.,506,Santo Domingo Albarradas,0001,Santo Domingo Albarradas,798,377,421,232
+20507,20,Oaxaca,Oax.,507,Santo Domingo Armenta,0001,Santo Domingo Armenta,3155,1582,1573,937
+20508,20,Oaxaca,Oax.,508,Santo Domingo Chihuitán,0001,Santo Domingo Chihuitán,1618,793,825,546
+20509,20,Oaxaca,Oax.,509,Santo Domingo de Morelos,0001,Santo Domingo de Morelos,11384,5470,5914,2488
+20510,20,Oaxaca,Oax.,510,Santo Domingo Ixcatlán,0001,Santo Domingo Ixcatlán,760,345,415,222
+20511,20,Oaxaca,Oax.,511,Santo Domingo Nuxaá,0001,Santo Domingo Nuxaá,3335,1626,1709,916
+20512,20,Oaxaca,Oax.,512,Santo Domingo Ozolotepec,0001,Santo Domingo Ozolotepec,1101,525,576,267
+20513,20,Oaxaca,Oax.,513,Santo Domingo Petapa,0001,Santo Domingo Petapa,9027,4502,4525,2597
+20514,20,Oaxaca,Oax.,514,Santo Domingo Roayaga,0001,Santo Domingo Roayaga,941,450,491,248
+20515,20,Oaxaca,Oax.,515,Santo Domingo Tehuantepec,0001,Santo Domingo Tehuantepec,67739,32825,34914,19450
+20516,20,Oaxaca,Oax.,516,Santo Domingo Teojomulco,0001,Santo Domingo Teojomulco,5260,2576,2684,1316
+20517,20,Oaxaca,Oax.,517,Santo Domingo Tepuxtepec,0001,Santo Domingo Tepuxtepec,6029,2796,3233,1468
+20518,20,Oaxaca,Oax.,518,Santo Domingo Tlatayápam,0001,Santo Domingo Tlatayápam,113,52,61,42
+20519,20,Oaxaca,Oax.,519,Santo Domingo Tomaltepec,0001,Santo Domingo Tomaltepec,3386,1651,1735,916
+20520,20,Oaxaca,Oax.,520,Santo Domingo Tonalá,0001,Santo Domingo Tonalá,7393,3567,3826,1969
+20521,20,Oaxaca,Oax.,521,Santo Domingo Tonaltepec,0001,Santo Domingo Tonaltepec,250,117,133,79
+20522,20,Oaxaca,Oax.,522,Santo Domingo Xagacía,0001,Santo Domingo Xagacía,1205,554,651,350
+20523,20,Oaxaca,Oax.,523,Santo Domingo Yanhuitlán,0001,Santo Domingo Yanhuitlán,1633,759,874,519
+20524,20,Oaxaca,Oax.,524,Santo Domingo Yodohino,0001,Santo Domingo Yodohino,327,171,156,85
+20525,20,Oaxaca,Oax.,525,Santo Domingo Zanatepec,0001,Santo Domingo Zanatepec,12483,6150,6333,3819
+20526,20,Oaxaca,Oax.,526,Santos Reyes Nopala,0001,Santos Reyes Nopala,16688,7897,8791,4487
+20527,20,Oaxaca,Oax.,527,Santos Reyes Pápalo,0001,Santos Reyes Pápalo,2490,1218,1272,613
+20528,20,Oaxaca,Oax.,528,Santos Reyes Tepejillo,0001,Santos Reyes Tepejillo,904,414,490,287
+20529,20,Oaxaca,Oax.,529,Santos Reyes Yucuná,0001,Santos Reyes Yucuná,1474,731,743,255
+20530,20,Oaxaca,Oax.,530,Santo Tomás Jalieza,0001,Santo Tomás Jalieza,3923,1858,2065,967
+20531,20,Oaxaca,Oax.,531,Santo Tomás Mazaltepec,0001,Santo Tomás Mazaltepec,2612,1263,1349,679
+20532,20,Oaxaca,Oax.,532,Santo Tomás Ocotepec,0001,Santo Tomás Ocotepec,4066,1857,2209,1054
+20533,20,Oaxaca,Oax.,533,Santo Tomás Tamazulapan,0001,Santo Tomás Tamazulapan,2726,1308,1418,746
+20534,20,Oaxaca,Oax.,534,San Vicente Coatlán,0001,San Vicente Coatlán,3512,1617,1895,846
+20535,20,Oaxaca,Oax.,535,San Vicente Lachixío,0001,San Vicente Lachixío,3227,1460,1767,717
+20536,20,Oaxaca,Oax.,536,San Vicente Nuñú,0001,San Vicente Nuñú,449,211,238,151
+20537,20,Oaxaca,Oax.,537,Silacayoápam,0001,Silacayoápam,6710,3227,3483,1925
+20538,20,Oaxaca,Oax.,538,Sitio de Xitlapehua,0001,Sitio de Xitlapehua,713,349,364,203
+20539,20,Oaxaca,Oax.,539,Soledad Etla,0001,Soledad Etla,6348,3077,3271,1669
+20540,20,Oaxaca,Oax.,540,Villa de Tamazulápam del Progreso,0001,Villa de Tamazulápam del Progreso,8326,3756,4570,2236
+20541,20,Oaxaca,Oax.,541,Tanetze de Zaragoza,0001,Tanetze de Zaragoza,1558,746,812,501
+20542,20,Oaxaca,Oax.,542,Taniche,0001,Taniche,887,413,474,250
+20543,20,Oaxaca,Oax.,543,Tataltepec de Valdés,0001,Tataltepec de Valdés,6386,3112,3274,1631
+20544,20,Oaxaca,Oax.,544,Teococuilco de Marcos Pérez,0001,Teococuilco de Marcos Pérez,1032,499,533,296
+20545,20,Oaxaca,Oax.,545,Teotitlán de Flores Magón,0001,Teotitlán de Flores Magón,10099,4786,5313,2709
+20546,20,Oaxaca,Oax.,546,Teotitlán del Valle,0001,Teotitlán del Valle,6392,3037,3355,1695
+20547,20,Oaxaca,Oax.,547,Teotongo,0001,Teotongo,1005,457,548,321
+20548,20,Oaxaca,Oax.,548,Tepelmeme Villa de Morelos,0001,Tepelmeme Villa de Morelos,1960,916,1044,601
+20549,20,Oaxaca,Oax.,549,"Heroica Villa Tezoatlán de Segura y Luna, Cuna de la Independencia de Oaxaca",0001,"Heroica Villa Tezoatlán de Segura y Luna, Cuna de la Independencia de Oaxaca",11465,5396,6069,3300
+20550,20,Oaxaca,Oax.,550,San Jerónimo Tlacochahuaya,0001,San Jerónimo Tlacochahuaya,5764,2712,3052,1564
+20551,20,Oaxaca,Oax.,551,Tlacolula de Matamoros,0001,Tlacolula de Matamoros,30254,14385,15869,8362
+20552,20,Oaxaca,Oax.,552,Tlacotepec Plumas,0001,Tlacotepec Plumas,410,198,212,138
+20553,20,Oaxaca,Oax.,553,Tlalixtac de Cabrera,0001,Tlalixtac de Cabrera,12067,5772,6295,3119
+20554,20,Oaxaca,Oax.,554,Totontepec Villa de Morelos,0001,Totontepec Villa de Morelos,5904,2841,3063,1522
+20555,20,Oaxaca,Oax.,555,Trinidad Zaachila,0001,Trinidad Zaachila,3419,1607,1812,905
+20556,20,Oaxaca,Oax.,556,La Trinidad Vista Hermosa,0001,La Trinidad Vista Hermosa,306,151,155,91
+20557,20,Oaxaca,Oax.,557,Unión Hidalgo,0001,Unión Hidalgo,14542,7077,7465,4266
+20558,20,Oaxaca,Oax.,558,Valerio Trujano,0001,Valerio Trujano,1376,640,736,433
+20559,20,Oaxaca,Oax.,559,San Juan Bautista Valle Nacional,0001,San Juan Bautista Valle Nacional,23067,10986,12081,6032
+20560,20,Oaxaca,Oax.,560,Villa Díaz Ordaz,0001,Villa Díaz Ordaz,6467,2964,3503,1736
+20561,20,Oaxaca,Oax.,561,Yaxe,0001,Yaxe,2954,1430,1524,828
+20562,20,Oaxaca,Oax.,562,Magdalena Yodocono de Porfirio Díaz,0001,Magdalena Yodocono de Porfirio Díaz,1682,813,869,475
+20563,20,Oaxaca,Oax.,563,Yogana,0001,Yogana,1245,596,649,379
+20564,20,Oaxaca,Oax.,564,Yutanduchi de Guerrero,0001,Yutanduchi de Guerrero,1195,577,618,390
+20565,20,Oaxaca,Oax.,565,Villa de Zaachila,0001,Villa de Zaachila,46464,22163,24301,11810
+20566,20,Oaxaca,Oax.,566,San Mateo Yucutindoo,0009,San Mateo Yucutindoo,3144,1586,1558,901
+20567,20,Oaxaca,Oax.,567,Zapotitlán Lagunas,0001,Zapotitlán Lagunas,3382,1637,1745,872
+20568,20,Oaxaca,Oax.,568,Zapotitlán Palmas,0001,Zapotitlán Palmas,1695,765,930,488
+20569,20,Oaxaca,Oax.,569,Santa Inés de Zaragoza,0001,Santa Inés de Zaragoza,1454,694,760,480
+20570,20,Oaxaca,Oax.,570,Zimatlán de Álvarez,0001,Zimatlán de Álvarez,22093,10430,11663,5866

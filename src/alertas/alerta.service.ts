@@ -6,7 +6,7 @@ import {
   AsignarAlertaInput,
 } from './alerta.schema';
 import { CreateAlertaDto } from './alerta.types';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 import { Categoria, NivelAlerta } from '@prisma/client';
 
 // Umbrales del IRSU
@@ -14,7 +14,7 @@ const UMBRAL_AMARILLA = 50;
 const UMBRAL_ROJA     = 100;
 
 export const alertaService = {
-  getAll: async (filtros: FiltrosAlertaInput, user: JwtPayload) => {
+  getAll: async (filtros: FiltrosAlertaInput, user: TokenPayload) => {
     // COORDINADOR solo ve alertas de su comunidad
     const comunidadId =
       user.rol === 'COORDINADOR' ? user.comunidadId ?? filtros.comunidadId :
@@ -96,7 +96,7 @@ export const alertaService = {
   },
 
   // Tomar una alerta
-  tomar: async (id: number, user: JwtPayload) => {
+  tomar: async (id: number, user: TokenPayload) => {
     const alerta = await alertaService.getById(id);
 
     if (alerta.estado !== 'ACTIVA') {
@@ -111,7 +111,7 @@ export const alertaService = {
   },
 
   // Asignar alerta a otro usuario
-  asignar: async (id: number, data: AsignarAlertaInput, user: JwtPayload) => {
+  asignar: async (id: number, data: AsignarAlertaInput, user: TokenPayload) => {
     const alerta = await alertaService.getById(id);
 
     if (alerta.estado === 'CERRADA') {
@@ -143,7 +143,7 @@ export const alertaService = {
   },
 
   // Cerrar alerta
-  cerrar: async (id: number, user: JwtPayload) => {
+  cerrar: async (id: number, user: TokenPayload) => {
     const alerta = await alertaService.getById(id);
 
     if (alerta.estado === 'CERRADA') {

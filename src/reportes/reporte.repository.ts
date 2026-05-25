@@ -87,6 +87,18 @@ export const reporteRepository = {
     });
   },
 
+  countByEstado: async (where: any) => {
+  const grouped = await prisma.reporte.groupBy({
+    by: ['estado'],
+    where,
+    _count: {
+      estado: true,
+    },
+  });
+
+  return grouped;
+}, 
+
   // RF-01-3: Cuenta reportes anónimos del día por IP
   countByIpToday: (ip: string): Promise<number> => {
     const hoy = new Date();

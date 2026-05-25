@@ -1,81 +1,202 @@
+import { Categoria, Prisma } from '@prisma/client';
+
 import { prisma } from '../lib/prisma';
-import { Categoria } from '@prisma/client';
 
 export const irsuRepository = {
-  // Reportes activos (no eliminados, no resueltos, no rechazados) de una comunidad
-  getReportesActivos: (comunidadId: number) => {
+  /**
+   * Reportes activos
+   */
+  getReportesActivos: (
+    comunidadId: number
+  ) => {
     return prisma.reporte.findMany({
       where: {
         comunidadId,
+
         deletedAt: null,
-        estado:    { notIn: ['RESUELTO', 'RECHAZADO'] },
+
+        estado: {
+          notIn: [
+            'RESUELTO',
+            'RECHAZADO',
+          ],
+        },
       },
-      select: { gravedad: true, categoria: true },
+
+      select: {
+        gravedad: true,
+        categoria: true,
+      },
     });
   },
 
-  // Reportes resueltos de una comunidad
-  countReportesResueltos: (comunidadId: number): Promise<number> => {
+  /**
+   * Total reportes resueltos
+   */
+  countReportesResueltos: (
+    comunidadId: number
+  ): Promise<number> => {
     return prisma.reporte.count({
       where: {
         comunidadId,
-        estado:    'RESUELTO',
+
+        estado: 'RESUELTO',
+
         deletedAt: null,
       },
     });
   },
 
-  // Historial IRSU para calcular tendencia
-  getHistorial: (comunidadId: number, limit = 10) => {
-    return prisma.irsuHistorial.findMany({
-      where:   { comunidadId, categoria: null },
-      orderBy: { createdAt: 'desc' },
-      take:    limit,
-      select:  { valor: true, createdAt: true },
-    });
-  },
-
-  // Guarda el resultado del cálculo en el historial
-  guardarHistorial: (data: {
-    comunidadId:      number;
-    categoria?:       Categoria;
-    valor:            number;
-    totalReportes:    number;
-    gravedadPromedio: number;
-    tendencia:        number;
-  }) => {
-    return prisma.irsuHistorial.create({ data });
-  },
-
-  // Actualiza el IRSU actual de la comunidad
-  actualizarComunidad: (comunidadId: number, irsuActual: number, color: string) => {
-    return prisma.comunidad.update({
-      where: { id: comunidadId },
-      data:  { irsuActual, color },
-    });
-  },
-
-  // Historial para el dashboard
-  findHistorial: (filtros: {
-    comunidadId: number;
-    categoria?:  Categoria;
-    desde?:      Date;
-    hasta?:      Date;
-    limit:       number;
-  }) => {
+  /**
+   * Historial global
+   * SOLO categoria null
+   */
+  getHistorialGlobal: (
+    comunidadId: number,
+    limit = 10
+  ) => {
     return prisma.irsuHistorial.findMany({
       where: {
-        comunidadId: filtros.comunidadId,
-        ...(filtros.categoria && { categoria: filtros.categoria }),
-        ...((filtros.desde || filtros.hasta) && {
-          createdAt: {
-            ...(filtros.desde && { gte: filtros.desde }),
-            ...(filtros.hasta && { lte: filtros.hasta }),
-          },
-        }),
+        comunidadId,
+        categoria: null,
       },
-      orderBy: { createdAt: 'desc' },
-      take:    filtros.limit,
+
+      orderBy: {
+        createdAt: 'desc',
+      },
+
+      take: limit,
+
+      select: {
+        valor: true,
+        createdAt: true,
+      },
+    });
+  },
+
+  /**
+   * Historial por categoría
+   */
+  getHistorialCategoria: (
+    comunidadId: number,
+    categoria: Categoria,
+    limit = 10
+  ) => {
+    return prisma.irsuHistorial.findMany({
+      where: {
+        comunidadId,
+        categoria,
+      },
+
+      orderBy: {
+        createdAt: 'desc',
+      },
+
+      take: limit,
+
+      select: {
+        valor: true,
+        createdAt: true,
+      },
+    });
+  },
+
+  /**
+   * Guardar historial individual
+   */
+  guardarHistorial: (data: {
+    comunidadId: number;
+    categoria?: Categoria | null;
+    valor: number;
+    totalReportes: number;
+    gravedadPromedio: number;
+    tendencia: number;
+  }) => {
+    return prisma.irsuHistorial.create({
+      data,
+    });
+  },
+
+  /**
+   * Guardado masivo
+   */
+  guardarHistorialMany: (
+    data: Prisma.IrsuHistorialCreateManyInput[]
+  ) => {
+    return prisma.irsuHistorial.createMany({
+      data,
+    });
+  },
+
+  /**
+   * Actualizar comunidad
+   */
+  actualizarComunidad: (
+    comunidadId: number,
+    irsuActual: number,
+    color: string
+  ) => {
+    return prisma.comunidad.update({
+      where: {
+        id: comunidadId,
+      },
+
+      data: {
+        irsuActual,
+        color,
+      },
+    });
+  },
+
+  /**
+   * Historial dashboard
+   */
+  findHistorial: (filtros: {
+    comunidadId: number;
+    categoria?: Categoria;
+    desde?: Date;
+    hasta?: Date;
+    limit: number;
+  }) => {
+    const where: Prisma.IrsuHistorialWhereInput =
+      {
+        comunidadId: filtros.comunidadId,
+      };
+
+    /**
+     * Categoría
+     */
+    if (filtros.categoria) {
+      where.categoria =
+        filtros.categoria;
+    }
+
+    /**
+     * Rango fechas
+     */
+    if (
+      filtros.desde ||
+      filtros.hasta
+    ) {
+      where.createdAt = {
+        ...(filtros.desde && {
+          gte: filtros.desde,
+        }),
+
+        ...(filtros.hasta && {
+          lte: filtros.hasta,
+        }),
+      };
+    }
+
+    return prisma.irsuHistorial.findMany({
+      where,
+
+      orderBy: {
+        createdAt: 'desc',
+      },
+
+      take: filtros.limit,
     });
   },
 };

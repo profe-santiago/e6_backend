@@ -6,11 +6,243 @@ datasource db {
   provider = "postgresql"
 }
 
+model Estado {
+  id         Int         @id @default(autoincrement())
+  nombre     String      @db.VarChar(100)
+  clave      String      @unique @db.Char(2)
+  municipios Municipio[]
+
+  @@map("estados")
+}
+
+model Municipio {
+  id              Int            @id @default(autoincrement())
+  nombre          String         @db.VarChar(200)
+  clave           String         @unique @db.Char(5)
+  estadoId        Int
+  codigosPostales CodigoPostal[]
+  comunidades     Comunidad[]
+  cuadrillas      Cuadrilla[]
+  estado          Estado         @relation(fields: [estadoId], references: [id])
+  usuarios        Usuario[]
+
+  @@map("municipios")
+}
+
+model CodigoPostal {
+  id          Int         @id @default(autoincrement())
+  codigo      String      @db.Char(5)
+  colonia     String      @db.VarChar(200)
+  municipioId Int
+  municipio   Municipio   @relation(fields: [municipioId], references: [id])
+  comunidades Comunidad[]
+
+  @@index([codigo])
+  @@map("codigos_postales")
+}
+
+model Comunidad {
+  id                Int                @id @default(autoincrement())
+  nombre            String             @db.VarChar(200)
+  slug              String             @unique @db.VarChar(250)
+  status            EstadoComunidad    @default(PENDIENTE)
+  irsuActual        Float              @default(0)
+  color             String             @default("#3B82F6") @db.VarChar(7)
+  logoUrl           String?
+  municipioId       Int
+  cpId              Int?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  alertas           Alerta[]
+  codigoPostal      CodigoPostal?      @relation(fields: [cpId], references: [id])
+  municipio         Municipio          @relation(fields: [municipioId], references: [id])
+  irsuHistorial     IrsuHistorial[]
+  reportes          Reporte[]
+  usuariosComunidad UsuarioComunidad[]
+  usuarios          Usuario[]
+
+  @@unique([municipioId, nombre])
+  @@map("comunidades")
+}
+
+model Usuario {
+  id                    Int                   @id @default(autoincrement())
+  email                 String                @unique @db.VarChar(150)
+  passwordHash          String
+  nombre                String?               @db.VarChar(100)
+  rol                   Rol                   @default(USUARIO)
+  activo                Boolean               @default(true)
+  municipioId           Int?
+  comunidadId           Int?
+  createdAt             DateTime              @default(now())
+  avatarUrl             String?               @db.VarChar(500)
+  alertasAsignadas      Alerta[]
+  asignacionesCuadrilla AsignacionCuadrilla[]
+  historial             ReporteHistorial[]
+  reportes              Reporte[]
+  comunidades           UsuarioComunidad[]
+  comunidad             Comunidad?            @relation(fields: [comunidadId], references: [id])
+  municipio             Municipio?            @relation(fields: [municipioId], references: [id])
+  votos                 Voto[]
+  refreshTokens         RefreshToken[]
+
+  @@map("usuarios")
+}
+
+model RefreshToken {
+  id         Int       @id @default(autoincrement())
+  token      String    @unique
+  usuarioId  Int
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Reporte {
+  id           Int                   @id @default(autoincrement())
+  titulo       String                @db.VarChar(120)
+  descripcion  String?
+  gravedad     Int
+  categoria    Categoria
+  estado       EstadoReporte         @default(PENDIENTE)
+  fuente       FuenteReporte         @default(APP_MOVIL)
+  latitud      Float
+  longitud     Float
+  deviceIp     String?               @db.VarChar(45)
+  sincronizado Boolean               @default(true)
+  voteCount    Int                   @default(0)
+  usuarioId    Int?
+  comunidadId  Int
+  createdAt    DateTime              @default(now())
+  deletedAt    DateTime?
+  asignaciones AsignacionCuadrilla[]
+  fotos        ReporteFoto[]
+  historial    ReporteHistorial[]
+  comunidad    Comunidad             @relation(fields: [comunidadId], references: [id])
+  usuario      Usuario?              @relation(fields: [usuarioId], references: [id])
+  votos        Voto[]
+
+  @@map("reportes")
+}
+
+model ReporteFoto {
+  id        Int     @id @default(autoincrement())
+  url       String
+  reporteId Int
+  reporte   Reporte @relation(fields: [reporteId], references: [id])
+
+  @@map("reporte_fotos")
+}
+
+model Voto {
+  id        Int     @id @default(autoincrement())
+  usuarioId Int
+  reporteId Int
+  reporte   Reporte @relation(fields: [reporteId], references: [id])
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@unique([usuarioId, reporteId])
+  @@map("votos")
+}
+
+model ReporteHistorial {
+  id             Int            @id @default(autoincrement())
+  reporteId      Int
+  cambiadoPor    Int
+  estadoAnterior EstadoReporte?
+  estadoNuevo    EstadoReporte
+  nota           String?
+  createdAt      DateTime       @default(now())
+  usuario        Usuario        @relation(fields: [cambiadoPor], references: [id])
+  reporte        Reporte        @relation(fields: [reporteId], references: [id])
+
+  @@map("reporte_historial")
+}
+
+model Alerta {
+  id          Int          @id @default(autoincrement())
+  comunidadId Int
+  categoria   Categoria
+  nivel       NivelAlerta
+  estado      EstadoAlerta @default(ACTIVA)
+  irsuValor   Float
+  asignadoA   Int?
+  atendidaEn  DateTime?
+  cerradaEn   DateTime?
+  createdAt   DateTime     @default(now())
+  usuario     Usuario?     @relation(fields: [asignadoA], references: [id])
+  comunidad   Comunidad    @relation(fields: [comunidadId], references: [id])
+
+  @@map("alertas")
+}
+
+model IrsuHistorial {
+  id               Int        @id @default(autoincrement())
+  comunidadId      Int
+  categoria        Categoria?
+  valor            Float
+  totalReportes    Int
+  gravedadPromedio Float
+  tendencia        Float
+  createdAt        DateTime   @default(now())
+  comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
+
+  @@map("irsu_historial")
+}
+
+model UsuarioComunidad {
+  id          Int       @id @default(autoincrement())
+  usuarioId   Int
+  comunidadId Int
+  esPrincipal Boolean   @default(false)
+  creadoEn    DateTime  @default(now())
+  comunidad   Comunidad @relation(fields: [comunidadId], references: [id], onDelete: Cascade)
+  usuario     Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, comunidadId])
+  @@map("usuario_comunidades")
+}
+
+model Cuadrilla {
+  id           Int                   @id @default(autoincrement())
+  nombre       String                @db.VarChar(100)
+  descripcion  String?
+  activa       Boolean               @default(true)
+  municipioId  Int
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  asignaciones AsignacionCuadrilla[]
+  municipio    Municipio             @relation(fields: [municipioId], references: [id])
+
+  @@map("cuadrillas")
+}
+
+model AsignacionCuadrilla {
+  id           Int              @id @default(autoincrement())
+  cuadrillaId  Int
+  reporteId    Int
+  estado       EstadoAsignacion @default(ASIGNADA)
+  nota         String?
+  asignadoEn   DateTime         @default(now())
+  iniciadaEn   DateTime?
+  completadaEn DateTime?
+  asignadoPor  Int
+  usuario      Usuario          @relation(fields: [asignadoPor], references: [id])
+  cuadrilla    Cuadrilla        @relation(fields: [cuadrillaId], references: [id])
+  reporte      Reporte          @relation(fields: [reporteId], references: [id])
+
+  @@map("asignaciones_cuadrilla")
+}
+
 enum Rol {
-  SUPER_ADMIN   // Acceso total al sistema
-  ADMIN         // Administrador de un municipio
-  COORDINADOR   // Coordinador de una comunidad específica
-  USUARIO       // Ciudadano registrado
+  SUPER_ADMIN
+  ADMIN
+  COORDINADOR
+  USUARIO
+  OPERADOR
 }
 
 enum Categoria {
@@ -21,10 +253,10 @@ enum Categoria {
 }
 
 enum EstadoReporte {
-  PENDIENTE   // Recién creado, sin atender
-  EN_PROCESO  // Siendo atendido por una autoridad
-  RESUELTO    // Problema resuelto
-  RECHAZADO   // Reporte inválido o duplicado
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  RECHAZADO
 }
 
 enum FuenteReporte {
@@ -35,176 +267,26 @@ enum FuenteReporte {
 }
 
 enum EstadoComunidad {
-  PENDIENTE    // Recién creada, pendiente de aprobación
-  ACTIVO       // Comunidad operativa y visible en el mapa
-  RECHAZADO    // Solicitud de comunidad rechazada
-  SUSPENDIDO   // Comunidad temporalmente inactiva
+  PENDIENTE
+  ACTIVO
+  RECHAZADO
+  SUSPENDIDO
 }
 
 enum NivelAlerta {
-  AMARILLA  // IRSU > 50: situación de atención moderada
-  ROJA      // IRSU > 100: situación crítica
+  AMARILLA
+  ROJA
 }
 
 enum EstadoAlerta {
-  ACTIVA       // Generada automáticamente, sin atender
-  EN_ATENCION  // Tomada por un coordinador o admin
-  CERRADA      // Problema resuelto
+  ACTIVA
+  EN_ATENCION
+  CERRADA
 }
 
-model Estado {
-  id         Int         @id @default(autoincrement())
-  nombre     String      @db.VarChar(100)
-  clave      String      @unique @db.Char(2) // Clave INEGI de 2 dígitos (ej. "20" para Oaxaca)
-  municipios Municipio[]
-  @@map("estados")
-}
-
-model Municipio {
-  id              Int            @id @default(autoincrement())
-  nombre          String         @db.VarChar(200)
-  clave           String         @unique @db.Char(5) // Clave INEGI de 5 dígitos (estado+municipio)
-  estadoId        Int
-  estado          Estado         @relation(fields: [estadoId], references: [id])
-  comunidades     Comunidad[]
-  codigosPostales CodigoPostal[]
-  usuarios        Usuario[]
-  @@map("municipios")
-}
-
-model CodigoPostal {
-  id          Int         @id @default(autoincrement())
-  codigo      String      @db.Char(5)    // Código postal de 5 dígitos (SEPOMEX)
-  colonia     String      @db.VarChar(200)
-  municipioId Int
-  municipio   Municipio   @relation(fields: [municipioId], references: [id])
-  comunidades Comunidad[]
-  @@index([codigo])
-  @@map("codigos_postales")
-}
-
-model Comunidad {
-  id            Int             @id @default(autoincrement())
-  nombre        String          @db.VarChar(200)
-  slug          String          @unique @db.VarChar(250) // URL-friendly, generado al crear (ej. "colonia-centro-420-abc123")
-  status        EstadoComunidad @default(PENDIENTE)
-  irsuActual    Float           @default(0)              // Valor IRSU más reciente calculado por el motor
-  color         String          @default("#3B82F6") @db.VarChar(7) // Color del semáforo: verde/amarillo/rojo según IRSU
-  logoUrl       String?
-  municipioId   Int
-  municipio     Municipio       @relation(fields: [municipioId], references: [id])
-  cpId          Int?                                     // Código postal principal de la comunidad (opcional)
-  codigoPostal  CodigoPostal?   @relation(fields: [cpId], references: [id])
-  usuarios      Usuario[]
-  reportes      Reporte[]
-  alertas       Alerta[]
-  irsuHistorial IrsuHistorial[]
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  @@unique([municipioId, nombre])
-  @@map("comunidades")
-}
-
-model Usuario {
-  id               Int      @id @default(autoincrement())
-  email            String   @unique @db.VarChar(150)
-  passwordHash     String
-  nombre           String?  @db.VarChar(100)
-  rol              Rol      @default(USUARIO)
-  activo           Boolean  @default(true)               // false = cuenta desactivada por admin
-  municipioId      Int?                                  // Obligatorio para ADMIN y COORDINADOR
-  municipio        Municipio? @relation(fields: [municipioId], references: [id])
-  comunidadId      Int?                                  // Obligatorio para COORDINADOR
-  comunidad        Comunidad? @relation(fields: [comunidadId], references: [id])
-  reportes         Reporte[]
-  votos            Voto[]
-  historial        ReporteHistorial[]
-  alertasAsignadas Alerta[]
-  createdAt        DateTime @default(now())
-  @@map("usuarios")
-}
-
-model Reporte {
-  id           Int           @id @default(autoincrement())
-  titulo       String        @db.VarChar(120)
-  descripcion  String?       @db.Text
-  gravedad     Int                                        // Escala 1–5: 1=menor, 5=crítico
-  categoria    Categoria
-  estado       EstadoReporte @default(PENDIENTE)
-  fuente       FuenteReporte @default(APP_MOVIL)
-  latitud      Float
-  longitud     Float
-  deviceIp     String?       @db.VarChar(45)             // IP del dispositivo; solo se guarda en reportes anónimos
-  sincronizado Boolean       @default(true)              // false = creado offline, pendiente de sincronizar
-  voteCount    Int           @default(0)                 // Contador desnormalizado para evitar COUNT en queries frecuentes
-  usuarioId    Int?                                      // null = reporte anónimo
-  usuario      Usuario?      @relation(fields: [usuarioId], references: [id])
-  comunidadId  Int
-  comunidad    Comunidad     @relation(fields: [comunidadId], references: [id])
-  fotos        ReporteFoto[]
-  votos        Voto[]
-  historial    ReporteHistorial[]
-  createdAt    DateTime      @default(now())
-  deletedAt    DateTime?                                 // null = activo; non-null = eliminado (soft delete)
-  @@map("reportes")
-}
-
-model ReporteFoto {
-  id        Int      @id @default(autoincrement())
-  url       String   @db.Text
-  reporteId Int
-  reporte   Reporte  @relation(fields: [reporteId], references: [id])
-  @@map("reporte_fotos")
-}
-
-model Voto {
-  id        Int      @id @default(autoincrement())
-  usuarioId Int
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
-  reporteId Int
-  reporte   Reporte  @relation(fields: [reporteId], references: [id])
-  @@unique([usuarioId, reporteId])                       // Un usuario solo puede votar una vez por reporte
-  @@map("votos")
-}
-
-model ReporteHistorial {
-  id             Int           @id @default(autoincrement())
-  reporteId      Int
-  reporte        Reporte       @relation(fields: [reporteId], references: [id])
-  cambiadoPor    Int
-  usuario        Usuario       @relation(fields: [cambiadoPor], references: [id])
-  estadoAnterior EstadoReporte?                          // null solo en el primer cambio de estado
-  estadoNuevo    EstadoReporte
-  nota           String?       @db.Text
-  createdAt      DateTime      @default(now())
-  @@map("reporte_historial")
-}
-
-model Alerta {
-  id          Int          @id @default(autoincrement())
-  comunidadId Int
-  comunidad   Comunidad    @relation(fields: [comunidadId], references: [id])
-  categoria   Categoria
-  nivel       NivelAlerta                                // AMARILLA (IRSU > 50) o ROJA (IRSU > 100)
-  estado      EstadoAlerta @default(ACTIVA)
-  irsuValor   Float                                      // Valor IRSU que disparó la alerta
-  asignadoA   Int?                                       // ID del coordinador o admin responsable
-  usuario     Usuario?     @relation(fields: [asignadoA], references: [id])
-  atendidaEn  DateTime?                                  // Fecha en que pasó a EN_ATENCION
-  cerradaEn   DateTime?                                  // Fecha en que pasó a CERRADA
-  createdAt   DateTime     @default(now())
-  @@map("alertas")
-}
-
-model IrsuHistorial {
-  id               Int        @id @default(autoincrement())
-  comunidadId      Int
-  comunidad        Comunidad  @relation(fields: [comunidadId], references: [id])
-  categoria        Categoria?                            // null = cálculo global; non-null = por categoría
-  valor            Float                                 // Valor IRSU calculado
-  totalReportes    Int
-  gravedadPromedio Float
-  tendencia        Float                                 // Pendiente de regresión lineal: positivo=empeora, negativo=mejora
-  createdAt        DateTime   @default(now())
-  @@map("irsu_historial")
+enum EstadoAsignacion {
+  ASIGNADA
+  EN_CURSO
+  COMPLETADA
+  CANCELADA
 }

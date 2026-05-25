@@ -5,12 +5,13 @@ import { usuarioRepository } from './usuario.repository';
 import {
   CreateAdminInput,
   CreateCoordinadorInput,
+  CreateOperadorInput,
   FiltrosUsuarioInput,
 } from './usuario.schema';
-import { JwtPayload } from '../auth/auth.types';
+import { TokenPayload } from '../auth/auth.types';
 
 export const usuarioService = {
-  getAll: async (filtros: FiltrosUsuarioInput, user: JwtPayload) => {
+  getAll: async (filtros: FiltrosUsuarioInput, user: TokenPayload) => {
     const municipioId =
       user.rol === 'ADMIN'       ? user.municipioId :
       user.rol === 'COORDINADOR' ? user.municipioId :
@@ -51,7 +52,7 @@ export const usuarioService = {
     return usuarioService.getById(userId);
   },
 
-  createAdmin: async (data: CreateAdminInput, user: JwtPayload) => {
+  createAdmin: async (data: CreateAdminInput, user: TokenPayload) => {
     if (user.rol !== 'SUPER_ADMIN') {
       throw new AppError(403, 'Solo el SUPER_ADMIN puede crear administradores');
     }
@@ -76,7 +77,7 @@ export const usuarioService = {
     });
   },
 
-  createCoordinador: async (data: CreateCoordinadorInput, user: JwtPayload) => {
+  createCoordinador: async (data: CreateCoordinadorInput, user: TokenPayload) => {
     const comunidad = await prisma.comunidad.findUnique({
       where:  { id: data.comunidadId },
       select: { id: true, municipioId: true, status: true },
@@ -109,7 +110,40 @@ export const usuarioService = {
     });
   },
 
-  desactivar: async (id: number, user: JwtPayload) => {
+  /**
+   * Crea un OPERADOR de cuadrilla — solo ADMIN o SUPER_ADMIN
+   * El operador solo puede ver y actualizar asignaciones de cuadrilla
+   */
+  createOperador: async (data: CreateOperadorInput, user: TokenPayload) => {
+    if (!['SUPER_ADMIN', 'ADMIN'].includes(user.rol)) {
+      throw new AppError(403, 'Solo ADMIN o SUPER_ADMIN pueden crear operadores');
+    }
+
+    if (user.rol === 'ADMIN' && user.municipioId !== data.municipioId) {
+      throw new AppError(403, 'No puedes crear operadores fuera de tu municipio');
+    }
+
+    const municipio = await prisma.municipio.findUnique({ where: { id: data.municipioId } });
+    if (!municipio) {
+      throw new AppError(404, 'Municipio no encontrado');
+    }
+
+    const existing = await usuarioRepository.findByEmail(data.email);
+    if (existing) {
+      throw new AppError(400, 'El email ya está registrado');
+    }
+
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    return usuarioRepository.create({
+      email:       data.email,
+      passwordHash,
+      nombre:      data.nombre,
+      rol:         'OPERADOR',
+      municipioId: data.municipioId,
+    });
+  },
+
+  desactivar: async (id: number, user: TokenPayload) => {
     const objetivo = await usuarioService.getById(id);
 
     if (objetivo.id === user.sub) {
@@ -127,7 +161,7 @@ export const usuarioService = {
     return usuarioRepository.setActivo(id, false);
   },
 
-  activar: async (id: number, user: JwtPayload) => {
+  activar: async (id: number, user: TokenPayload) => {
     const objetivo = await usuarioService.getById(id);
 
     if (user.rol === 'ADMIN' && objetivo.municipio?.id !== user.municipioId) {
